@@ -1,0 +1,151 @@
+setwd("~/Documents/Master Thesis/ergm.sign/R")
+library(devtools)
+load_all('/Users/mschalberger/Downloads/ergm.multi-private-mutex')
+library(tergm)
+library(ergm)
+library(sna)
+library(dplyr)
+source("count.R")
+source("gof.sergm.R")
+source("gof.tsergm.R")
+source("plot.dynamic.sign.R")
+source("plot.static.sign.R")
+source("SERGM.R")
+source("signnet.R")
+source("sim.sergm.R")
+source("sim.tsergm.R")
+source("summary.dynamic.sign.R")
+source("summary.static.sign.R")
+source("tsergm.R")
+library(ergm.sign)
+
+
+# Create random list of adjacency matrices
+# Static
+set.seed(1234)
+mat <- matrix(sample(c(-1,0,1),100,replace=TRUE),ncol=10)
+mat[lower.tri(mat)] <- 0
+diag(mat) <- 0
+
+# Dynamic
+set.seed(1234)
+lis <- c()
+n <- 4
+for (i in c(1:n)) {
+  mat <- matrix(sample(c(-1,0,1),100,replace=TRUE),ncol=10)
+  mat[lower.tri(mat)] <- 0
+  diag(mat) <- 0
+  lis[[i]] <- mat
+}
+
+### signnet ###
+# Static
+static_net <- signnet(mat, directed = F, loops = F, matrix.type = "adjacency")
+class(static_net)
+
+# Dynamic
+dynamic_net <- signnet(lis, directed = F, loops = F, matrix.type = "adjacency")
+class(dynamic_net)
+
+### summary ###
+# Static
+summary(static_net)
+# Dynamic
+summary(dynamic_net)
+
+
+### summary ###
+# Static
+plot(static_net, displaylabels = T, displayisolates = F)
+# Dynamic
+par(mfrow=c(2,2), mar = c(0.1, 0.1, 2, 0.1))
+plot(dynamic_net, displaylabels = T)
+
+
+
+### sergm ###
+set.seed(1234)
+model <- sergm(static_net ~ edges_pos + edges_neg + gwesf_pos(decay=0.5, fix = T))
+model
+
+### tsergm ###
+# Joint
+set.seed(1234)
+joint <- tsergm(dynamic_net ~ Cross(~ edges_pos + ese_pos(d = 2)) +
+                                       Change(~ edges_pos + ese_pos(d = 2)),
+                                   times = c(0:3))
+joint
+
+# Separable TERGM
+set.seed(1234)
+separable <- tsergm(dynamic_net ~ Form(~ edges_pos + ese_pos(d = 2)) +
+                                             Diss(~ edges_pos + ese_pos(d = 2)),
+                                         times = c(0:3))
+separable
+
+
+### count ###
+count(static_net ~ edges_pos + edges_neg + gwesf_pos(decay=0.5, fix = T))
+count(dynamic_net ~  edges_pos + edges_neg + gwesf_pos(decay=0.5, fix = T))
+count(dynamic_net[[1]] ~  edges_pos + edges_neg + gwesf_pos(decay=0.5, fix = T))
+count(dynamic_net ~ Cross(~ edges_pos + ese_pos(d = 2)) +
+        Change(~ edges_pos + ese_pos(d = 2)))
+
+
+### simulate ###
+# static
+sim <- sim.sergm(model, nsim = 10, seed = 123)
+summary(sim)
+
+# dynamic
+sim_dynamic <- sim.tsergm(joint, nsim = 10, seed = 123)
+summary(sim_dynamic)
+
+
+### gof ###
+
+# static
+set.seed(1234)
+gof.sergm(model, nsim = 10)
+
+set.seed(1234)
+mcmc.diagnostics(model)
+
+# dynamic
+set.seed(1234)
+gof.tsergm(joint, nsim = 10)
+
+set.seed(1234)
+mcmc.diagnostics(joint, vars.per.page = 4)
+
+
+
+
+### sanity check ###
+
+# static
+# check nr 1
+test1 <- sim.sergm(network.initialize(50, directed = F) ~
+                               edges_pos +
+                               edges_neg +
+                               gwesf_pos(decay=0.3, fix = T),
+                             coef = c(-3.9,-3,1),
+                             seed = 1234)
+set.seed(1234)
+sergm(test1 ~  edges_pos + edges_neg + gwesf_pos(decay=0.3, fix = T))
+count(test1 ~  edges_pos + edges_neg + gwesf_pos(decay=0.3, fix = T))
+
+# check nr 2
+test2 <- sim.sergm(network.initialize(60, directed = F) ~
+                               triangles_pos +
+                               triangles_neg +
+                               gwdse(decay = 0.2, fix = T),
+                             coef = c(-2,-2.5,1),
+                             seed = 1234)
+set.seed(1234)
+sergm(test2 ~  triangles_pos +
+        triangles_neg +
+        gwdse(decay = 0.2, fix = T))
+count(test2 ~ triangles_pos +
+        triangles_neg +
+        gwdse(decay=0.2, fix = T))

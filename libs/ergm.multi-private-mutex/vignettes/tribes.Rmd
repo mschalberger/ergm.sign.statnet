@@ -1,0 +1,108 @@
+---
+title: "Using `ergm.multi` to analyse the signed Read's Highland Tribes dataset"
+author: "Pavel N. Krivitsky"
+date: "`ergm.multi` version `r packageVersion('ergm.multi')` (`r Sys.Date()`)"
+output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{Using ergm.multi to analyse the Read's signed Highland Tribes dataset}
+---
+
+```{css, echo=FALSE}
+pre {
+  font-size: 85%
+}
+```
+
+```{r, echo=FALSE, cache=FALSE, eval=TRUE}
+library(knitr)
+library(rmarkdown)
+options(rmarkdown.html_vignette.check_title = FALSE)
+opts_chunk$set(message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
+concordance=TRUE, error=FALSE, fig.width=7, fig.height=7)
+options(width=160)
+```
+
+```{r}
+library(ergm.multi)
+```
+
+# Obtaining data
+
+The highland tribes dataset can be found in the `latentnet` package:
+
+```{r}
+data(tribes, package = "latentnet")
+```
+
+It contains a number of edge attributes, providing various encodings of the allied and hostile relations between tribes:
+
+```{r}
+list.edge.attributes(tribes)
+```
+
+We will use `pos` and `neg` for a multilayer construct. Note that there's no rule that says we can't name them something descriptive, though we must quote these operators with backticks:
+
+```{r}
+Ltribes <- Layer(tribes, c(`+`="pos", `-`="neg"))
+```
+
+This is now a multilayer network construct, with metadata set for it to be understood by layer-aware terms.
+
+# Configuring estimation
+
+A signed network differs from a multilayer network in that a given dyad cannot have a relationship in both a positive and a negative layer. in the language of Layer Logic, this is forbidding `` `+`&`-` `` from changing. This is specified by a layer-aware constraint `` fixL(~`+`&`-`) ``, which can be specified in one of two ways:
+
+```{r, eval=FALSE}
+ergm(Ltribes~..., constraints=~. + fixL(~`+`&`-`))
+```
+
+where `...` is the model formula. The dot is important, since it indicates that the constraints attached to the network via the `ergmlhs` API should not be replaced but appended to. The other approach is to append this constraint to the network:
+
+```{r}
+Ltribes %ergmlhs% "constraints"
+Ltribes %ergmlhs% "constraints" <- update(Ltribes %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
+Ltribes %ergmlhs% "constraints"
+```
+
+We can now call `ergm()` without additional arguments, and the constraint will be enforced.
+
+# Some example models
+
+Let's start by fitting a simple density model
+
+```{r, warning=FALSE}
+ergm(Ltribes ~ L(~edges, ~`+`) + L(~edges, ~`-`))
+```
+
+Are these correct? Well,
+
+```{r}
+(e.p <- summary(Ltribes ~ L(~edges, ~`+`)))
+(e.n <- summary(Ltribes ~ L(~edges, ~`-`)))
+(d <- network.dyadcount(tribes)) # original, not combined network
+```
+
+This model happens to be a baseline-category logit, with 0 being baseline, so
+
+```{r}
+logit <- function(p) log(p/(1-p))
+
+logit(e.p / (d-e.n))
+logit(e.n / (d-e.p))
+```
+
+So far so good!
+
+Let's try to fit something with triadic effects. (1/2 here is a bit arbitrary.)
+
+```{r, warning=FALSE}
+fit <- ergm(Ltribes ~ L(~edges, ~`+`) + gwespL(1/2, fix=TRUE, L.base=~`+`, Ls.path=c(~`+`,~`+`)) + L(~edges, ~`-`) + gwespL(1/2, fix=TRUE, L.base=~`-`, Ls.path=c(~`+`,~`-`)))
+summary(fit)
+```
+
+Here, the first `gwespL()` term models friend-of-a-friend-is-a-friend configurations: the base of the triad is positive, and the 2-path is positive and positive. The second one models friend-of-an-enemy-is-an-enemy and enemy-of-a-friend-is-an-enemy: the base is negative, and the 2-path requires a positive and a negative relation (in any order).
+
+# References
