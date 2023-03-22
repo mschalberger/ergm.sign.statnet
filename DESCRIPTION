@@ -2,8 +2,8 @@ Package: ergm.sign
 Type: Package
 Title: ERGM for Signed Networks
 Version: 0.1.0
-Author: Marc Schalberger <m.schalberger@campus.lmu.de>
-Maintainer: Marc Schalberger <m.schalberger@campus.lmu.de>
+Author: Marc Schalberger
+Maintainer: Marc Schalberger
 Description: This package builds on the ergm.multi package from the statnet packages and makes it possible to fit an ERGM for signed networks.
 License: use_mit_license()
 Encoding: UTF-8
