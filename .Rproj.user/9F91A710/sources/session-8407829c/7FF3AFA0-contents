@@ -1,4 +1,4 @@
-setwd("/Users/mschalberger/Downloads/Replication-Code-All-that-Glitters-main/Applications/Conflict events in the Syrian civil war")
+setwd("./ergm.sign_replication")
 
 library(dplyr)
 library(lubridate)

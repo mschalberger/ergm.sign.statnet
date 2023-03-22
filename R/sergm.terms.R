@@ -78,83 +78,157 @@
 #' \enumerate{
 #'
 #'\item \code{esf_pos(d, type="OTP")}:
-#' This adds a term to the model of the edgewise-shared friends.
-#' The statistic is equal the sum of positive edges with a specific number of positive
-#' edgewise-shared friends.
-#' If actors i and j are both connected via a positive edge to actors k,l and there is a
-#' positive edge between actors i and j, the number of positive edgewise-shared friends
-#' of the edge between i and j is 2. This value can lie between 0 and
+#' This adds a term for the count of positive edgewise-shared friends to the model.
+#' The count is the number of friends that each have a positive tie to a common third actor, this value can lie between 0 and
 #' n -2 (where n is the number of actors in the network).
 #' Relating to the structural balance theory this term translates to
 #' clustering according to the 'friends-of-friends-are-friends' mechanism.
 #'
 #' \item \code{esf_neg(d, type="OTP")}:
-#' This adds a term to the model of the negative edgewise-shared friends.
-#' The statistic is equal the sum of negative edges with a specific number of negative edgewise-shared friends
-#' If actors i and j are both connected via a negative edge to actors k,l and there is a
-#' negative edge between actors i and j, the number of negative edgewise-shared partners
-#' of the edge between i and j is 2. This value can lie between 0 and
+#' This adds a term for the count of negative edgewise-shared friends to the model.
+#' The count is the number of enemies that each have a positive tie to a common third actor, this value can lie between 0 and
 #' n -2 (where n is the number of actors in the network).
 #' Relating to the structural balance theory this term translates to
-#' clustering according to the 'enemies-of-enemies-are-friends' mechanism.
+#' clustering according to the 'friends-of-enemies-are-friends' mechanism.
 #'
 #' \item \code{ese_pos(d, type="OTP")}:
-#' This adds a term to the model of the positive edgewise-shared enemies.
-#' The statistic is equal the sum of positive edges with a specific number of edgewise-shared enemies.
-#' If actors i and j are both connected via a negative edge to actors k,l and there is a
-#' positive edge between actors i and j, the number of edgewise-shared enemies
-#' of the edge between i and j is 2. This value can lie between 0 and
+#' This adds a term for the count of positive edgewise-shared enemies to the model.
+#' The count is the number of friends that each have a negative tie to a common third actor, this value can lie between 0 and
 #' n -2 (where n is the number of actors in the network).
 #' Relating to the structural balance theory this term translates to
 #' clustering according to the 'enemies-of-friends-are-enemies' mechanism.
 #'
 #' \item \code{ese_neg(d, type="OTP")}:
-#' This adds a term to the model of the negative edgewise-shared enemies.
-#' The statistic is equal the sum of negative edges with a specific number of edgewise-shared enemies.
-#' If actors i and j are both connected via a negative edge to actors k,l and there is a
-#' positive edge between actors i and j, the number of edgewise-shared enemies
-#' of the edge between i and j is 2. This value can lie between 0 and
+#' This adds a term for the count of negative edgewise-shared enemies to the model.
+#' The count is the number of enemies that each have a negative tie to a common third actor, this value can lie between 0 and
 #' n -2 (where n is the number of actors in the network).
 #' Relating to the structural balance theory this term translates to
 #' clustering according to the 'enemies-of-enemies-are-enemies' mechanism.
 #'
+#' #' \item \code{esm_pos(d, type="OTP")}:
+#' This adds a term for the count of positive edgewise-shared mixed partners to the model.
+#' The count is the number of friends that have a positive and a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#' Relating to the structural balance theory this term translates to
+#' clustering according to the 'friends-of-friends-are-enemies' mechanism.
+#'
+#' \item \code{esm_neg(d, type="OTP")}:
+#' This adds a term for the count of negative edgewise-shared mixed partners to the model.
+#' The count is the number of enemies that have a positive and a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#' Relating to the structural balance theory this term translates to
+#' clustering according to the 'friends-of-enemies-are-enemies' mechanism.
+#'
 #'  \item \code{gwesf_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
 #' This adds a term to the model of the geometrically weighted positive edgewise-shared friends.
-#' For one value k in this range, the weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #'
 #' \item \code{gwesf_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
 #' This adds a term to the model of the geometrically weighted negative edgewise-shared friends.
-#' For one value k in this range, the weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #'
 #' \item \code{gwese_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
-#'
 #' This adds a term to the model of the geometrically weighted positive edgewise-shared enemies.
-#' For one value k in this range, the weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #'
 #' \item \code{gwese_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
-#'
 #' This adds a term to the model of the geometrically weighted negative edgewise-shared enemies.
-#' For one value k in this range, the weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwesm_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted positive edgewise-shared mixed partners.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwesm_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted negative edgewise-shared mixed partners.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #' }
 #'
 #' @section Dyadwise-shared partners:
 #' \enumerate{
 #' \item \code{dsf(d, type="OTP")}:
+#' This adds a term for the count of dyadwise-shared friends to the model.
+#' The count is the number of pairs of actors (connected or unconnected) that each have a positive tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
 #' \item \code{dse(d, type="OTP")}:
+#' This adds a term for the count of dyadwise-shared enemies to the model.
+#' The count is the number of pairs of actors (connected or unconnected) that each have a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{dsm(d, type="OTP")}:
+#' This adds a term for the count of dyadwise-shared mixed partners to the model.
+#' The count is the number of pairs of actors (connected or unconnected) that have a positive and a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
 #' \item \code{gwdsf(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted dyadwise-shared friends
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
 #' \item \code{gwdse(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted dyadwise-shared enemies.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwdsm(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted dyadwise-shared mixed partners.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #' }
 #'
 #' @section Non-edgewise-shared partners:
 #' \enumerate{
-#' \item \code{dsf_pos(d, type="OTP")}:
-#' \item \code{dsf_neg(d, type="OTP")}:
-#' \item \code{dse_pos(d, type="OTP")}:
-#' \item \code{dse_neg(d, type="OTP")}:
-#' \item \code{gwdsf_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
-#' \item \code{gwdsf_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
-#' \item \code{gwdse_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
-#' \item \code{gwdse_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' \item \code{nesf_pos(d, type="OTP")}:
+#' This adds a term for the count of positive non-edgewise-shared friends to the model.
+#' The count is the number of pairs of actors that are not friends but each have a positive tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{nesf_neg(d, type="OTP")}:
+#' This adds a term for the count of negative non-edgewise-shared friends to the model.
+#' The count is the number of pairs of actors that are not enemies but each have a positive tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{nese_pos(d, type="OTP")}:
+#' This adds a term for the count of positive non-edgewise-shared enemies to the model.
+#' The count is the number of pairs of actors that are not friends but each have a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{nese_neg(d, type="OTP")}:
+#' This adds a term for the count of negative non-edgewise-shared enemies to the model.
+#' The count is the number of pairs of actors that are not enemies but each have a negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{nesm_pos(d, type="OTP")}:
+#' This adds a term for the count of positive non-edgewise-shared mixed partners to the model.
+#' The count is the number of pairs of actors that are not friends but are connected through a positive and negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#' \item \code{nesm_neg(d, type="OTP")}:
+#' This adds a term for the count of negative non-edgewise-shared mixed partners to the model.
+#' The count is the number of pairs of actors that are not enemies but are connected through a positive and negative tie to a common third actor, this value can lie between 0 and
+#' n -2 (where n is the number of actors in the network).
+#'
+#'  \item \code{gwnesf_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted positive non-edgewise-shared friends.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwnesf_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted negative non-edgewise-shared friends.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwnese_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted positive non-edgewise-shared enemies.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwnese_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted negative non-edgewise-shared enemies.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwnesm_pos(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted positive non-edgewise-shared mixed partners.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
+#'
+#' \item \code{gwnesm_neg(decay = alpha, fixed = FALSE, cutoff = 30, type = "OTP")}:
+#' This adds a term to the model of the geometrically weighted negative non-edgewise-shared mixed partners.
+#' The weight is given by exp(alpha)*(1-(1-exp(-alpha))^k).
 #' }
 #'
 NULL

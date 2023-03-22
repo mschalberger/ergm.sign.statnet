@@ -1,9 +1,9 @@
 {
     "id": "1C9C2809",
-    "path": "~/Documents/Master Thesis/Code.R",
+    "path": "~/Documents/Master Thesis/ergm.sign_replication/thesis_implementation.R",
     "project_path": null,
     "type": "r_source",
-    "hash": "0",
+    "hash": "4215441041",
     "contents": "",
     "dirty": false,
     "created": 1679387067284.0,
@@ -12,15 +12,15 @@
     "properties": {
         "source_window_id": "",
         "Source": "Source",
-        "cursorPosition": "1,0",
-        "scrollLine": "0"
+        "cursorPosition": "52,0",
+        "scrollLine": "35"
     },
     "folds": "",
-    "lastKnownWriteTime": 1679387083,
+    "lastKnownWriteTime": 1679416008,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1679387083131,
+    "last_content_update": 1679416008157,
     "read_only": false,
     "read_only_alternatives": []
 }
