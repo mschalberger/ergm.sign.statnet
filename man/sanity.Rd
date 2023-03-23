@@ -2,9 +2,9 @@
 % Please edit documentation in R/sanity checks.R
 \name{sanity}
 \alias{sanity}
-\title{Consistency checks for package}
+\title{Consistency Checks for Package}
 \description{
-Performs consistency checks for package
+Performs consistency checks for package.
 }
 \examples{
 set.seed(1234)

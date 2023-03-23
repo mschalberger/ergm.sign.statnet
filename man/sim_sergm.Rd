@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_sergm.R
 \name{sim_sergm}
 \alias{sim_sergm}
-\title{Draw from the distribution of a Signed Exponential Family Random Graph Model}
+\title{Draw from the Distribution of a Signed Exponential Family Random Graph Model}
 \usage{
 sim_sergm(object, nsim = 1, seed = NULL, coef = NULL, ...)
 }

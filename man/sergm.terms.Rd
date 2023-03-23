@@ -2,14 +2,14 @@
 % Please edit documentation in R/sergm.terms.R
 \name{sergm.terms}
 \alias{sergm.terms}
-\title{Terms used in Signed Exponential Family Random Graph Models}
+\title{Terms Used in Signed Exponential Family Random Graph Models}
 \description{
-How to specify netowrk statistics in the [`ergm.sign`][ergm.sign] package.
+How to specify network statistics in the [`ergm.sign`][ergm.sign] package.
 }
 \section{Specifying models}{
 
-The lhs of the formula needs to specify an object of the class \code{static.sign} or \code{dynamic.sign}.
-Similarly to the definition of terms in \CRANpkg{ergm}, the rhs contains a description of the networks
+The LHS of the formula needs to specify an object of the class \code{static.sign} or \code{dynamic.sign}.
+Similarly to the definition of terms in \CRANpkg{ergm}, the RHS contains a description of the networks
 terms in an additive manner. As for the naming convention of the currently implemented
 network terms, the suffix \eqn{_pos} indicates that the network term only regard positive edges,
 while the suffix \eqn{_neg} does the same for negative edges. If there is none of these two suffices
@@ -117,7 +117,7 @@ n -2 (where n is the number of actors in the network).
 Relating to the structural balance theory this term translates to
 clustering according to the 'enemies-of-enemies-are-enemies' mechanism.
 
-#' \item \code{esm_pos(d, type="OTP")}:
+\item \code{esm_pos(d, type="OTP")}:
 This adds a term for the count of positive edgewise-shared mixed partners to the model.
 The count is the number of friends that have a positive and a negative tie to a common third actor, this value can lie between 0 and
 n -2 (where n is the number of actors in the network).

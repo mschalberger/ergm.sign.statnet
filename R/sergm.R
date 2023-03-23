@@ -1,12 +1,12 @@
 #' Signed Exponential Random Graph Model (SERGM)
 #'
-#' sergm is used to fit signed exponential-family random graph models (ERGMs). sergm can return a maximum pseudo-likelihood estimate, an approximate maximum likelihood estimate based on a Monte Carlo scheme, or an approximate contrastive divergenceestimate based on a similar scheme. (For an overview of the package (Hunter et al. 2008; Krivitsky et al. 2023), see \link{ergm-package}.)
+#' The function \code{sergm} is used to fit signed exponential-family random graph models (SERGMs). The function can return a maximum pseudo-likelihood estimate, an approximate maximum likelihood estimate based on a Monte Carlo scheme, or an approximate contrastive divergenceestimate based on a similar scheme.
 #'
-#' @param formula An R formula object, of the form y ~ <model terms>, where y is a static signed network object. For the details on the possible <model terms>, see \link{sergm.terms}.
+#' @param formula An R formula object, of the form y ~ <model terms>, where y is a \code{static.sign} object. For the details on the possible <model terms>, see \link{sergm.terms}.
 #' @param cons_sim Should a constraint exist that an edge can be negative and positive, default is that this is not possible.
 #' @param control A list of control parameters for algorithm tuning, typically constructed with \link{control.ergm()}. Its documentation gives the the list of recognized control parameters and their meaning. The more generic utility \link{snctrl()} (StatNet ConTRoL) also provides argument completion for the available control functions and limited argument name checking.
 #'
-#' @return sergm returns an object of class ergm that is a list consisting of coef, sample etc.
+#' @return An object of class ergm that is a list consisting of coef, sample etc.
 #'
 #' @seealso \link{signnet}, \link{sergm.terms}, \link{tsergm}
 #'

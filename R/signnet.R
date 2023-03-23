@@ -1,11 +1,11 @@
 #' Create Signed Network Object
 #'
-#' Turn an adjacency matrix or edgelist into a static or dynamic signed network
+#' Turn an adjacency matrix or an edgelist into a static or dynamic signed network
 #'
 #' @param mat (List of) Adjacency matrix or edgelist. The adjacency matrix must only consist of 1,0 or -1. The edgelist must consist of 3 columns "From", "To" and "Sign" (1 or -1). For a dynamic network the required input is a list of adjacecny matrices or edgelists.
 #' @param directed 	logical; should edges be interpreted as directed?
 #' @param loops logical; should loops be allowed?
-#' @param matrix.type Either "adjacency" or "edgelist" indicating what kind of format our input has.
+#' @param matrix.type Either "adjacency" or "edgelist" indicating what kind of format the input has.
 #' @param cov Add vertex attributes to the network. The input for this should be a dataframe where the first column contains the names of the vertices and the other columns of the dataframe should represent the individual vertex attributes that will be added to the network, however it is not necessary to include all the vertices of the network in the dataframe.
 #' @param names Specify vertex names. If no list is provided, the column names of the adjacency matrix will be used as names for the vertices.
 #'

@@ -2,7 +2,7 @@
 % Please edit documentation in R/count.R
 \name{count}
 \alias{count}
-\title{Calculation of network or graph statistics or other attributes specified in a formula}
+\title{Calculation of Network or Graph Statistics or other Attributes Specified in a Formula}
 \usage{
 count(formula)
 }

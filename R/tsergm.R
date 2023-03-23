@@ -1,13 +1,13 @@
 #' Temporal Signed Exponential Random Graph Model (SERGM)
 #'
-#' \code{tergm} is used for finding Temporal ERGMs’ (TERGMs) Conditional MLE (CMLE) (Krivitsky and Handcock, 2010) and Equilibrium Generalized Method of Moments Estimator (EGMME) (Krivitsky, 2009).
+#' The function \code{tergm} is used for finding Temporal ERGMs’ (TERGMs) Conditional MLE (CMLE) (Krivitsky and Handcock, 2010) and Equilibrium Generalized Method of Moments Estimator (EGMME) (Krivitsky, 2009).
 #'
-#' @param formula An R formula object, of the form y ~ <model terms>, where y is a dynamic signed network object. For the details on the possible <model terms>, see \link{sergm.terms}.
+#' @param formula An R formula object, of the form y ~ <model terms>, where y is a \code{dynamic.sign} object. For the details on the possible <model terms>, see \link{sergm.terms}.
 #' @param cons_sim Should a constraint exist that an edge can be negative and positive, default is that this is not possible.
 #' @param control A list of control parameters for algorithm tuning, typically constructed with \link{control.ergm()}. Its documentation gives the the list of recognized control parameters and their meaning. The more generic utility \link{snctrl()} (StatNet ConTRoL) also provides argument completion for the available control functions and limited argument name checking.
 #' @param times A list of integers specifying which timepoints should be taken into account.
 #'
-#' @return tsergm returns an object of class ergm that is a list consisting of coef, sample etc.
+#' @return An object of class ergm that is a list consisting of coef, sample etc.
 #'
 #' @seealso \link{signnet}, \link{sergm.terms}, \link{sergm}
 #'

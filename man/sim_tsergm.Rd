@@ -2,7 +2,7 @@
 % Please edit documentation in R/sim_tsergm.R
 \name{sim_tsergm}
 \alias{sim_tsergm}
-\title{Draw from the distribution of a Temporal Signed Exponential Family Random Graph Model}
+\title{Draw from the Distribution of a Temporal Signed Exponential Family Random Graph Model}
 \usage{
 sim_tsergm(object, nsim = 1, seed = NULL, coef = NULL, ...)
 }

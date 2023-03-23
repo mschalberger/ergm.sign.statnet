@@ -3,7 +3,7 @@
 \docType{package}
 \name{ergm.sign}
 \alias{ergm.sign}
-\title{ergm.sign: A package for Exponential Random Graph Models for Signed Networks}
+\title{ergm.sign: A Package for Exponential Random Graph Models for Signed Networks}
 \description{
 The ergm.sign package implements the tools to simulate and estimate Signed Exponential Random Graph Models and Temporal Signed Exponential Random Graph Models.
 }

@@ -1,6 +1,6 @@
 #' Consistency Checks for Package
 #'
-#' Performs consistency checks for package
+#' Performs consistency checks for package.
 #'
 #'@name sanity
 #'

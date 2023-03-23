@@ -21,7 +21,7 @@ signnet(
 
 \item{loops}{logical; should loops be allowed?}
 
-\item{matrix.type}{Either "adjacency" or "edgelist" indicating what kind of format our input has.}
+\item{matrix.type}{Either "adjacency" or "edgelist" indicating what kind of format the input has.}
 
 \item{cov}{Add vertex attributes to the network. The input for this should be a dataframe where the first column contains the names of the vertices and the other columns of the dataframe should represent the individual vertex attributes that will be added to the network, however it is not necessary to include all the vertices of the network in the dataframe.}
 
@@ -31,5 +31,5 @@ signnet(
 A signed network of the class \code{static.sign} or \code{dynamic.sign}.
 }
 \description{
-Turn an adjacency matrix or edgelist into a static or dynamic signed network
+Turn an adjacency matrix or an edgelist into a static or dynamic signed network
 }
