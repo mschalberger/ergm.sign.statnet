@@ -1,4 +1,4 @@
-#' Consistency checks for package
+#' Consistency Checks for Package
 #'
 #' Performs consistency checks for package
 #'

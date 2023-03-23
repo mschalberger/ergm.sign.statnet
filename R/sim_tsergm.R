@@ -1,4 +1,4 @@
-#' Draw from the distribution of a Temporal Signed Exponential Family Random Graph Model
+#' Draw from the Distribution of a Temporal Signed Exponential Family Random Graph Model
 #'
 #' \code{sim_tsergm} is used to draw from temporal signed exponential family random network models. See \link{tsergm} for more information on these models. The method for tsergm objects inherits the model, the coefficients, the response attribute, the reference, the constraints, and most simulation parameters from the model fit, unless overridden by passing them explicitly. Unless overridden, the simulation is initialized with either a random draw from near the fitted model saved by \code{tsergm()}.
 #'

@@ -1,4 +1,4 @@
-#' Calculation of network or graph statistics or other attributes specified in a formula
+#' Calculation of Network or Graph Statistics or other Attributes Specified in a Formula
 #'
 #' This function computes summaries of the object on the left-hand side (LHS) of the formula that are specified by its right-hand side (RHS). If a network is given as the LHS and \link{sergm.terms} is on the RHS, it computes the sufficient statistics associated with those terms.
 #'

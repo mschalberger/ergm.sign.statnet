@@ -1,4 +1,4 @@
-#' Terms used in Signed Exponential Family Random Graph Models
+#' Terms Used in Signed Exponential Family Random Graph Models
 #'
 #' @name sergm.terms
 #' @description How to specify netowrk statistics in the [`ergm.sign`][ergm.sign] package.
