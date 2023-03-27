@@ -34,7 +34,7 @@ summary.dynamic.sign <- function(net, time = c(1:length(net))) {
                     sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:n)),
                     sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:n)),
                     round(network.density(nw),2)), ncol =1)
-      rownames(a) <- c("Directed", "Loops", "Multiple","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
+      rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
       colnames(a) <- paste("Time", i)
       mat <- cbind(mat,a)
     }
@@ -58,7 +58,7 @@ summary.static.sign <- function(net) {
                 sum(summary_formula(MultiNet ~ espL(c(1:(n)), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:(n))),
                 sum(summary_formula(MultiNet ~ espL(d = c(1:(n)), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:(n))),
                 round(network.density(net),2)), ncol =1)
-  rownames(a) <- c("Directed", "Loops", "Multiple","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
+  rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
   colnames(a) <- ""
   cat("Network Attributes:")
   return(noquote(a))
