@@ -24,7 +24,6 @@ summary.dynamic.sign <- function(net, time = c(1:length(net))) {
       MultiNet <- Layer(nw, c(`+` = "pos",`-`= "neg"))
       a <- matrix(c(as.character(nw$gal[["directed"]]),
                     nw$gal[["loops"]],
-                    nw$gal[["multiple"]],
                     network.size(nw),
                     summary_formula(MultiNet~edges +
                                       L(~edges, ~`+`) +
@@ -49,7 +48,6 @@ summary.static.sign <- function(net) {
   MultiNet <- Layer(net, c(`+` = "pos",`-`= "neg"))
   a <- matrix(c(as.character(net$gal[["directed"]]),
                 net$gal[["loops"]],
-                net$gal[["multiple"]],
                 n <- network.size(net),
                 summary_formula(MultiNet~edges +
                                   L(~edges, ~`+`) +
