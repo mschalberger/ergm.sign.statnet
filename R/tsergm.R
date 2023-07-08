@@ -201,7 +201,7 @@ tsergm <- function(formula, cons_sim = T, control = control.ergm() , times = c(0
     MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
   }
   options(ergm.loglik.warn_dyads=FALSE)
-  MultiFit <- ergm(formula = as.formula(paste("MultiDyn ~", paste(models, collapse = "+")), ... = ...)#, estimate = estimate, times = times, constraints = ~. + fixL(~`+`&`-`)
+  MultiFit <- ergm(formula = as.formula(paste("MultiDyn ~", paste(models, collapse = "+"))), ... = ...#, estimate = estimate, times = times, constraints = ~. + fixL(~`+`&`-`)
                     )
   MultiFit["call"] <- format(formula)
     names(MultiFit[["MCMCtheta"]]) <- lapply(names(MultiFit[["MCMCtheta"]]), function(x) {
