@@ -4,8 +4,6 @@
 #' sub-tribes of Eastern Central Highlands of New Guinea, documented by Read
 #' (1954).
 #'
-#' This network shows 3 clusters.
-#'
 #' @name tribes
 #' @docType data
 #' @format
@@ -17,7 +15,6 @@
 #' @source
 #' \url{http://vlado.fmf.uni-lj.si/pub/networks/data/UciNet/UciData.htm#gama},
 #' with corrections from Read (1954).
-#' @keywords multivariate cluster graphs
 #' @examples
 #'
 #' \donttest{
