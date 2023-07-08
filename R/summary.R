@@ -15,51 +15,53 @@ summary <- function(net, time = c(1:length(net))) UseMethod("summary")
 
 #' @rdname summary
 #' @export
-summary.dynamic.sign <- function(net, time = c(1:length(net))) {
+summary.dynamic.sign <- function(net, time = c(1:length(net)), names = NULL) {
   class(net) <- "network"
-    mat <- c()
-    for (i in time) {
-      nw <- net[[i]]
-      n = network.size(nw)
-      MultiNet <- Layer(nw, c(`+` = "pos",`-`= "neg"))
-      a <- matrix(c(as.character(nw$gal[["directed"]]),
-                    nw$gal[["loops"]],
-                    network.size(nw),
-                    summary_formula(MultiNet~edges +
-                                      L(~edges, ~`+`) +
-                                      L(~edges, ~`-`) +
-                                      L(~triangle, ~ `+`|`-`) +
-                                      L(~triangle,~ `+`) +
-                                      L(~triangle, ~ `-`)),
-                    sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:n)),
-                    sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:n)),
-                    round(network.density(nw),2)), ncol =1)
-      rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
-      colnames(a) <- paste("Time", i)
-      mat <- cbind(mat,a)
-    }
-    print(noquote(mat))
+  mat <- data.frame()
+  for (i in time) {
+    nw <- net[[i]]
+    n <- network.size(nw)
+    MultiNet <- Layer(nw, c(`+` = "pos", `-` = "neg"))
+    a <- data.frame(Directed = nw$gal[["directed"]],
+                    Loops = nw$gal[["loops"]],
+                    Nodes = network.size(nw),
+                    Edges = summary_formula(MultiNet ~ edges),
+                    `+ edges` = summary_formula(MultiNet ~ L(~ edges, ~ `+`)),
+                    `- edges` = summary_formula(MultiNet ~ L(~ edges, ~ `-`)),
+                    Triads = summary_formula(MultiNet ~ L(~ triangle, ~ `+` | `-`)),
+                    `+++` = summary_formula(MultiNet ~ L(~ triangle, ~ `+`)),
+                    `---` = summary_formula(MultiNet ~ L(~ triangle, ~ `-`)),
+                    `++-` = sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n)),
+                    `+--` = sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * c(1:n)),
+                    Density = round(network.density(nw), 2), check.names = F)
+    rownames(a) <- ifelse(is.null(names), paste("Time", i), names[i])
+    mat <- rbind(mat, a)
+  }
+  #rownames(mat) <- ifelse(is.null(names), time, names)
+  return(mat)
 }
+
 
 #' @rdname summary
 #' @export
 summary.static.sign <- function(net) {
   class(net) <- "network"
   MultiNet <- Layer(net, c(`+` = "pos",`-`= "neg"))
-  a <- matrix(c(as.character(net$gal[["directed"]]),
-                net$gal[["loops"]],
-                n <- network.size(net),
-                summary_formula(MultiNet~edges +
-                                  L(~edges, ~`+`) +
-                                  L(~edges, ~`-`) +
-                                  L(~triangle, ~ `+`|`-`) +
-                                  L(~triangle,~ `+`) +
-                                  L(~triangle, ~ `-`)),
-                sum(summary_formula(MultiNet ~ espL(c(1:(n)), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:(n))),
-                sum(summary_formula(MultiNet ~ espL(d = c(1:(n)), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:(n))),
-                round(network.density(net),2)), ncol =1)
+  a <- as.data.frame(c(as.character(net$gal[["directed"]]),
+                       as.character(net$gal[["loops"]]),
+                       n <- network.size(net),
+                       summary_formula(MultiNet~edges +
+                                         L(~edges, ~`+`) +
+                                         L(~edges, ~`-`) +
+                                         L(~triangle, ~ `+`|`-`) +
+                                         L(~triangle,~ `+`) +
+                                         L(~triangle, ~ `-`)),
+                       sum(summary_formula(MultiNet ~ espL(c(1:(n)), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:(n))),
+                       sum(summary_formula(MultiNet ~ espL(d = c(1:(n)), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:(n))),
+                       round(network.density(net),2)))
   rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
   colnames(a) <- ""
   cat("Network Attributes:")
-  return(noquote(a))
+  return(a)
 }
+
