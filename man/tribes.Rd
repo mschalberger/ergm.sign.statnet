@@ -16,9 +16,6 @@ A network of political alliances and enmities among the 16 Gahuku-Gama
 sub-tribes of Eastern Central Highlands of New Guinea, documented by Read
 (1954).
 }
-\details{
-This network shows 3 clusters.
-}
 \examples{
 
 \donttest{
@@ -32,6 +29,3 @@ Harary F. (1983). Structural models in anthropology. Cambridge: Cambridge
 University Press. (See p 56-60).  Read K. (1954). Cultures of the central
 highlands, New Guinea. Southwestern Journal of Anthropology, 10, 1-43.
 }
-\keyword{cluster}
-\keyword{graphs}
-\keyword{multivariate}
