@@ -17,6 +17,7 @@
 signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, ...) {
   if (is.list(mat)&& !is.data.frame(mat)) {
     nets <- lapply(mat, function (x) {
+      x <- as.matrix(x)
       if (matrix.type == "adjacency") {
         if (directed == F){
           if (isSymmetric(x)) {
