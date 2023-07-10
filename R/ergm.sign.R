@@ -9,6 +9,7 @@
 #' @import network
 #' @importFrom dplyr bind_rows
 #' @importFrom  tergm NetSeries tergm control.tergm
+#' @importFrom Rdpack reprompt
 #'
 #' @docType package
 #' @name ergm.sign
