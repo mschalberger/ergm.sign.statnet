@@ -4,12 +4,14 @@
 \alias{gof_sergm}
 \title{Conduct Goodness-of-Fit Diagnostics on a Signed Exponential Family Random Graph Model}
 \usage{
-gof_sergm(model, nsim = 200)
+gof_sergm(model, nsim = 200, seed = NULL)
 }
 \arguments{
 \item{model}{A fitted SERGM model.}
 
 \item{nsim}{An integer representing the number of simulated networks to generate. Defaults to 200.}
+
+\item{seed}{Seed value (interger) for the random number generator. See \link{set.seed}}
 }
 \value{
 Plots 6 diagnostics for the goodness-of-fit of signed exponential family random graph models.

@@ -4,6 +4,7 @@
 #'
 #' @param model A fitted TSERGM model.
 #' @param nsim An integer representing the number of simulated networks to generate. Defaults to 200.
+#' @param seed Seed value (interger) for the random number generator. See \link{set.seed}
 #'
 #' @return Plots 6 diagnostics for the goodness-of-fit of temporal signed exponential family random graph models.
 #'
@@ -11,11 +12,11 @@
 #'
 #' @export
 
-gof_tsergm <- function(model, nsim = 200) {
+gof_tsergm <- function(model, nsim = 200, seed = NULL) {
 
   suppressWarnings({
   # simulate tsergms
-  sim <- sim_tsergm(model, nsim = nsim)
+  sim <- sim_tsergm(model, nsim = nsim, seed = seed)
 
   sim_matrix <- as.matrix.network(model[["network"]])
   netid <- get.vertex.attribute(model[["network"]], attrname = ".NetworkID")

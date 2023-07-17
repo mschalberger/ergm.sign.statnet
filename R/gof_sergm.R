@@ -4,6 +4,7 @@
 #'
 #' @param model A fitted SERGM model.
 #' @param nsim An integer representing the number of simulated networks to generate. Defaults to 200.
+#' @param seed Seed value (interger) for the random number generator. See \link{set.seed}
 #'
 #' @return Plots 6 diagnostics for the goodness-of-fit of signed exponential family random graph models.
 #'
@@ -11,10 +12,10 @@
 #'
 #' @export
 
-gof_sergm <- function(model, nsim = 200) {
+gof_sergm <- function(model, nsim = 200, seed = NULL) {
 
   # simulate sergms
-  sim <- sim_sergm(model, nsim = nsim)
+  sim <- sim_sergm(model, nsim = nsim, seed = seed)
 
   # extract network from model
   matrix <- as.matrix.network(model[["network"]])
