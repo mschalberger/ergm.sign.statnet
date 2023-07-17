@@ -23,7 +23,7 @@ gof_sergm <- function(model, nsim = 200) {
   pos <- as.sociomatrix(model[["network"]][["gal"]][[".subnetcache"]][[".LayerID"]][["+"]])
   neg <- as.sociomatrix(model[["network"]][["gal"]][[".subnetcache"]][[".LayerID"]][["-"]])*-1
   comb <- pos + neg
-  net <- signnet(mat = comb, matrix.type = "adjacency")
+  net <- signNetwork(mat = comb, matrix.type = "adjacency")
   class(net) <- "network"
 
   n <- network.size(net)

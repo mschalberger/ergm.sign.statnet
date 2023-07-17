@@ -24,5 +24,5 @@ Matrix with network attributes.
 Print descriptive statistics of a signed network.
 }
 \seealso{
-\link{signnet}
+\link{signNetwork}
 }

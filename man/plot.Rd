@@ -44,7 +44,7 @@ plot(
 )
 }
 \arguments{
-\item{net}{An object of class \code{static.sign} or \code{dynamic.sign} created with \code{\link{signnet}}.}
+\item{net}{An object of class \code{static.sign} or \code{dynamic.sign} created with \code{\link{signNetwork}}.}
 
 \item{time}{A vector of integers indicating which timepoints should be plotted.}
 

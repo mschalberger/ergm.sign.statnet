@@ -2,7 +2,7 @@
 #'
 #' The function \code{plot.static.sign} or \code{plot.dynamic.sign} produces one or multiple simple two-dimensional plot of a dynamic signed network. In addition to the arguments of the \code{\link{network::plot.network}} function, some arguments for the context of signed networks have been added.
 #'
-#' @param net An object of class \code{static.sign} or \code{dynamic.sign} created with \code{\link{signnet}}.
+#' @param net An object of class \code{static.sign} or \code{dynamic.sign} created with \code{\link{signNetwork}}.
 #' @param ... Additional arguments to plot \code{\link{network::plot.network}}
 #' @param time A vector of integers indicating which timepoints should be plotted.
 #' @param color_pos Edge color for positive edges (1). Default is set to green.

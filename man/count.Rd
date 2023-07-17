@@ -16,5 +16,5 @@ A vector of statistics specified in the RHS of the formula.
 This function computes summaries of the object on the left-hand side (LHS) of the formula that are specified by its right-hand side (RHS). If a network is given as the LHS and \link{sergm.terms} is on the RHS, it computes the sufficient statistics associated with those terms.
 }
 \seealso{
-\link{signnet}, \link{sergm.terms}
+\link{signNetwork}, \link{sergm.terms}
 }

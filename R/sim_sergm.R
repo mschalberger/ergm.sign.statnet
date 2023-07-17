@@ -11,7 +11,7 @@
 #'
 #' @return A signed network or a list of signed networks (if nsim > 1) of class \code{static.sign}.
 #'
-#' @seealso \link{signnet}, \link{sergm}, \link{sergm.terms}, \link{sim_tsergm}
+#' @seealso \link{signNetwork}, \link{sergm}, \link{sergm.terms}, \link{sim_tsergm}
 #'
 #' @export
 
@@ -172,14 +172,14 @@ sim_sergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
       pos <- as.sociomatrix(uncomb[[1]])*-1
       neg <- as.sociomatrix(uncomb[[2]])
       comb <- neg+pos
-      res[[i]] <- signnet(comb, matrix.type = "adjacency", ... = ...)
+      res[[i]] <- signNetwork(comb, matrix.type = "adjacency", ... = ...)
     }
   } else {
     uncomb <- uncombine_network(sim, split.vattr = ".LayerName")
     pos <- as.sociomatrix(uncomb[[1]])*-1
     neg <- as.sociomatrix(uncomb[[2]])
     comb <- neg+pos
-    res <- signnet(comb, matrix.type = "adjacency", ... = ...)
+    res <- signNetwork(comb, matrix.type = "adjacency", ... = ...)
   }
   } else if (class(object) == "ergm") {
     if (is.null(coef)) {
@@ -195,14 +195,14 @@ sim_sergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
         neg <- as.sociomatrix(uncomb[[1]])*-1
         pos <- as.sociomatrix(uncomb[[2]])
         comb <- neg + pos
-        res[[i]] <- signnet(comb, matrix.type = "adjacency", ... = ...)
+        res[[i]] <- signNetwork(comb, matrix.type = "adjacency", ... = ...)
       }
     } else {
       uncomb <- uncombine_network(sim, split.vattr = ".LayerName")
       neg <- as.sociomatrix(uncomb[[1]])*-1
       pos <- as.sociomatrix(uncomb[[2]])
       comb <- neg+pos
-      res <- signnet(comb, matrix.type = "adjacency", ... = ...)
+      res <- signNetwork(comb, matrix.type = "adjacency", ... = ...)
     }
   }
   return(res)

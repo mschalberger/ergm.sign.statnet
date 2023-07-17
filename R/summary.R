@@ -7,7 +7,7 @@
 #'
 #' @return Matrix with network attributes.
 #'
-#' @seealso \link{signnet}
+#' @seealso \link{signNetwork}
 #'
 #' @export
 

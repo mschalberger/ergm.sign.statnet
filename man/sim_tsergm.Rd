@@ -24,5 +24,5 @@ A dynamic signed network or a list of dynamic signed networks (if nsim > 1) of c
 \code{sim_tsergm} is used to draw from temporal signed exponential family random network models. See \link{tsergm} for more information on these models. The method for tsergm objects inherits the model, the coefficients, the response attribute, the reference, the constraints, and most simulation parameters from the model fit, unless overridden by passing them explicitly. Unless overridden, the simulation is initialized with either a random draw from near the fitted model saved by \code{tsergm()}.
 }
 \seealso{
-\link{signnet}, \link{tsergm}, \link{sergm.terms}, \link{sim_tsergm}
+\link{signNetwork}, \link{tsergm}, \link{sergm.terms}, \link{sim_tsergm}
 }

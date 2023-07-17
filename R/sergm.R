@@ -8,7 +8,7 @@
 #'
 #' @return An object of class ergm that is a list consisting of coef, sample etc.
 #'
-#' @seealso \link{signnet}, \link{sergm.terms}, \link{tsergm}
+#' @seealso \link{signNetwork}, \link{sergm.terms}, \link{tsergm}
 #'
 #' @export
 

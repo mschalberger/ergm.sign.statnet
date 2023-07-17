@@ -24,5 +24,5 @@ A signed network or a list of signed networks (if nsim > 1) of class \code{stati
 \code{sim_sergm} is used to draw from signed exponential family random network models. See \link{sergm} for more information on these models. The method for sergm objects inherits the model, the coefficients, the response attribute, the reference, the constraints, and most simulation parameters from the model fit, unless overridden by passing them explicitly. Unless overridden, the simulation is initialized with either a random draw from near the fitted model saved by \code{sergm()}.
 }
 \seealso{
-\link{signnet}, \link{sergm}, \link{sergm.terms}, \link{sim_tsergm}
+\link{signNetwork}, \link{sergm}, \link{sergm.terms}, \link{sim_tsergm}
 }

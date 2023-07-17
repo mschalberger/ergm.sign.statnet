@@ -28,7 +28,7 @@ gof_tsergm <- function(model, nsim = 200) {
     net[1:(n/2),1:(n/2)] + net[(n/2+1):n,(n/2+1):n]*-1
   })
 
-  net_list <- signnet(res, matrix.type = "adjacency")
+  net_list <- signNetwork(res, matrix.type = "adjacency")
   class(net_list) <- "network"
 
   n <- e <- degree_pos <- degree_neg <- ese_neg <- ese_pos <- esf_neg <- esf_pos <- c()

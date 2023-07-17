@@ -28,5 +28,5 @@ An object of class ergm that is a list consisting of coef, sample etc.
 The function \code{tergm} is used for finding Temporal ERGMs’ (TERGMs) Conditional MLE (CMLE) (Krivitsky and Handcock, 2010) and Equilibrium Generalized Method of Moments Estimator (EGMME) (Krivitsky, 2009).
 }
 \seealso{
-\link{signnet}, \link{sergm.terms}, \link{sergm}
+\link{signNetwork}, \link{sergm.terms}, \link{sergm}
 }

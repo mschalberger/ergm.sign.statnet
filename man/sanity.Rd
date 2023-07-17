@@ -11,7 +11,7 @@ set.seed(1234)
 mat <- matrix(sample(c(-1,0,1),100,replace=TRUE),ncol=10)
 mat[lower.tri(mat)] <- 0
 diag(mat) <- 0
-static_net <- signnet(mat, directed = F, loops = F, matrix.type = "adjacency")
+static_net <- signNetwork(mat, directed = F, loops = F, matrix.type = "adjacency")
 
 # Check that uncombine_network gets the same solution for Layer as manually
 set.seed(123)

@@ -4,7 +4,7 @@
 #'
 #' @param formula A formula having as its LHS a \code{static.sign} or \code{dynamic.sign} object to be summarized using a formula.
 #'
-#' @seealso \link{signnet}, \link{sergm.terms}
+#' @seealso \link{signNetwork}, \link{sergm.terms}
 #'
 #' @return A vector of statistics specified in the RHS of the formula.
 #'

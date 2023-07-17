@@ -11,7 +11,7 @@
 #'
 #' @return A dynamic signed network or a list of dynamic signed networks (if nsim > 1) of class \code{dynamic.sign}.
 #'
-#' @seealso \link{signnet}, \link{tsergm}, \link{sergm.terms}, \link{sim_tsergm}
+#' @seealso \link{signNetwork}, \link{tsergm}, \link{sergm.terms}, \link{sim_tsergm}
 #'
 #' @export
 
@@ -133,7 +133,7 @@ sim_tsergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
           n <- ncol(net)
           net[1:(n/2),1:(n/2)] + net[(n/2+1):n,(n/2+1):n]*-1
         })
-        result[[i]] <- signnet(res, matrix.type = "adjacency", ... = ...)
+        result[[i]] <- signNetwork(res, matrix.type = "adjacency", ... = ...)
       }
     } else {
       sim_matrix <- as.matrix.network(sim)
@@ -146,7 +146,7 @@ sim_tsergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
         n <- ncol(net)
         net[1:(n/2),1:(n/2)] + net[(n/2+1):n,(n/2+1):n]*-1
       })
-      result <- signnet(res, matrix.type = "adjacency", ... = ...)
+      result <- signNetwork(res, matrix.type = "adjacency", ... = ...)
     }
     return(result)
 
@@ -171,7 +171,7 @@ sim_tsergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
         n <- ncol(net)
         net[1:(n/2),1:(n/2)] + net[(n/2+1):n,(n/2+1):n]*-1
       })
-      result[[i]] <- signnet(res, matrix.type = "adjacency", ... = ...)
+      result[[i]] <- signNetwork(res, matrix.type = "adjacency", ... = ...)
     }
   } else {
     sim_matrix <- as.matrix.network(sim)
@@ -184,7 +184,7 @@ sim_tsergm <- function(object, nsim = 1, seed = NULL, coef = NULL, ...) {
       n <- ncol(net)
       net[1:(n/2),1:(n/2)] + net[(n/2+1):n,(n/2+1):n]*-1
     })
-    result <- signnet(res, matrix.type = "adjacency", ... = ...)
+    result <- signNetwork(res, matrix.type = "adjacency", ... = ...)
   }
   return(result)
   }

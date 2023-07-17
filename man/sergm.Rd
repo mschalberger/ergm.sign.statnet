@@ -20,5 +20,5 @@ An object of class ergm that is a list consisting of coef, sample etc.
 The function \code{sergm} is used to fit signed exponential-family random graph models (SERGMs). The function can return a maximum pseudo-likelihood estimate, an approximate maximum likelihood estimate based on a Monte Carlo scheme, or an approximate contrastive divergenceestimate based on a similar scheme.
 }
 \seealso{
-\link{signnet}, \link{sergm.terms}, \link{tsergm}
+\link{signNetwork}, \link{sergm.terms}, \link{tsergm}
 }
