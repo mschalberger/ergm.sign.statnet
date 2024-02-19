@@ -33,18 +33,22 @@ plot <- function(net,
 #' @rdname plot
 #' @export
 plot.dynamic.sign <- function(net,
-                             time = c(1:length(net)),
+                             time = NULL,
                              color_pos = "green3",
                              color_neg = "red3",
                              vertex.col = 2,
                              vertex.legend = F,
                              vertex.legend.pos = "topleft",
-                             main = paste("Time ", c(1:length(net))),
+                             main = NULL,
                              vertex.legend.size = 0.65,
                              ...) {
   nws <- UnLayer(net)
+  if (is.null(time)) {
+    time <- 1:length(nws$single)
+    main <- paste("Time ", 1:length(nws$single))
+  }
     for (i in time) {
-      nw <- nws[[i]]
+      nw <- nws$single[[i]]
       nw%e%'sign' <- ifelse(nw%e%'sign'== 1, color_pos, color_neg)
       plot.network(nw,
                    main = main[i],
@@ -71,6 +75,7 @@ plot.static.sign <- function(net,
                              legend.size = 0.65,
                              ...) {
   net <- UnLayer(net)
+  net <- net$single
   net%e%'sign' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
   plot.network(net,
                edge.col = "sign",
