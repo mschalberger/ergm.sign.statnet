@@ -42,8 +42,9 @@ plot.dynamic.sign <- function(net,
                              main = paste("Time ", c(1:length(net))),
                              vertex.legend.size = 0.65,
                              ...) {
+  nws <- UnLayer(net)
     for (i in time) {
-      nw <- net[[i]]
+      nw <- nws[[i]]
       nw%e%'sign' <- ifelse(nw%e%'sign'== 1, color_pos, color_neg)
       plot.network(nw,
                    main = main[i],
@@ -69,7 +70,7 @@ plot.static.sign <- function(net,
                              vertex.legend.pos = "topleft",
                              legend.size = 0.65,
                              ...) {
-  class(net) <- "network"
+  net <- UnLayer(net)
   net%e%'sign' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
   plot.network(net,
                edge.col = "sign",

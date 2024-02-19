@@ -79,11 +79,14 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
           set.vertex.attribute(dyn_net, col, subset_cov[,col])
         }
       }
-      x <- dyn_net
+      MultiNet <- Layer(dyn_net, c(`+` = "pos",`-`= "neg"))
+      x <- MultiNet
     })
     #nets <- networkDynamic(network.list = nets, create.TEAs = T)
-    class(nets) <- "dynamic.sign"
-    return(nets)
+    MultiDyn <- NetSeries(nets)
+    #MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
+    class(MultiDyn) <- c("dynamic.sign",class(MultiDyn))
+    return(MultiDyn)
   }
   else  {
     if (matrix.type == "adjacency") {
@@ -150,8 +153,10 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
       }
     }
 
-    class(static_net) <- "static.sign"
-    return(static_net)
+    MultiNet <- Layer(static_net, c(`+` = "pos",`-`= "neg"))
+    #MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", . + fixL(~`+`&`-`))
+    class(MultiNet) <- c("static.sign", "network")
+    return(MultiNet)
   }
 }
 
