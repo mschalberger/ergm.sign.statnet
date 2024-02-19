@@ -189,7 +189,7 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 #' @concept layer-aware
-InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
+InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
                       vartypes = c("numeric","character", "formula","logical"),

@@ -5,8 +5,6 @@ UnLayer <- function(snet) {
     pos <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["+"]]
     neg <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["-"]]
 
-
-
     mat <- as.sociomatrix(pos, attrname = "sign") + as.sociomatrix(neg, attrname = "sign")
 
      net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)

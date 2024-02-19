@@ -10,6 +10,7 @@
 #' @importFrom dplyr bind_rows
 #' @importFrom  tergm NetSeries tergm control.tergm
 #' @importFrom Rdpack reprompt
+#' @importFrom dplyr bind_rows
 #'
 #' @docType package
 #' @name ergm.sign
