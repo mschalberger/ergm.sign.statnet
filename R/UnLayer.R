@@ -1,36 +1,64 @@
-UnLayer <- function(snet) {
+UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
   if("static.sign" %in% class(snet)) {
     multi <- snet
 
     pos <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["+"]]
     neg <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["-"]]
 
-    mat <- as.sociomatrix(pos, attrname = "sign") + as.sociomatrix(neg, attrname = "sign")
+    mat <- as.sociomatrix(pos) + as.sociomatrix(neg)
 
-     net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
-     net <- set.edge.value(net, "sign", mat)
+    net <- as.network(mat,matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
+
+     #add edge attributes
+     for (e in list.edge.attributes(multi)) {
+       net%e%e <- multi%e%e
+     }
+
+    #add edge color
+    net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
+
+     #add vertex attributes
+     for (v in list.vertex.attributes(pos)) {
+       net%v%v <- pos%v%v
+     }
+
+    #save multilayer
+    net$mlt <- multi
 
      comb <- net
-    #comb <- sum(pos,neg, na.rm = T)
   } else if ("dynamic.sign" %in% class(snet))  {
     multi <- c(snet[["gal"]][[".subnetcache"]][[".NetworkID"]][[1]][["gal"]][[".PrevNets"]],
                     snet[["gal"]][[".subnetcache"]][[".NetworkID"]])
-    comb <- lapply(multi_nets, function(x) {
+    comb <- lapply(multi, function(x) {
       pos <- x[["gal"]][[".subnetcache"]][[".LayerID"]][["+"]]
       neg <- x[["gal"]][[".subnetcache"]][[".LayerID"]][["-"]]
 
-      mat <- as.sociomatrix(pos, attrname = "sign") + as.sociomatrix(neg, attrname = "sign")
+      mat <- as.sociomatrix(pos) + as.sociomatrix(neg)
 
-      net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
-      net <- set.edge.value(net, "sign", mat)
+      net <- as.network(mat,matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
+
+      #add edge attributes
+      for (e in list.edge.attributes(snet)) {
+        net%e%e <- x%e%e
+      }
+
+      #add edge color
+      net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
+
+      #add vertex attributes
+      for (v in list.vertex.attributes(pos)) {
+        net%v%v <- pos%v%v
+      }
+
+      #save multilayer
+      net$mlt <- x
 
       x <- net
-      #comb <- sum(pos, neg, na.rm = T)
     })
+
+
   } else{
     stop("The input should be a network created by the signNetwork() function")
   }
-  return(list(
-    multi = multi,
-    single = comb))
+  return(comb)
 }

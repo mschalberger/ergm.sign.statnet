@@ -18,14 +18,13 @@ summary <- function(net, time = c(1:length(net))) UseMethod("summary")
 summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
   nws <- UnLayer(net)
   if (is.null(time)) {
-    time <- 1:length(nws$single)
+    time <- 1:length(nws)
   }
 
   mat <- data.frame()
   for (i in time) {
-    nw <- nws$single[[i]]
-    n <- network.size(nw)
-    MultiNet <- nws$multi[[i]]
+    nw <- nws[[i]]
+    MultiNet <- nws[[i]][[6]]
     a <- data.frame(Directed = nw$gal[["directed"]],
                     Loops = nw$gal[["loops"]],
                     Nodes = network.size(nw),
@@ -41,7 +40,6 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
     rownames(a) <- ifelse(is.null(names), paste("Time", i), names[i])
     mat <- rbind(mat, a)
   }
-  #rownames(mat) <- ifelse(is.null(names), time, names)
   return(mat)
 }
 
@@ -50,8 +48,7 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
 #' @export
 summary.static.sign <- function(net) {
   net <- UnLayer(net)
-  MultiNet <- net$multi
-  net <- net$single
+  MultiNet <- net$mlt
 
   a <- as.data.frame(c(as.character(net$gal[["directed"]]),
                        as.character(net$gal[["loops"]]),
