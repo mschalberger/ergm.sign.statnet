@@ -60,5 +60,4 @@ By default, outgoing two-paths (`"OTP"`) are calculated. Note that Robins et al.
 \Sexpr[results=rd,stage=render]{ergm:::.formatTermKeywords("ergmTerm", "gwdse", "subsection")}
 }
 \concept{directed}
-\concept{layer-aware}
 \concept{undirected}
