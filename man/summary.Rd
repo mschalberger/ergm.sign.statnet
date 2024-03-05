@@ -8,7 +8,7 @@
 \usage{
 summary(net, time = c(1:length(net)))
 
-\method{summary}{dynamic.sign}(net, time = c(1:length(net)), names = NULL)
+\method{summary}{dynamic.sign}(net, time = NULL, names = NULL)
 
 \method{summary}{static.sign}(net)
 }
