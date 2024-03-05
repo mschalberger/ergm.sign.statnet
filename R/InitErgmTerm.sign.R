@@ -1,3 +1,13 @@
+#' @templateVar name Pos
+#' @title Evaluation of positive edges
+#' @description Evaluates the terms in `formula` of the positive edges and sums the results elementwise.
+#'
+#' @usage
+#' # binary: Pos(formula)
+#'
+#' @template ergmTerm-formula
+#'
+#' @concept operator
 InitErgmTerm.Pos <- function(nw, arglist, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("formula"),
@@ -10,10 +20,20 @@ InitErgmTerm.Pos <- function(nw, arglist, ...) {
   a$formula <- if(length(formula)==1) formula[[1]] else formula
   cl <- call("L", a$formula, Ls = ~`+`)
   trm <- call.ErgmTerm(cl, nw, ...)
-
+  trm$coef.names <- gsub("^.*~", "Pos~", trm$coef.names)
   trm
 }
 
+#' @templateVar name Neg
+#' @title Evaluation of negative edges
+#' @description Evaluates the terms in `formula` of the negative edges and sums the results elementwise.
+#'
+#' @usage
+#' # binary: Neg(formula)
+#'
+#' @template ergmTerm-formula
+#'
+#' @concept operator
 InitErgmTerm.Neg <- function(nw, arglist, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("formula"),
@@ -26,7 +46,7 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
   a$formula <- if(length(formula)==1) formula[[1]] else formula
   cl <- call("L", a$formula, Ls = ~`-`)
   trm <- call.ErgmTerm(cl, nw, ...)
-
+  trm$coef.names <- gsub("^.*~", "Neg~", trm$coef.names)
   trm
 }
 
@@ -43,7 +63,6 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","in_order"),
@@ -52,7 +71,7 @@ InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
                       required = c(TRUE, FALSE,FALSE))
   cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
-  trm$coef.names<- paste("dsf", a$d, sep = ".")
+  trm$coef.names <- if(is.directed(nw)) paste("dsf.", a$type, "#", a$d, sep = "") else paste("dsf#", a$d, sep = "")
   trm
 }
 
@@ -69,7 +88,6 @@ InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","in_order"),
@@ -78,7 +96,7 @@ InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
                       required = c(TRUE, FALSE,FALSE))
   cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
-  trm$coef.names <- paste("dse", a$d, sep = ".")
+  trm$coef.names <- if(is.directed(nw)) paste("dse.", a$type, "#", a$d, sep = "") else paste("dse#", a$d, sep = "")
   trm
 }
 
@@ -100,7 +118,6 @@ InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","in_order"),
@@ -109,7 +126,7 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
                       required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
   cl <- call("dgwdspL", decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
-  #trm$coef.names <- paste("gwdsf", a$decay, sep = ".")
+  trm$coef.names <- if(is.directed(nw)) paste("gwdsf", a$type, "fixed", a$decay, sep = ".") else paste("gwdsf.fixed", a$decay, sep = ".")
   trm
 }
 
@@ -131,7 +148,6 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","in_order"),
@@ -140,7 +156,7 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
                       required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
   cl <- call("dgwdspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
-  #tmp$coef.names <- paste("gwdse", decay, sep = ".")
+  trm$coef.names <- if(is.directed(nw)) paste("gwdse", a$type, "fixed", a$decay, sep = ".") else paste("gwdse.fixed", a$decay, sep = ".")
   trm
 }
 
@@ -160,7 +176,6 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
@@ -176,6 +191,7 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
   }
   cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("esf(",a$base,").", a$type, "#", a$d, sep = "") else paste("esf(",a$base, ")#", a$d,sep = "")
   trm
 }
 
@@ -195,7 +211,6 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
@@ -211,6 +226,7 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
   }
   cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("ese(",a$base,").", a$type, "#", a$d, sep = "") else paste("ese(",a$base, ")#", a$d,sep = "")
   trm
 }
 
@@ -233,13 +249,12 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
-InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
+InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -247,8 +262,9 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("gwesf(",a$base,").", a$type, "fixed.", a$decay, sep = "") else paste("gwesf(",a$base, ").fixed.", a$decay,sep = "")
   trm
 }
 
@@ -271,13 +287,12 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE,FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -285,8 +300,9 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("gwese(",a$base,").", a$type, "fixed.", a$decay, sep = "") else paste("gwese(",a$base, ").fixed.", a$decay,sep = "")
   trm
 }
 
@@ -306,7 +322,6 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
@@ -322,6 +337,7 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   }
   cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("nsf(",a$base,").", a$type, "#", a$d, sep = "") else paste("nsf(",a$base, ")#", a$d,sep = "")
   trm
 }
 
@@ -341,7 +357,6 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
 InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
@@ -357,6 +372,7 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
   }
   cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("nse(",a$base,").", a$type, "#", a$d, sep = "") else paste("nse(",a$base, ")#", a$d,sep = "")
   trm
 }
 
@@ -379,13 +395,12 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
-InitErgmTerm.gwnsf <- function(nw, arglist, ...) {
+InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -395,6 +410,7 @@ InitErgmTerm.gwnsf <- function(nw, arglist, ...) {
   }
   cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("gwnsf(",a$base,").", a$type, "fixed.", a$decay, sep = "") else paste("gwnsf(",a$base, ").fixed.", a$decay,sep = "")
   trm
 }
 
@@ -417,13 +433,12 @@ InitErgmTerm.gwnsf <- function(nw, arglist, ...) {
 #'
 #' @concept directed
 #' @concept undirected
-#' @concept layer-aware
-InitErgmTerm.gwnse <- function(nw, arglist, ...) {
+InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -433,6 +448,7 @@ InitErgmTerm.gwnse <- function(nw, arglist, ...) {
   }
   cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- if(is.directed(nw)) paste("gwnse(",a$base,").", a$type, "fixed.", a$decay, sep = "") else paste("gwnse(",a$base, ").fixed.", a$decay,sep = "")
   trm
 }
 
