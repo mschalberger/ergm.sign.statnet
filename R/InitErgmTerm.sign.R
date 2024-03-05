@@ -164,10 +164,17 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "formula","logical"),
+                      vartypes = c("numeric","character", "character,numeric","logical"),
                       defaultvalues = list(NULL, "OTP", NULL, FALSE),
                       required = c(TRUE, FALSE, FALSE, FALSE))
-  cl <- call("despL", d = a$d, type = a$type, L.base = a$base, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -192,10 +199,17 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "formula","logical"),
+                      vartypes = c("numeric","character", "character,numeric","logical"),
                       defaultvalues = list(NULL, "OTP", NULL, FALSE),
                       required = c(TRUE, FALSE, FALSE, FALSE))
-  cl <- call("despL",d = a$d, type = a$type, L.base = a$base, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -223,10 +237,17 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
 InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "formula","logical"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = a$base, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -254,10 +275,17 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "formula","logical"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = a$base, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -282,10 +310,17 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "formula","logical"),
+                      vartypes = c("numeric","character", "character,numeric","logical"),
                       defaultvalues = list(NULL, "OTP", NULL, FALSE),
                       required = c(TRUE, FALSE, FALSE, FALSE))
-  cl <- call("dnspL",d = a$d, type = a$type, L.base = a$base, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -310,10 +345,17 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "formula","logical"),
+                      vartypes = c("numeric","character", "character,numeric","logical"),
                       defaultvalues = list(NULL, "OTP", NULL, FALSE),
                       required = c(TRUE, FALSE, FALSE, FALSE))
-  cl <- call("dnspL",d = a$d, type = a$type, L.base = a$base, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -341,10 +383,17 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
 InitErgmTerm.gwnsf <- function(nw, arglist, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "formula","logical"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = a$base, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }
@@ -372,10 +421,17 @@ InitErgmTerm.gwnsf <- function(nw, arglist, ...) {
 InitErgmTerm.gwnse <- function(nw, arglist, ...) {
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "formula","logical"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = a$base, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if (is.null(a$base)) {
+    b <- NULL
+  } else if (a$base %in% c("+", 1)) {
+    b <- ~`+`
+  } else if (a$base %in% c("-", -1)) {
+    b <- ~`-`
+  }
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
   trm <- call.ErgmTerm(cl, nw, ...)
   trm
 }

@@ -12,8 +12,7 @@
 
 \item{type}{A string indicating the type of shared partner or path to be considered for directed networks: `"OTP"` (default for directed), `"ITP"`, `"RTP"`, `"OSP"`, and `"ISP"`; has no effect for undirected. See the section below on Shared partner types for details.}
 
-\item{L.base}{the Layer Logic (c.f. Layer Logic section in the
-[Layer()] documentation) specification for the base}
+\item{base}{specify the base of the triad, either by '+' and '-' or 1 and -1}
 }
 \description{
 This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of non-edges in the network with exactly `d[i]` shared enemies. For a directed network, multiple shared enemy definitions are possible.

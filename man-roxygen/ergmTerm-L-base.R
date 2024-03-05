@@ -7,5 +7,4 @@
 #
 #  Copyright 2003-2023 Statnet Commons
 ################################################################################
-#' @param L.base the Layer Logic (c.f. Layer Logic section in the
-#'   [Layer()] documentation) specification for the base
+#' @param base specify the base of the triad, either by '+' and '-' or 1 and -1

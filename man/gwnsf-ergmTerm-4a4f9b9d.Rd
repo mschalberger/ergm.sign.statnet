@@ -23,8 +23,7 @@ the computational burden.  Its default value can also be controlled by the
 
 \item{type}{A string indicating the type of shared partner or path to be considered for directed networks: `"OTP"` (default for directed), `"ITP"`, `"RTP"`, `"OSP"`, and `"ISP"`; has no effect for undirected. See the section below on Shared partner types for details.}
 
-\item{L.base}{the Layer Logic (c.f. Layer Logic section in the
-[Layer()] documentation) specification for the base}
+\item{base}{specify the base of the triad, either by '+' and '-' or 1 and -1}
 }
 \description{
 This term adds a statistic equal to the geometrically weighted nonedgewise (that is, over dyads that do not have an edge) shared friend distribution with decay parameter. For a directed network, multiple shared friend definitions are possible.
