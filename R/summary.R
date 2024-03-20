@@ -25,6 +25,7 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
   for (i in time) {
     nw <- nws[[i]]
     MultiNet <- nws[[i]][[6]]
+    n <- network.size(nw)
     a <- data.frame(Directed = nw$gal[["directed"]],
                     Loops = nw$gal[["loops"]],
                     Nodes = network.size(nw),

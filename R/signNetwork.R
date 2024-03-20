@@ -84,7 +84,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
     })
     #nets <- networkDynamic(network.list = nets, create.TEAs = T)
     MultiDyn <- NetSeries(nets)
-    #MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
+    MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
     class(MultiDyn) <- c("dynamic.sign",class(MultiDyn))
     return(MultiDyn)
   }
@@ -154,7 +154,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
     }
 
     MultiNet <- Layer(static_net, c(`+` = "pos",`-`= "neg"))
-    #MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", . + fixL(~`+`&`-`))
+    MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+`&`-`))
     class(MultiNet) <- c("static.sign", "network")
     return(MultiNet)
   }
