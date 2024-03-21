@@ -2,16 +2,19 @@ UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
   if("static.sign" %in% class(snet)) {
     multi <- snet
 
-    pos <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["+"]]
-    neg <- multi[["gal"]][[".subnetcache"]][[".LayerID"]][["-"]]
+    pos <- get.inducedSubgraph(x = multi, v = which(multi%v%".LayerName"=="+"))
+    neg <- get.inducedSubgraph(x = multi, v = which(multi%v%".LayerName"=="-"))
 
-    mat <- as.sociomatrix(pos) + as.sociomatrix(neg)
+    mat <- as.sociomatrix(pos) + as.sociomatrix(neg) *-1
 
-    net <- as.network(mat,matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
+    net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
 
      #add edge attributes
      for (e in list.edge.attributes(multi)) {
        net%e%e <- multi%e%e
+     }
+    if (!("sign" %in% list.edge.attributes(multi))) {
+       net%e%'sign' <- mat
      }
 
     #add edge color
@@ -30,17 +33,22 @@ UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
     multi <- c(snet[["gal"]][[".subnetcache"]][[".NetworkID"]][[1]][["gal"]][[".PrevNets"]],
                     snet[["gal"]][[".subnetcache"]][[".NetworkID"]])
     comb <- lapply(multi, function(x) {
-      pos <- x[["gal"]][[".subnetcache"]][[".LayerID"]][["+"]]
-      neg <- x[["gal"]][[".subnetcache"]][[".LayerID"]][["-"]]
+      pos <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="+"))
+      neg <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="-"))
 
-      mat <- as.sociomatrix(pos) + as.sociomatrix(neg)
+      mat <- as.sociomatrix(pos) + as.sociomatrix(neg) *-1
 
-      net <- as.network(mat,matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
+      net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
 
       #add edge attributes
       for (e in list.edge.attributes(snet)) {
         net%e%e <- x%e%e
       }
+
+      if (!("sign" %in% list.edge.attributes(snet))) {
+        net%e%'sign' <- mat
+      }
+
 
       #add edge color
       net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
