@@ -32,10 +32,10 @@ GoF <- function(model, nsim = 200, seed = NULL) {
     degree_neg <- summary_formula(net ~ Neg(~ degree(0:(n-1)))) / n
     names(degree_neg) <- names(degree_pos) <- 0:(n-1)
 
-    ese_neg <- summary_formula(net ~ ese(0:(n-2), base = ~`-`)) / e
-    ese_pos <- summary_formula(net ~ ese(0:(n-2), base=~`+`)) / e
-    esf_neg <- summary_formula(net ~ esf(0:(n-2), base=~`-`)) / e
-    esf_pos <- summary_formula(net ~ esf(0:(n-2), base=~`+`)) / e
+    ese_neg <- summary_formula(net ~ ese(0:(n-2), base = "-")) / e
+    ese_pos <- summary_formula(net ~ ese(0:(n-2), base="+")) / e
+    esf_neg <- summary_formula(net ~ esf(0:(n-2), base="-")) / e
+    esf_pos <- summary_formula(net ~ esf(0:(n-2), base="+")) / e
     names(esf_neg) <- names(ese_pos) <- names(ese_neg) <- names(esf_pos) <- 0:(n-2)
 
     # create network statistics for simulated networks
@@ -46,10 +46,10 @@ GoF <- function(model, nsim = 200, seed = NULL) {
       edges[i] <- summary_formula(tmp ~ edges)
       sim_degree_pos[[i]] <- summary_formula(tmp ~ Pos(~ degree(0:(net_size[i]-1))))/net_size[i]
       sim_degree_neg[[i]] <- summary_formula(tmp ~ Neg(~ degree(0:(net_size[i]-1))))/net_size[i]
-      sim_ese_neg[[i]] <- summary_formula(tmp ~ ese(0:(net_size[i]-2), base=~`-`))/edges[i]
-      sim_ese_pos[[i]] <- summary_formula(tmp ~ ese(0:(net_size[i]-2), base=~`+`))/edges[i]
-      sim_esf_neg[[i]] <- summary_formula(tmp ~ esf(0:(net_size[i]-2), base=~`-`))/edges[i]
-      sim_esf_pos[[i]] <-  summary_formula(tmp ~ esf(0:(net_size[i]-2), base=~`+`))/edges[i]
+      sim_ese_neg[[i]] <- summary_formula(tmp ~ ese(0:(net_size[i]-2), base="-"))/edges[i]
+      sim_ese_pos[[i]] <- summary_formula(tmp ~ ese(0:(net_size[i]-2), base="+"))/edges[i]
+      sim_esf_neg[[i]] <- summary_formula(tmp ~ esf(0:(net_size[i]-2), base="-"))/edges[i]
+      sim_esf_pos[[i]] <-  summary_formula(tmp ~ esf(0:(net_size[i]-2), base="+"))/edges[i]
     }
     sim_degree_pos <- bind_rows(sim_degree_pos)
     sim_degree_neg <- bind_rows(sim_degree_neg)
@@ -133,10 +133,10 @@ GoF <- function(model, nsim = 200, seed = NULL) {
       degree_neg[[i]] <- summary_formula(MultiNet ~ Neg(~ degree(0:(n[[i]]-1))))
       names(degree_pos[[i]]) <- names(degree_neg[[i]]) <- 0:(n[[i]]-1)
 
-      ese_neg[[i]] <- summary_formula(MultiNet ~ ese(0:(n[[i]]-2), base=~`-`))
-      ese_pos[[i]] <- summary_formula(MultiNet ~ ese(0:(n[[i]]-2), base=~`+`))
-      esf_neg[[i]] <- summary_formula(MultiNet ~ esf(0:(n[[i]]-2), base=~`-`))
-      esf_pos[[i]] <- summary_formula(MultiNet ~ esf(0:(n[[i]]-2), base=~`+`))
+      ese_neg[[i]] <- summary_formula(MultiNet ~ ese(0:(n[[i]]-2), base="-"))
+      ese_pos[[i]] <- summary_formula(MultiNet ~ ese(0:(n[[i]]-2), base="+"))
+      esf_neg[[i]] <- summary_formula(MultiNet ~ esf(0:(n[[i]]-2), base="-"))
+      esf_pos[[i]] <- summary_formula(MultiNet ~ esf(0:(n[[i]]-2), base="+"))
       names(esf_neg[[i]]) <- names(ese_pos[[i]]) <- names(ese_neg[[i]]) <- names(esf_pos[[i]]) <- 0:(n[[i]]-2)
     }
 
@@ -159,10 +159,10 @@ GoF <- function(model, nsim = 200, seed = NULL) {
         edges[[i]][[j]] <- summary_formula(tmp ~ edges)
         sim_degree_pos[[i]][[j]] <- summary_formula(tmp ~ Pos(~ degree(0:(net_size[[i]][[j]]-1))))
         sim_degree_neg[[i]][[j]] <- summary_formula(tmp ~ Neg(~ degree(0:(net_size[[i]][[j]]-1))))
-        sim_ese_neg[[i]][[j]] <- summary_formula(tmp ~ ese(0:(net_size[[i]][[j]]-2), base=~`-`))
-        sim_ese_pos[[i]][[j]] <- summary_formula(tmp ~ ese(0:(net_size[[i]][[j]]-2), base=~`+`))
-        sim_esf_neg[[i]][[j]] <- summary_formula(tmp ~ esf(0:(net_size[[i]][[j]]-2), base=~`-`))
-        sim_esf_pos[[i]][[j]] <-  summary_formula(tmp ~ esf(0:(net_size[[i]][[j]]-2), base=~`+`))
+        sim_ese_neg[[i]][[j]] <- summary_formula(tmp ~ ese(0:(net_size[[i]][[j]]-2), base="-"))
+        sim_ese_pos[[i]][[j]] <- summary_formula(tmp ~ ese(0:(net_size[[i]][[j]]-2), base="+"))
+        sim_esf_neg[[i]][[j]] <- summary_formula(tmp ~ esf(0:(net_size[[i]][[j]]-2), base="-"))
+        sim_esf_pos[[i]][[j]] <-  summary_formula(tmp ~ esf(0:(net_size[[i]][[j]]-2), base="+"))
       }
     }
 
