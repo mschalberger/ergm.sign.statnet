@@ -8,6 +8,6 @@ License: use_mit_license()
 Encoding: UTF-8
 LazyData: true
 LazyLoad: yes
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.1
 RdMacros: Rdpack
 Imports: Rdpack
