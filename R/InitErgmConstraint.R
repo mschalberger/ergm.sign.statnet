@@ -105,7 +105,7 @@
 #' @templateVar Ls.interp , specifying fixed relations
 ## #' @template ergmTerm-Ls-1
 #'
-## #' @template ergmConstraint-general
+#' @template ergmConstraint-general
 #'
 #' @concept layer-aware
 #' @concept directed
