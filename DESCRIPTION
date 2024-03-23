@@ -11,3 +11,7 @@ LazyLoad: yes
 RoxygenNote: 7.3.1
 RdMacros: Rdpack
 Imports: Rdpack
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

@@ -1,0 +1,81 @@
+---
+title: "Using `ergm.sign` to analyse the signed Read's Highland Tribes dataset"
+author: "Marc Schalberger"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{tribes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+    %\VignetteIndexEntry{Using ergm.sign to analyse the Read's signed Highland Tribes dataset}
+
+---
+
+```{css, echo=FALSE}
+pre {
+  font-size: 85%
+}
+```
+
+```{r, echo=FALSE, cache=FALSE, eval=TRUE}
+library(knitr)
+library(rmarkdown)
+options(rmarkdown.html_vignette.check_title = FALSE)
+opts_chunk$set(message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
+concordance=TRUE, error=FALSE, fig.width=7, fig.height=7)
+options(width=160)
+```
+
+```{r setup}
+library(ergm.sign)
+```
+
+# Obtaining data
+
+The highland tribes dataset is included in the `ergm.sign` package:
+
+```{r}
+data("tribes")
+```
+
+This gives us a multilayer network construct with a positive and a negative layer encoding the allied and hostile relationships between the tribes.
+
+# Desctiptive statistics
+
+The summary `summary` function returns a matrix with the most important descriptive statistics for the  signed network:
+
+```{r}
+summary(tribes)
+```
+
+If we would like to get other descriptive statistics using the `summary_formula` function:
+
+```{r}
+ergm::summary_formula(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
+```
+
+# Plotting the network
+
+It is also possible to plot the signed network using the `plot` function. Which requires the `UnLayer` function that turns the multilayer network into a single layer network:
+
+```{r}
+tribes_sgl <- UnLayer(tribes, color_pos = "green3", color_neg = "red3")
+plot(tribes_sgl, edge.col = "col", label = "vertex.names")
+```
+
+# Fitting a model
+
+Just like in the unsigned case, we can call the `ergm` function to fit a model to the signed network. The `ergm` function requires a formula that specifies the model to be fitted. In addition to the normal ergm terms we can also use the `Pos` and the `Neg` function to specify terms that only apply to the positive or negative layer of the network.
+
+```{r}
+fit <- ergm(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
+summary(fit)
+```
+
+Triadic effects are of particular interest in the context of signed networks.
+
+```{r}
+triad_fit <- ergm(tribes ~ gwese(0.5, fixed = TRUE, base = "+") + gwesf(0.5, fixed = TRUE, base = "+"))
+summary(triad_fit)
+```
+
+Here, the `gwese` (geometrically weighted edgewise shared enemies) term models enemy of my enemy is my friend configuration and the `gwesf` (geometrically weighted edgewise shared friends) term models friend of a friend is a friend configuration.
