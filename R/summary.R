@@ -10,11 +10,6 @@
 #' @seealso \link{signNetwork}
 #'
 #' @export
-
-summary <- function(net, time = c(1:length(net))) UseMethod("summary")
-
-#' @rdname summary
-#' @export
 summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
   nws <- UnLayer(net)
   if (is.null(time)) {
@@ -45,7 +40,6 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
 }
 
 
-#' @rdname summary
 #' @export
 summary.static.sign <- function(net) {
   net <- UnLayer(net)
