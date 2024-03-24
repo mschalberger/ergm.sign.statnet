@@ -20,7 +20,7 @@ pre {
 library(knitr)
 library(rmarkdown)
 options(rmarkdown.html_vignette.check_title = FALSE)
-opts_chunk$set(message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
+opts_chunk$set(warning= FALSE,message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
 concordance=TRUE, error=FALSE, fig.width=7, fig.height=7)
 options(width=160)
 ```
@@ -67,7 +67,7 @@ plot(tribes_sgl, edge.col = "col", label = "vertex.names")
 Just like in the unsigned case, we can call the `ergm` function to fit a model to the signed network. The `ergm` function requires a formula that specifies the model to be fitted. In addition to the normal ergm terms we can also use the `Pos` and the `Neg` function to specify terms that only apply to the positive or negative layer of the network.
 
 ```{r}
-fit <- ergm(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
+fit <- ergm(tribes ~ Pos(~ edges) + Neg(~ edges))
 summary(fit)
 ```
 
