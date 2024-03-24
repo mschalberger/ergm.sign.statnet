@@ -20,6 +20,8 @@ pre {
 ```{r, echo=FALSE, cache=FALSE, eval=TRUE}
 library(knitr)
 library(rmarkdown)
+library(ergm)
+library(ergm.multi)
 options(rmarkdown.html_vignette.check_title = FALSE)
 opts_chunk$set(warning= FALSE,message=FALSE, echo=TRUE, cache=TRUE, autodep=TRUE,
 concordance=TRUE, error=FALSE, fig.width=7, fig.height=7)
