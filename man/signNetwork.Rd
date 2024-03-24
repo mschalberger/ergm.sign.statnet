@@ -33,3 +33,8 @@ A signed network of the class \code{static.sign} or \code{dynamic.sign}.
 \description{
 Turn an adjacency matrix or an edgelist into a static or dynamic signed network
 }
+\examples{
+mat <- matrix(c(0,0,0,1,-1,0,1,0,0), nrow = 3)
+net <- signNetwork(mat, matrix.type = "adjacency")
+
+}

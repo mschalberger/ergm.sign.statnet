@@ -17,6 +17,11 @@ Matrix with network attributes.
 \description{
 Print descriptive statistics of a signed network.
 }
+\examples{
+data("tribes")
+summary(tribes)
+
+}
 \seealso{
 \link{signNetwork}
 }

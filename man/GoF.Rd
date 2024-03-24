@@ -19,6 +19,12 @@ Plots 6 diagnostics for the goodness-of-fit of signed exponential family random 
 \description{
 This function calculates the goodness-of-fit (GoF) for a fitted SERGM model by simulating new networks using the same model and comparing the statistics of the original network with those of the simulated networks. The statistics used in the comparison are the positive and negative degree distributions, edge-wise shared enemies distributions for positive and negative edges, and edge-wise shared friend distributions for positive and negative edges.
 }
+\examples{
+data("tribes")
+fit <- ergm(tribes ~ Pos(~ edges) + Neg(~ edges))
+GoF(fit, nsim = 20)
+
+}
 \seealso{
 \link{sergm}, \link{gof_tsergm}
 }

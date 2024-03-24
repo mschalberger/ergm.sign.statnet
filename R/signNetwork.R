@@ -11,6 +11,10 @@
 #'
 #' @return A signed network of the class \code{static.sign} or \code{dynamic.sign}.
 #'
+#' @examples
+#'mat <- matrix(c(0,0,0,1,-1,0,1,0,0), nrow = 3)
+#'net <- signNetwork(mat, matrix.type = "adjacency")
+#'
 #' @export
 
 

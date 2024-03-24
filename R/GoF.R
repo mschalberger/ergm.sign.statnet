@@ -10,6 +10,11 @@
 #'
 #' @seealso \link{sergm}, \link{gof_tsergm}
 #'
+#' @examples
+#'data("tribes")
+#'fit <- ergm(tribes ~ Pos(~ edges) + Neg(~ edges))
+#'GoF(fit, nsim = 20)
+#'
 #' @export
 
 GoF <- function(model, nsim = 200, seed = NULL) {

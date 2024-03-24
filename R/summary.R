@@ -9,6 +9,10 @@
 #'
 #' @seealso \link{signNetwork}
 #'
+#' @examples
+#' data("tribes")
+#' summary(tribes)
+#'
 #' @export
 summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
   nws <- UnLayer(net)

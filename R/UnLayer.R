@@ -1,6 +1,23 @@
-UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
-  if("static.sign" %in% class(snet)) {
-    multi <- snet
+#' Multilayer network to single layer network.
+#'
+#' Turn a multilayer network object into a single layer network object.
+#'
+#' @param net A signed network object of class \code{static.sign} or \code{dynamic.sign}.
+#' @param color_pos Color for positive edges. Default is 'green3'.
+#' @param color_neg Color for negative edges. Default is 'red3'.
+#'
+#' @return Single layer network object.
+#'
+#' @seealso \link{signNetwork}
+#'
+#' @examples
+#' data("tribes")
+#' tribes_sgl <- UnLayer(tribes)
+#'
+#' @export
+UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
+  if("static.sign" %in% class(net)) {
+    multi <- net
 
     pos <- get.inducedSubgraph(x = multi, v = which(multi%v%".LayerName"=="+"))
     neg <- get.inducedSubgraph(x = multi, v = which(multi%v%".LayerName"=="-"))
@@ -29,9 +46,9 @@ UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
     net$mlt <- multi
 
      comb <- net
-  } else if ("dynamic.sign" %in% class(snet))  {
-    multi <- c(snet[["gal"]][[".subnetcache"]][[".NetworkID"]][[1]][["gal"]][[".PrevNets"]],
-                    snet[["gal"]][[".subnetcache"]][[".NetworkID"]])
+  } else if ("dynamic.sign" %in% class(net))  {
+    multi <- c(net[["gal"]][[".subnetcache"]][[".NetworkID"]][[1]][["gal"]][[".PrevNets"]],
+                    net[["gal"]][[".subnetcache"]][[".NetworkID"]])
     comb <- lapply(multi, function(x) {
       pos <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="+"))
       neg <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="-"))
@@ -41,11 +58,11 @@ UnLayer <- function(snet, color_pos = "green3", color_neg = "red3") {
       net <- as.network(abs(mat),matrix.type = "adjacency", directed = pos$gal$directed, loops = pos$gal$loops)
 
       #add edge attributes
-      for (e in list.edge.attributes(snet)) {
+      for (e in list.edge.attributes(net)) {
         net%e%e <- x%e%e
       }
 
-      if (!("sign" %in% list.edge.attributes(snet))) {
+      if (!("sign" %in% list.edge.attributes(net))) {
         net%e%'sign' <- mat
       }
 

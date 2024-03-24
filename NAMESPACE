@@ -3,6 +3,7 @@
 S3method(summary,dynamic.sign)
 S3method(summary,static.sign)
 export(GoF)
+export(UnLayer)
 export(signNetwork)
 import(devtools)
 import(ergm)

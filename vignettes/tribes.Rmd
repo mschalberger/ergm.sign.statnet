@@ -2,6 +2,7 @@
 title: "Using `ergm.sign` to analyse the signed Read's Highland Tribes dataset"
 author: "Marc Schalberger"
 output: rmarkdown::html_vignette
+bibliography: ../inst/REFERENCES.bib
 vignette: >
   %\VignetteIndexEntry{tribes}
   %\VignetteEngine{knitr::rmarkdown}
@@ -31,7 +32,7 @@ library(ergm.sign)
 
 # Obtaining data
 
-The highland tribes dataset is included in the `ergm.sign` package:
+The highland tribes dataset from @read1954cultures is included in the `ergm.sign` package:
 
 ```{r}
 data("tribes")
@@ -79,3 +80,14 @@ summary(triad_fit)
 ```
 
 Here, the `gwese` (geometrically weighted edgewise shared enemies) term models enemy of my enemy is my friend configuration and the `gwesf` (geometrically weighted edgewise shared friends) term models friend of a friend is a friend configuration.
+
+# Goodness of fit
+
+In order to assess the goodness of fit of the model we can use the `GoF` function, which compares the observed network statistics to the statistics of simulated networks. The `nsim` argument specifies the number of simulations to be performed. For example, to perform 20 simulations we can use the following code:
+
+```{r}
+GoF(fit, nsim = 20)
+```
+
+# References
+ 
