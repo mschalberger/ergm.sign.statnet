@@ -61,3 +61,7 @@ snctrl <- statnet.common::snctrl
   ergm_keyword(name="layer-aware", short="layer", description="operates on multilayer network constructs", popular=TRUE, package="ergm.multi")
 }
 
+#' @useDynLib ergm.sign
+.onUnload <- function(libpath){
+  library.dynam.unload("ergm.sign",libpath)
+}
