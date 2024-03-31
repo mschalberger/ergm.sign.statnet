@@ -30,9 +30,8 @@ UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
      for (e in list.edge.attributes(multi)) {
        net%e%e <- multi%e%e
      }
-    if (!("sign" %in% list.edge.attributes(multi))) {
-       net%e%'sign' <- mat
-     }
+
+    net <- set.edge.value(net,'sign',mat)
 
     #add edge color
     net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
