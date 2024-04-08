@@ -4,10 +4,12 @@
 \alias{mple_sign}
 \title{Fit an ERGM with MPLE using a logistic regression model}
 \usage{
-mple_sign(formula)
+mple_sign(formula, ...)
 }
 \arguments{
 \item{formula}{An ERGM formula, with the left-hand side being the network}
+
+\item{...}{Additional arguments passed to \code{\link{ergmMPLE}}}
 }
 \value{
 A fitted logistic regression model

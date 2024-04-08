@@ -7,6 +7,7 @@
 #' then used to calculate the MPLE using a logistic regression model.
 #'
 #' @param formula An ERGM formula, with the left-hand side being the network
+#' @param ... Additional arguments passed to \code{\link{ergmMPLE}}
 #'
 #' @return A fitted logistic regression model
 #'
@@ -18,9 +19,9 @@
 #'
 #' @export
 
-mple_sign <- function(formula) {
+mple_sign <- function(formula, ...) {
   # Fit the ergmMPLE model
-  tmp <- ergmMPLE(formula, output = "array")
+  tmp <- ergmMPLE(formula, output = "array", ...)
 
   # Extract relevant dimensions
   n_actors <- nrow(tmp$predictor[,,1]) / 2
