@@ -63,8 +63,10 @@ mple_sign <- function(formula, ...) {
   mat_neg_1 <- matrix(unlist(neg_1), nrow = ceiling(length(neg_1) / n_vars))
   mat_neg_2 <- matrix(unlist(neg_2), nrow = ceiling(length(neg_2) / n_vars))
 
-  # Combine matrices
-  result <- rbind(mat_zero_1, mat_zero_2, mat_pos_1, mat_pos_2, mat_neg_1, mat_neg_2)
+  # Combine matrices by rows (some matrices might be empty)
+  matrices <- list(mat_zero_1, mat_zero_2, mat_pos_1, mat_pos_2, mat_neg_1, mat_neg_2)
+  list_without_empty_matrices <- Filter(function(x) !(is.matrix(x) && nrow(x) == 0 && ncol(x) == 0), matrices)
+  result <- do.call("rbind", list_without_empty_matrices)
 
   # Set column names
   colnames(result) <- dimnames(tmp$predictor)[[3]]
@@ -77,6 +79,8 @@ mple_sign <- function(formula, ...) {
 
   # Fit logistic regression model
   fit <- glm(y ~ . - 1, data = as.data.frame(result), family = binomial())
+  fit$call <- paste("mple_sign(",format(formula),")")
+  fit$formula <- formula
 
   # Return the fitted model
   return(fit)
