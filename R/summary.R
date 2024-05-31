@@ -34,8 +34,18 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
                     Triads = summary_formula(MultiNet ~ L(~ triangle, ~ `+` | `-`)),
                     `+++` = summary_formula(MultiNet ~ L(~ triangle, ~ `+`)),
                     `---` = summary_formula(MultiNet ~ L(~ triangle, ~ `-`)),
-                    `++-` = sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n)),
-                    `+--` = sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * c(1:n)),
+                    `++-` = ifelse(Directed,
+                                   sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
+                                                         espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP")+
+                                                         espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
+                                                         espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) *c(1:n)),
+                          sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n))),
+                    `+--` = ifelse(Directed,
+                                   sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
+                                                         espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP")+
+                                                         espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
+                                                         espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ISP")) *c(1:n)),
+                                   sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * c(1:n))),
                     Density = round(network.density(nw), 2), check.names = F)
     rownames(a) <- ifelse(is.null(names), paste("Time", i), names[i])
     mat <- rbind(mat, a)
@@ -58,8 +68,18 @@ summary.static.sign <- function(net) {
                                          L(~triangle, ~ `+`|`-`) +
                                          L(~triangle,~ `+`) +
                                          L(~triangle, ~ `-`)),
-                       sum(summary_formula(MultiNet ~ espL(c(1:(n)), L.base= ~`-`, Ls.path= c(~`+`,~`+`))) * c(1:(n))),
-                       sum(summary_formula(MultiNet ~ espL(d = c(1:(n)), L.base= ~`+`, Ls.path= c(~`-`,~`-`))) * c(1:(n))),
+                       ifelse(Directed,
+                                sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
+                                                      espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP")+
+                                                      espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
+                                                      espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) *c(1:n)),
+                                sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n))),
+                       ifelse(Directed,
+                              sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
+                                                    espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP")+
+                                                    espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
+                                                    espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ISP")) *c(1:n)),
+                              sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * c(1:n))),
                        round(network.density(net),2)))
   rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
   colnames(a) <- ""
