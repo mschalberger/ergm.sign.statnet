@@ -34,13 +34,13 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
                     Triads = summary_formula(MultiNet ~ L(~ triangle, ~ `+` | `-`)),
                     `+++` = summary_formula(MultiNet ~ L(~ triangle, ~ `+`)),
                     `---` = summary_formula(MultiNet ~ L(~ triangle, ~ `-`)),
-                    `++-` = ifelse(Directed,
+                    `++-` = ifelse(nw$gal[["directed"]],
                                    sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
                                                          espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP")+
                                                          espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
                                                          espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) *c(1:n)),
                           sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n))),
-                    `+--` = ifelse(Directed,
+                    `+--` = ifelse(nw$gal[["directed"]],
                                    sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
                                                          espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP")+
                                                          espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
@@ -68,13 +68,13 @@ summary.static.sign <- function(net) {
                                          L(~triangle, ~ `+`|`-`) +
                                          L(~triangle,~ `+`) +
                                          L(~triangle, ~ `-`)),
-                       ifelse(Directed,
+                       ifelse(net$gal[["directed"]],
                                 sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
                                                       espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP")+
                                                       espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
                                                       espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) *c(1:n)),
                                 sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * c(1:n))),
-                       ifelse(Directed,
+                       ifelse(net$gal[["directed"]],
                               sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
                                                     espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP")+
                                                     espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
