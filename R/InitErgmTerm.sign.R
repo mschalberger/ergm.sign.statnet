@@ -452,3 +452,6 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   trm
 }
 
+InitErgmTerm..layer.net <- ergm.multi:::InitErgmTerm..layer.net
+body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net", coef.names=c(), iinputs=c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)), if(is.directed(nw)) sapply(nwl, function(nw) (nw%v% ".undirected")[1]), ll), dependence=dependence))
+assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")

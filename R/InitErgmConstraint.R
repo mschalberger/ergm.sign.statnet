@@ -119,3 +119,4 @@ InitErgmConstraint.fixL<-function(nw, arglist,  ...) {
 
   list(Ls = a$Ls, dependence=TRUE)
 }
+
