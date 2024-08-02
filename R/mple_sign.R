@@ -19,7 +19,7 @@
 #'
 #' @export
 
-mple_sign <- function(formula, ...) {
+mple_sign <- function(formula, control = control.ergm(),...) {
   # Fit the ergmMPLE model
   tmp <- ergmMPLE(formula, output = "array", ...)
 
@@ -95,10 +95,10 @@ mple_sign <- function(formula, ...) {
   res$mle.lik <- logLik(glm_fit)
   res$null.lik <- logLik(glm_fit_null)
   res$estimate <- "MPLE"
-  #res$control <- control
+  res$control <- control
   res$ergm_version <- as.package_version("4.6.0")
   res$formula <- formula
-  res$info <- list(terms_dind = FALSE, space_dind = TRUE, n_info_dyads = sum(tmp$weight), obs = FALSE,valued = FALSE, MPLE_is_MLE = n_dependent>0)
+  res$info <- list(terms_dind = FALSE, space_dind = TRUE, n_info_dyads = sum(tmp$weight), obs = FALSE,valued = FALSE)
   # res$call <- est$call
   # res$info <- est$info
   res$etamap$offsettheta <- rep(FALSE,length(res$coefficients))
