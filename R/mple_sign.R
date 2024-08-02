@@ -28,8 +28,8 @@ mple_sign <- function(formula, ...) {
   n_vars <- dim(tmp$predictor)[3]
 
   # Extract change statistics matrices
-  change_pos <- tmp$predictor[1:n_actors, 1:n_actors, ]
-  change_neg <- tmp$predictor[1:n_actors + n_actors, 1:n_actors + n_actors, ]
+  change_pos <- tmp$predictor[1:n_actors, 1:n_actors, , drop = FALSE]
+  change_neg <- tmp$predictor[1:n_actors + n_actors, 1:n_actors + n_actors, , drop = FALSE]
 
   # Create adjacency matrix
   net <- ergm.getnetwork(formula)
@@ -78,10 +78,32 @@ mple_sign <- function(formula, ...) {
   result <- rbind(result, cbind(y = 1, matrix(0, nrow = nrow(result)/2, ncol = ncol(result)-1)))
 
   # Fit logistic regression model
-  fit <- glm(y ~ . - 1, data = as.data.frame(result), family = binomial())
-  fit$call <- paste("mple_sign(",format(formula),")")
-  fit$formula <- formula
+  glm_fit <- glm(y ~ . - 1, data = as.data.frame(result), family = binomial())
+
+  glm_fit_null <- glm(y~ 1, family = binomial(), data = as.data.frame(result))
+  glm_summary <- summary(glm_fit)
+  res <- list()
+  res$coefficients <- glm_fit$coefficients
+  res$iterations <- glm_fit$iter
+  res$MCMCtheta <- glm_fit$coefficients
+  res$gradient <- rep(NA,length(glm_fit$coefficients))
+  res$hessian <- -solve(glm_summary$cov.unscaled)
+  res$covar <- glm_summary$cov.unscaled
+  res$failure <- !glm_fit$converged
+  res$mple.lik <- logLik(glm_fit)
+  res$mple.lik.null <- logLik(glm_fit_null)
+  res$mle.lik <- logLik(glm_fit)
+  res$null.lik <- logLik(glm_fit_null)
+  res$estimate <- "MPLE"
+  res$control <- control
+  res$ergm_version <- as.package_version("4.6.0")
+  res$formula <- formula
+  res$info <- list(terms_dind = FALSE, space_dind = TRUE, n_info_dyads = sum(tmp$weight), obs = FALSE,valued = FALSE, MPLE_is_MLE = n_dependent>0)
+  # res$call <- est$call
+  # res$info <- est$info
+  res$etamap$offsettheta <- rep(FALSE,length(res$coefficients))
+  class(res) <- "ergm"
 
   # Return the fitted model
-  return(fit)
+  return(res)
 }

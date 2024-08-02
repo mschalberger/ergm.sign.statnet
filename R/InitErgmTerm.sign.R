@@ -455,3 +455,16 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 InitErgmTerm..layer.net <- ergm.multi:::InitErgmTerm..layer.net
 body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net", coef.names=c(), iinputs=c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)), if(is.directed(nw)) sapply(nwl, function(nw) (nw%v% ".undirected")[1]), ll), dependence=dependence))
 assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
+
+# uncombine_network <- ergm.multi:::uncombine_network
+# body(uncombine_network)[[6]][[4]][[4]][[4]][[2]] <- quote({
+#   if ("combined_networks" %in% class(nwl[[i]])) {
+#     class(nwl[[i]]) <- class(nwl[[i]])[-seq_len(min(which(class(nwl[[i]]) == "combined_networks")))]
+#   }
+# })
+# assignInNamespace("uncombine_network", uncombine_network, ns="ergm.multi")
+#
+# InitErgmTerm.N <- ergm.multi:::InitErgmTerm.N
+# body(InitErgmTerm.N)[[7]] <- quote(nattrs <- as_tibble.combined_networks(nw, unit = "networks", .NetworkID = a$.NetworkID,
+#                                                         .NetworkName = a$.NetworkName))
+# assignInNamespace("InitErgmTerm.N", InitErgmTerm.N, ns="ergm.multi")
