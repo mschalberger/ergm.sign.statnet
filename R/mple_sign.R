@@ -21,7 +21,7 @@
 
 mple_sign <- function(formula, control = control.ergm(),...) {
   # Fit the ergmMPLE model
-  tmp <- ergmMPLE(formula, output = "array", ...)
+  tmp <- ergmMPLE(formula, output = "array", control = control, ...)
 
   # Extract relevant dimensions
   n_actors <- nrow(tmp$predictor[,,1]) / 2
