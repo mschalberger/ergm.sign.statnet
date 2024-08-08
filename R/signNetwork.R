@@ -19,7 +19,8 @@
 
 
 signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, ...) {
-  if (is.list(mat)&& !is.data.frame(mat)) {
+  if(!is.null(mat)){
+    if (is.list(mat)&& !is.data.frame(mat)) {
     nets <- lapply(mat, function (x) {
       x <- as.matrix(x)
       if (matrix.type == "adjacency") {
@@ -91,8 +92,9 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
     MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+`&`-`))
     class(MultiDyn) <- c("dynamic.sign",class(MultiDyn))
     return(MultiDyn)
+
   }
-  else  {
+    else  {
     if (matrix.type == "adjacency") {
       if (directed == F){
         if (isSymmetric(mat)) {
@@ -161,6 +163,13 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
     MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+`&`-`))
     class(MultiNet) <- c("static.sign", "network")
     return(MultiNet)
+    }
+    } else {
+    null_net <- Layer(`+` = network.initialize(0, directed = directed, loops = loops, ...),
+                      `-` = network.initialize(0, directed = directed, loops = loops, ...))
+    null_net %ergmlhs% "constraints" <- update(null_net %ergmlhs% "constraints", ~. + fixL(~`+`&`-`))
+    class(null_net) <- c("static.sign", "network")
+    return(null_net)
   }
 }
 
