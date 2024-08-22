@@ -18,7 +18,7 @@
 #' @export
 
 
-signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, vertices = NULL, ...) {
+signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, vertex.attr = NULL, vertices = NULL, ...) {
     if (is.list(mat)&& !is.data.frame(mat)) {
     nets <- lapply(mat, function (x) {
       x <- as.matrix(x)
@@ -110,7 +110,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
         diag(mat) <-0
       }
 
-      static_net <- as.network(abs(mat), matrix.type = "adjacency", directed = directed, loops = loops, vertices = vertices, ... = ...)
+      static_net <- as.network(abs(mat), matrix.type = "adjacency", directed = directed, loops = loops, vertices = vertices, vertex.attr = vertex.attr, ... = ...)
       static_net <- set.edge.value(static_net, "sign", mat)
       pos <- (static_net%e%"sign" == 1)
       neg <- (static_net%e%"sign" == -1)
