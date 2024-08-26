@@ -11,6 +11,8 @@ signNetwork(
   matrix.type,
   cov = NULL,
   names = NULL,
+  vertex.attr = NULL,
+  vertices = NULL,
   ...
 )
 }

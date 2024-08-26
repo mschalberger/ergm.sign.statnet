@@ -10,10 +10,7 @@ LazyData: true
 LazyLoad: yes
 RoxygenNote: 7.3.1
 RdMacros: Rdpack
-Imports: ergm.multi, ergm, Rdpack
+Imports: ergm.multi, ergm, Rdpack, tergm
 LinkingTo: ergm.multi, ergm
-Suggests: 
-    knitr,
-    rmarkdown
-    testthat (>= 3.0.0)
+Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
