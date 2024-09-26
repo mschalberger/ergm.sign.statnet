@@ -29,6 +29,14 @@
 
   .RegisterProposals()
   .RegisterKeywords()
+
+  InitErgmTerm..layer.net <- getFromNamespace("InitErgmTerm..layer.net", ns="ergm.multi")
+  body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net",
+                                                   coef.names = c(),
+                                                   iinputs = c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)),
+                                                               if(is.directed(nw)) sapply(nwl, function(nw) (nw %v% ".undirected")[1]), ll),
+                                                   dependence = dependence))
+  assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
 }
 
 ## BEGIN boilerplate: should be kept in sync with statnet.common.
