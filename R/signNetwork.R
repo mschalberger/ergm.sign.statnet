@@ -18,7 +18,7 @@
 #' @export
 
 
-signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, vertex.attr = NULL, vertices = NULL, ...) {
+signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, names = NULL, vertex.attr = NULL, ...) {
     if (is.list(mat)&& !is.data.frame(mat)) {
     nets <- lapply(mat, function (x) {
       x <- as.matrix(x)
@@ -37,7 +37,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
         if (loops == F){
           diag(x) <-0
         }
-        dyn_net <- as.network(x, matrix.type = "adjacency", directed = directed, loops = loops, vertices = vertices, ... = ...)
+        dyn_net <- network::network(x, matrix.type = "adjacency", directed = directed, loops = loops, vertex.attr = vertex.attr,... = ...)
         dyn_net <- set.edge.value(dyn_net, "sign", x)
         pos <- (dyn_net%e%"sign" == 1)
         neg <- (dyn_net%e%"sign" == -1)
@@ -56,7 +56,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
           edges_neg$pos = FALSE
           edges_neg$neg = TRUE}, error = function(e){})
         full <- rbind(edges_pos, edges_neg)
-        dyn_net <- as.network(full, matrix.type = "edgelist", directed = directed, loops = loops, vertices = vertices, ... = ...)
+        dyn_net <- network::network(full, matrix.type = "edgelist", directed = directed, loops = loops,vertex.attr = vertex.attr,  ... = ...)
       }
       # if(is.null(names)) {
       #   if (matrix.type == "adjacency") {
@@ -110,7 +110,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
         diag(mat) <-0
       }
 
-      static_net <- as.network(abs(mat), matrix.type = "adjacency", directed = directed, loops = loops, vertices = vertices, vertex.attr = vertex.attr, ... = ...)
+      static_net <- network::network(abs(mat), matrix.type = "adjacency", directed = directed, loops = loops,vertex.attr = vertex.attr,  ... = ...)
       static_net <- set.edge.value(static_net, "sign", mat)
       pos <- (static_net%e%"sign" == 1)
       neg <- (static_net%e%"sign" == -1)
@@ -128,7 +128,7 @@ signNetwork <- function(mat, directed = F, loops = F, matrix.type, cov = NULL, n
       tryCatch({
         edges_neg$pos = FALSE
         edges_neg$neg = TRUE}, error = function(e){})
-      static_net <- as.network(rbind(edges_pos, edges_neg), matrix.type = "edgelist", directed = directed, loops = loops, vertices = vertices, ... = ...)
+      static_net <- network::network(rbind(edges_pos, edges_neg), matrix.type = "edgelist", directed = directed, loops = loops, vertex.attr = vertex.attr, ... = ...)
     }
 
     # if (is.null(names)) {

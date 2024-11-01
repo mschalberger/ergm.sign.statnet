@@ -12,7 +12,6 @@ signNetwork(
   cov = NULL,
   names = NULL,
   vertex.attr = NULL,
-  vertices = NULL,
   ...
 )
 }

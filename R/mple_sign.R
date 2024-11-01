@@ -19,7 +19,7 @@
 #'
 #' @export
 
-mple_sign <- function(formula, control = control.ergm(),...) {
+mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"),...) {
   # Fit the ergmMPLE model
   tmp <- ergmMPLE(formula, output = "array", control = control, ...)
 
