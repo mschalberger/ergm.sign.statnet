@@ -8,7 +8,6 @@
 #'
 #' @param formula An ERGM formula, with the left-hand side being the network
 #' @param control A list of control parameters for the \code{\link{ergmMPLE}} function. Per default the method to estimate the convariance method is set to Godambe.
-#' @param basis a value (usually a network) to override the LHS of the formula.
 #' @param ... Additional arguments passed to \code{\link{ergmMPLE}}
 #'
 #' @return A fitted logistic regression model
@@ -21,26 +20,71 @@
 #'
 #' @export
 
-mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"), basis = ergm.getnetwork(formula), ...) {
+mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"), ...) {
   # Fit the ergmMPLE model
-  tmp <- ergmMPLE(formula, output = "array", control = control, basis = basis, ...)
+  tmp <- ergmMPLE(formula, output = "array", control = control, ...)
 
-  # Extract relevant dimensions
-  n_actors <- nrow(tmp$predictor[,,1]) / 2
+  net <- ergm.getnetwork(formula)
+  n_actors <- network.size(net)/ 2
   n_vars <- dim(tmp$predictor)[3]
 
+  is_directed <- is.directed(net)
+  has_loops <- has.loops(net)
+
+  if ("combined_networks" %in% class(net)) {
+    k <- length(net[["gal"]][[".subnetcache"]][[".NetworkID"]])
+    block_sizes <- unlist(lapply(net[["gal"]][[".subnetcache"]][[".NetworkID"]], function(x) network.size(x)))
+    cum_block_sizes <- c(0, cumsum(block_sizes))
+    half_sizes <- block_sizes / 2
+
+    change_pos <- array(0, dim = c(sum(half_sizes), sum(half_sizes), n_vars))
+    change_neg <- array(0, dim = c(sum(half_sizes), sum(half_sizes), n_vars))
+    adj_mat <- matrix(0, nrow = n_actors, ncol = n_actors)
+
+
+    for (i in 1:k) {
+      # Compute the start/end of each positive and negative block
+      pos_idx <- (cum_block_sizes[i] + 1):(cum_block_sizes[i] + half_sizes[i])  # First half
+      neg_idx <- (cum_block_sizes[i] + half_sizes[i] + 1):cum_block_sizes[i + 1]  # Second half
+
+      # Compute the position in the final extracted matrices
+      new_pos_idx <- ((i - 1) * half_sizes[i] + 1):(i * half_sizes[i])
+
+      change_pos[new_pos_idx, new_pos_idx, ] <- tmp$predictor[pos_idx, pos_idx, , drop = FALSE]
+      change_neg[new_pos_idx, new_pos_idx, ] <- tmp$predictor[neg_idx, neg_idx, , drop = FALSE]
+
+      # Create adjacency matrix
+      adj_mat[new_pos_idx,new_pos_idx][which(as.matrix(net)[pos_idx, pos_idx] == 1, arr.ind = TRUE)] <- 1
+      adj_mat[new_pos_idx,new_pos_idx][which(as.matrix(net)[neg_idx, neg_idx] == 1, arr.ind = TRUE)] <- -1
+      if(!has_loops) {
+        diag(adj_mat) <- NA
+        }
+      if(!is_directed) {
+        adj_mat[lower.tri(adj_mat)] <- NA
+        #change_pos[rep(lower.tri(matrix(NA, nrow = dim(change_pos)[1], ncol = dim(change_pos)[2])), dim(change_pos)[3])] <- NA
+        #change_neg[rep(lower.tri(matrix(NA, nrow = dim(change_neg)[1], ncol = dim(change_neg)[2])), dim(change_neg)[3])] <- NA
+      }
+      #adj_mat[new_pos_idx,- new_pos_idx] <- NA
+      #adj_mat[-new_pos_idx,new_pos_idx] <- NA
+     }
+  } else {
   # Extract change statistics matrices
   change_pos <- tmp$predictor[1:n_actors, 1:n_actors, , drop = FALSE]
   change_neg <- tmp$predictor[1:n_actors + n_actors, 1:n_actors + n_actors, , drop = FALSE]
 
   # Create adjacency matrix
-  net <- ergm.getnetwork(formula)
   adj_mat <- matrix(0, nrow = n_actors, ncol = n_actors)
   adj_mat[which(as.matrix(net)[1:n_actors, 1:n_actors] == 1, arr.ind = TRUE)] <- 1
   adj_mat[which(as.matrix(net)[1:n_actors + n_actors, 1:n_actors + n_actors] == 1, arr.ind = TRUE)] <- -1
-  diag(adj_mat) <- NA
-  adj_mat[lower.tri(adj_mat)] <- NA
-
+  if(!has_loops) {
+    diag(adj_mat) <- NA
+  }
+  if(!is_directed) {
+    adj_mat[lower.tri(adj_mat)] <- NA
+    #change_pos[rep(lower.tri(matrix(NA, nrow = dim(change_pos)[1], ncol = dim(change_pos)[2])), dim(change_pos)[3])] <- NA
+    #change_neg[rep(lower.tri(matrix(NA, nrow = dim(change_neg)[1], ncol = dim(change_neg)[2])), dim(change_neg)[3])] <- NA
+  }
+  }
   # Create adjacency array
   adj_array <- array(rep(adj_mat, n_vars), dim = c(n_actors, n_actors, n_vars))
 

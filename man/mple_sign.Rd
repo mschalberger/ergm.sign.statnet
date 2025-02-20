@@ -7,12 +7,13 @@
 mple_sign(
   formula,
   control = control.ergm(MPLE.covariance.method = "Godambe"),
-  basis = ergm.getnetwork(formula),
   ...
 )
 }
 \arguments{
 \item{formula}{An ERGM formula, with the left-hand side being the network}
+
+\item{control}{A list of control parameters for the \code{\link{ergmMPLE}} function. Per default the method to estimate the convariance method is set to Godambe.}
 
 \item{...}{Additional arguments passed to \code{\link{ergmMPLE}}}
 }
