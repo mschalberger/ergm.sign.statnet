@@ -7,6 +7,8 @@
 #' then used to calculate the MPLE using a logistic regression model.
 #'
 #' @param formula An ERGM formula, with the left-hand side being the network
+#' @param control A list of control parameters for the \code{\link{ergmMPLE}} function. Per default the method to estimate the convariance method is set to Godambe.
+#' @param basis a value (usually a network) to override the LHS of the formula.
 #' @param ... Additional arguments passed to \code{\link{ergmMPLE}}
 #'
 #' @return A fitted logistic regression model
@@ -19,9 +21,9 @@
 #'
 #' @export
 
-mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"),...) {
+mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"), basis = ergm.getnetwork(formula), ...) {
   # Fit the ergmMPLE model
-  tmp <- ergmMPLE(formula, output = "array", control = control, ...)
+  tmp <- ergmMPLE(formula, output = "array", control = control, basis = basis, ...)
 
   # Extract relevant dimensions
   n_actors <- nrow(tmp$predictor[,,1]) / 2

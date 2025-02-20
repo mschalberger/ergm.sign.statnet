@@ -7,6 +7,7 @@
 mple_sign(
   formula,
   control = control.ergm(MPLE.covariance.method = "Godambe"),
+  basis = ergm.getnetwork(formula),
   ...
 )
 }
