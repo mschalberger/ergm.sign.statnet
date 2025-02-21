@@ -23,8 +23,6 @@ signNetworks <- function(...) {
     return(nw)
   })
 
-
-
   # Combine networks
   comb <- Networks(nwl)
 
