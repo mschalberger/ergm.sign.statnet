@@ -1,12 +1,10 @@
-#'  A signed multinetwork network representation.
+#' A signed multinetwork network representation.
 #'
-#'  A function for specifying the LHS of a signed multi-network (a.k.a. multilevel) ERGM. Typically used in conjunction with the \code{N()} term operator.
+#' A function for specifying the LHS of a signed multi-network (a.k.a. multilevel) ERGM. Typically used in conjunction with the \code{N()} term operator.
 #'
-#'  @param ... Several signed networks or a list of signed networks.
-#'
-#'  @return A network object comprising the provided networks, with multinetwork metadata.
-#'
-#'  @export
+#' @param ... Several signed networks or a list of signed networks.
+#' @return A network object comprising the provided networks, with multinetwork metadata.
+#' @export
 
 signNetworks <- function(...) {
   args <- list(...)

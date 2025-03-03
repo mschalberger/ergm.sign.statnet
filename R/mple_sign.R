@@ -33,41 +33,46 @@ mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Go
 
   if ("combined_networks" %in% class(net)) {
     k <- length(net[["gal"]][[".subnetcache"]][[".NetworkID"]])
-    block_sizes <- unlist(lapply(net[["gal"]][[".subnetcache"]][[".NetworkID"]], function(x) network.size(x)))
+    block_sizes <- sapply(net[["gal"]][[".subnetcache"]][[".NetworkID"]], network.size)
     cum_block_sizes <- c(0, cumsum(block_sizes))
     half_sizes <- block_sizes / 2
 
-    change_pos <- array(0, dim = c(sum(half_sizes), sum(half_sizes), n_vars))
-    change_neg <- array(0, dim = c(sum(half_sizes), sum(half_sizes), n_vars))
+    total_half_size <- sum(half_sizes)
+
+    change_pos <- array(0, dim = c(total_half_size, total_half_size, n_vars))
+    change_neg <- array(0, dim = c(total_half_size, total_half_size, n_vars))
     adj_mat <- matrix(0, nrow = n_actors, ncol = n_actors)
 
+    net_mat <- as.matrix(net)  # Convert network to matrix once
 
-    for (i in 1:k) {
-      # Compute the start/end of each positive and negative block
-      pos_idx <- (cum_block_sizes[i] + 1):(cum_block_sizes[i] + half_sizes[i])  # First half
-      neg_idx <- (cum_block_sizes[i] + half_sizes[i] + 1):cum_block_sizes[i + 1]  # Second half
+    new_pos_start <- 1  # Track where the next block starts in the extracted matrices
 
-      # Compute the position in the final extracted matrices
-      new_pos_idx <- ((i - 1) * half_sizes[i] + 1):(i * half_sizes[i])
+    for (i in seq_len(k)) {
+      half_size <- half_sizes[i]
+      pos_idx <- seq(cum_block_sizes[i] + 1, cum_block_sizes[i] + half_size)
+      neg_idx <- seq(cum_block_sizes[i] + half_size + 1, cum_block_sizes[i + 1])
+
+      new_pos_idx <- seq(new_pos_start, new_pos_start + half_size - 1)
+      new_pos_start <- new_pos_start + half_size  # Update for next iteration
 
       change_pos[new_pos_idx, new_pos_idx, ] <- tmp$predictor[pos_idx, pos_idx, , drop = FALSE]
       change_neg[new_pos_idx, new_pos_idx, ] <- tmp$predictor[neg_idx, neg_idx, , drop = FALSE]
 
-      # Create adjacency matrix
-      adj_mat[new_pos_idx,new_pos_idx][which(as.matrix(net)[pos_idx, pos_idx] == 1, arr.ind = TRUE)] <- 1
-      adj_mat[new_pos_idx,new_pos_idx][which(as.matrix(net)[neg_idx, neg_idx] == 1, arr.ind = TRUE)] <- -1
-      if(!has_loops) {
-        diag(adj_mat) <- NA
-        }
-      if(!is_directed) {
-        adj_mat[lower.tri(adj_mat)] <- NA
-        #change_pos[rep(lower.tri(matrix(NA, nrow = dim(change_pos)[1], ncol = dim(change_pos)[2])), dim(change_pos)[3])] <- NA
-        #change_neg[rep(lower.tri(matrix(NA, nrow = dim(change_neg)[1], ncol = dim(change_neg)[2])), dim(change_neg)[3])] <- NA
-      }
-      #adj_mat[new_pos_idx,- new_pos_idx] <- NA
-      #adj_mat[-new_pos_idx,new_pos_idx] <- NA
-     }
-  } else {
+      adj_mat[new_pos_idx, new_pos_idx][net_mat[pos_idx, pos_idx] == 1] <- 1
+      adj_mat[new_pos_idx, new_pos_idx][net_mat[neg_idx, neg_idx] == 1] <- -1
+
+      adj_mat[new_pos_idx,- new_pos_idx] <- NA
+      adj_mat[- new_pos_idx, new_pos_idx] <- NA
+    }
+
+    if (!has_loops) {
+      diag(adj_mat) <- NA
+    }
+    if (!is_directed) {
+      adj_mat[lower.tri(adj_mat)] <- NA
+    }
+  }
+  else {
   # Extract change statistics matrices
   change_pos <- tmp$predictor[1:n_actors, 1:n_actors, , drop = FALSE]
   change_neg <- tmp$predictor[1:n_actors + n_actors, 1:n_actors + n_actors, , drop = FALSE]

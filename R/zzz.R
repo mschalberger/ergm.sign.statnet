@@ -17,6 +17,7 @@
 .onAttach <- function(libname, pkgname){
   #' @importFrom statnet.common statnetStartupMessage
   sm <- statnetStartupMessage("ergm.multi", c("statnet"), FALSE)
+  options(ergm.ABI.action = "disable")  # Ignore ABI mismatch warnings
   if(!is.null(sm)){
     packageStartupMessage(sm)
   }
