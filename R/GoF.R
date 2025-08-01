@@ -124,13 +124,13 @@ GoF <- function(model, nsim = 200, seed = NULL) {
 
     }
    else if ("dynamic.sign" %in% class(sim[[1]])) {
-     net_list <- UnLayer(model[["network"]])
+     net_list <- model[["network"]][["gal"]][["NetList"]]
 
     n <- e <- degree_pos <- degree_neg <- ese_neg <- ese_pos <- esf_neg <- esf_pos <- c()
     for (i in 1:length(net_list)) {
-      nw <- net_list$single[[i]]
+      MultiNet <- net_list[[i]]
+      nw <- UnLayer(MultiNet)
       n[[i]] <- network.size(nw)
-      MultiNet <- net_list$multi[[i]]
 
       e[[i]] <- summary_formula(MultiNet ~ edges)
 

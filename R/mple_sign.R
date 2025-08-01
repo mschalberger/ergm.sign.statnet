@@ -20,7 +20,7 @@
 #'
 #' @export
 
-mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Godambe"), ...) {
+mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   # Fit the ergmMPLE model
   tmp <- ergmMPLE(formula, output = "array", control = control, ...)
 
@@ -32,15 +32,15 @@ mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Go
   has_loops <- has.loops(net)
 
   if ("combined_networks" %in% class(net)) {
-    k <- length(net[["gal"]][[".subnetcache"]][[".NetworkID"]])
-    block_sizes <- sapply(net[["gal"]][[".subnetcache"]][[".NetworkID"]], network.size)
+    k <- length(net[["gal"]][[".subnetcache"]][[1]])
+    block_sizes <- sapply(net[["gal"]][[".subnetcache"]][[1]], network.size)
     cum_block_sizes <- c(0, cumsum(block_sizes))
     half_sizes <- block_sizes / 2
 
     total_half_size <- sum(half_sizes)
 
-    change_pos <- array(0, dim = c(total_half_size, total_half_size, n_vars))
-    change_neg <- array(0, dim = c(total_half_size, total_half_size, n_vars))
+    change_pos <- array(NA, dim = c(total_half_size, total_half_size, n_vars))
+    change_neg <- array(NA, dim = c(total_half_size, total_half_size, n_vars))
     adj_mat <- matrix(0, nrow = n_actors, ncol = n_actors)
 
     net_mat <- as.matrix(net)  # Convert network to matrix once
@@ -130,16 +130,125 @@ mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Go
 
   # Fit logistic regression model
   glm_fit <- glm(y ~ . - 1, data = as.data.frame(result), family = binomial())
-
-  glm_fit_null <- glm(y~ 1, family = binomial(), data = as.data.frame(result))
   glm_summary <- summary(glm_fit)
   res <- list()
+
+
+
+  #Godambe
+  if (control$MPLE.covariance.method == 'Godambe') {
+  if ("combined_networks" %in% class(net)) {
+    list_net <- uncombine_network(net)
+    small <- signNetwork(matrix(0, nrow = 1, ncol = 1), matrix.type= "adjacency", directed = is_directed, loops = has_loops)
+    vnames <- net%v%"vertex.names"
+    sub_list <- list()
+
+
+    if (!is.null(seed)) {
+      set.seed(seed)
+      seeds <- sample.int(1e6, length(list_net))
+    }
+
+    start_name <- 1  # Initialize `start_name`
+
+    for (i in seq_along(list_net)) {
+      blocks <- list_net[[i]]
+      sample_seed <- if (!is.null(seed)) seeds[[i]] else NULL
+      block_size <- network.size(blocks)
+
+      new_names <- vnames[start_name:(start_name + block_size - 1)]
+      start_name <- start_name + block_size  # Update correctly
+
+      class(blocks) <- c("static.sign", class(blocks))
+      net_list <- signNetworks(blocks, small)
+
+      sub_net <- ergm::simulate_formula(
+          object = formula,
+          basis = net_list,
+          nsim = control$MPLE.covariance.samplesize,  # 500 simulations
+          coef = glm_fit$coefficients,
+          seed = sample_seed,
+          control = control.simulate.formula(
+            MCMC.prop = ~sparse,
+            MCMC.burnin = control$MPLE.covariance.sim.burnin,
+            MCMC.interval = control$MPLE.covariance.sim.interval
+          ),
+          output = "network",
+          ...
+      )
+      sub_net <- lapply(sub_net, function(net) {
+        class(net) <- c("static.sign", class(net))
+        net <- get.inducedSubgraph(net, which(net%v%".NetworkID" == 1))
+        })
+      sub_list[[i]] <- sub_net
+    }
+    transposed_list <- lapply(seq_len(control$MPLE.covariance.samplesize), function(i) {
+      lapply(sub_list, `[[`, i)
+    })
+
+    sim_mple <- lapply(transposed_list, signNetworks)
+  } else {
+    sim_mple <- ergm::simulate_formula(
+      object = formula,
+      basis = net,
+      nsim = control$MPLE.covariance.samplesize,  # 500 simulations
+      coef = glm_fit$coefficients,
+      control = control.simulate.formula(
+        MCMC.prop = ~sparse,
+        MCMC.burnin = control$MPLE.covariance.sim.burnin,
+        MCMC.interval = control$MPLE.covariance.sim.interval
+      ),
+      output = "network",
+      ...
+    )
+  }
+
+    num_variables <- length(glm_fit$coefficients)
+    nsim <- length(sim_mple)
+
+    gradient_matrix <- matrix(0, nrow = num_variables, ncol = nsim)
+
+    for (i in 1:nsim) {
+      tmp <- sim_mple[[i]]
+      tmp_match <- tmp %v% "vertex.names"
+
+      dat <- ergm::ergmMPLE(formula = formula, basis = tmp, control = control,
+                            output = "dyadlist")
+      # Reorder
+      dat$predictor[,1] <- tmp_match[dat$predictor[,1]]
+      dat$predictor[,2] <- tmp_match[dat$predictor[,2]]
+
+      if(ncol(dat$predictor) == 3){
+        covariates <- matrix(ncol = 1, dat$predictor[,-(1:2)])
+      } else {
+        covariates <- matrix(ncol = ncol(dat$predictor[,-(1:2)]), dat$predictor[,-(1:2)])
+      }
+      colnames(covariates) <- colnames(dat$predictor)[-(1:2)]
+
+      predictions <- as.vector(1 / (1 + exp(-covariates %*% glm_fit$coef)))
+
+      gradient <- as.vector((dat$response - predictions) %*% covariates)
+
+      gradient_matrix[, i] <- gradient
+    }
+    # Compute Variability Matrix
+    variability_matrix <- var(t(gradient_matrix))
+
+    invHess <- glm_summary$cov.unscaled
+
+    # Godambe matrix calculation
+    G <- invHess %*% variability_matrix %*% invHess
+    res$covar <- G
+  } else {
+    res$covar <- glm_summary$cov.unscaled
+  }
+
+  glm_fit_null <- glm(y~ 1, family = binomial(), data = as.data.frame(result))
   res$coefficients <- glm_fit$coefficients
   res$iterations <- glm_fit$iter
   res$MCMCtheta <- glm_fit$coefficients
   res$gradient <- rep(NA,length(glm_fit$coefficients))
   res$hessian <- -solve(glm_summary$cov.unscaled)
-  res$covar <- glm_summary$cov.unscaled
   res$failure <- !glm_fit$converged
   res$mple.lik <- logLik(glm_fit)
   res$mple.lik.null <- logLik(glm_fit_null)
@@ -153,6 +262,7 @@ mple_sign <- function(formula, control = control.ergm(MPLE.covariance.method="Go
   # res$call <- est$call
   # res$info <- est$info
   res$etamap$offsettheta <- rep(FALSE,length(res$coefficients))
+  res$glm <- glm_fit
   class(res) <- "ergm"
 
   # Return the fitted model

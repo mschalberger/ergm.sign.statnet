@@ -42,12 +42,11 @@ UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
      }
 
     #save multilayer
-    net$mlt <- multi
+    net$gal$mlt <- multi
 
      comb <- net
   } else if ("dynamic.sign" %in% class(net))  {
-    multi <- c(net[["gal"]][[".subnetcache"]][[".NetworkID"]][[1]][["gal"]][[".PrevNets"]],
-                    net[["gal"]][[".subnetcache"]][[".NetworkID"]])
+    multi <- net$gal$NetList
     comb <- lapply(multi, function(x) {
       pos <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="+"))
       neg <- get.inducedSubgraph(x = x, v = which(x%v%".LayerName"=="-"))
@@ -75,7 +74,7 @@ UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
       }
 
       #save multilayer
-      net$mlt <- x
+      net$gal$mlt <- x
 
       x <- net
     })

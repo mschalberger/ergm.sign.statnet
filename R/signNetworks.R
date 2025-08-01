@@ -1,12 +1,15 @@
-#' A signed multinetwork network representation.
+#' A signed multi- or dynamic-network representation.
 #'
-#' A function for specifying the LHS of a signed multi-network (a.k.a. multilevel) ERGM. Typically used in conjunction with the \code{N()} term operator.
+#' Combines multiple signed networks into a single object for ERGM modeling.
+#' Can represent either multilayer or dynamic network structures.
 #'
 #' @param ... Several signed networks or a list of signed networks.
-#' @return A network object comprising the provided networks, with multinetwork metadata.
+#' @param dynamic Logical. If \code{TRUE}, treat the input as a dynamic network; otherwise, as a multilayer network.
+#' @return A combined network object with appropriate constraints for model fitting.
 #' @export
 
-signNetworks <- function(...) {
+
+signNetworks <- function(..., dynamic = FALSE) {
   args <- list(...)
   if(all(sapply(args, is, "static.sign"))){
     nwl <- as.list(args)
@@ -14,21 +17,25 @@ signNetworks <- function(...) {
     nwl <- args[[1]]
   }else stop("Unrecognized format for multinetwork specification. See help for information.")
 
-  # Remove layer constraint
-  constraint_formula <- formula(~fixL(~`+` & `-`), env = globalenv())
+  # Remove constraints
   nwl <- lapply(nwl, function(nw) {
-    nw%ergmlhs%"constraints" <- constraint_formula
+    nw%ergmlhs%"constraints" <- NULL
     return(nw)
   })
 
   # Combine networks
-  comb <- Networks(nwl)
+  comb <- if (dynamic) NetSeries(nwl) else Networks(nwl)
+  group_var <- if (dynamic) ".TimeID" else ".NetworkID"
 
-  # Add new blockdiag attribute
-  comb%v%".NetworkID_new" <-  as.numeric(factor(paste0(comb%v%".LayerID", comb%v%".NetworkID")))
+  # Create grouping ID for blockdiag
+  comb %v% ".NetworkID_new" <- as.numeric(factor(paste(comb %v% group_var, comb%v%".LayerID", sep = "-")))
 
   # Add constraint
-  comb%ergmlhs%"constraints" <- formula(~fixL(~`+` & `-`) + blockdiag(".NetworkID_new"))
-
+  new_constraints <- if (dynamic) {
+    as.formula("~ fixL(~`+` & `-`) + blockdiag('.NetworkID_new') + discord('.PrevNet')")
+  } else {
+    as.formula("~ fixL(~`+` & `-`) + blockdiag('.NetworkID_new')")
+  }
+  comb %ergmlhs% "constraints" <- new_constraints
   return(comb)
 }

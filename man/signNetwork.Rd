@@ -6,36 +6,59 @@
 \usage{
 signNetwork(
   mat,
-  directed = F,
-  loops = F,
-  matrix.type,
-  cov = NULL,
+  directed = FALSE,
+  loops = FALSE,
+  matrix.type = c("adjacency", "edgelist"),
   names = NULL,
   vertex.attr = NULL,
+  timepoints = NULL,
+  tie.breaker = c("zero", "positive", "negative", "first", "last"),
   ...
 )
 }
 \arguments{
-\item{mat}{(List of) Adjacency matrix or edgelist. The adjacency matrix must only consist of 1,0 or -1. The edgelist must consist of 3 columns "From", "To" and "Sign" (1 or -1). For a dynamic network the required input is a list of adjacecny matrices or edgelists.}
+\item{mat}{(List of) adjacency matrices or edgelists. For dynamic networks, provide a list.
+Adjacency matrices must contain only -1, 0, or 1. Edgelists must have three columns: "From", "To", and "Sign".}
 
-\item{directed}{logical; should edges be interpreted as directed?}
+\item{directed}{Logical; should edges be interpreted as directed? Defaults to FALSE.}
 
-\item{loops}{logical; should loops be allowed?}
+\item{loops}{Logical; should loops be allowed? Defaults to FALSE.}
 
-\item{matrix.type}{Either "adjacency" or "edgelist" indicating what kind of format the input has.}
+\item{matrix.type}{Either "adjacency" or "edgelist", indicating the format of the input.}
 
-\item{cov}{Add vertex attributes to the network. The input for this should be a dataframe where the first column contains the names of the vertices and the other columns of the dataframe should represent the individual vertex attributes that will be added to the network, however it is not necessary to include all the vertices of the network in the dataframe.}
+\item{names}{Optional. A vector or list of vertex names. If dynamic, provide a list aligned with `mat`.}
 
-\item{names}{Specify vertex names. If no list is provided, the column names of the adjacency matrix will be used as names for the vertices.}
+\item{vertex.attr}{Optional. Additional vertex attributes passed to the network constructor.}
+
+\item{timepoints}{Optional. Either a single integer (number of desired pooled timepoints) or a list of index groups (e.g., list(1:3, 4:6)). Only applies to dynamic networks.}
+
+\item{tie.breaker}{Character. Determines how to resolve sign conflicts when positives and negatives are equal within a pooling window. One of:
+\itemize{
+  \item `"zero"`: set to 0 (default)
+  \item `"positive"`: set to 1
+  \item `"negative"`: set to -1
+  \item `"first"`: use the first nonzero sign
+  \item `"last"`: use the last nonzero sign
+}}
+
+\item{...}{Additional arguments passed to \code{network::network}.}
 }
 \value{
-A signed network of the class \code{static.sign} or \code{dynamic.sign}.
+A signed network of class \code{"static.sign"} or \code{"dynamic.sign"}.
 }
 \description{
-Turn an adjacency matrix or an edgelist into a static or dynamic signed network
+Turn an adjacency matrix or an edgelist into a static or dynamic signed network.
 }
 \examples{
-mat <- matrix(c(0,0,0,1,-1,0,1,0,0), nrow = 3)
+# Static adjacency matrix
+mat <- matrix(c(0, 1, -1, 1, 0, 0, -1, 0, 0), nrow = 3)
 net <- signNetwork(mat, matrix.type = "adjacency")
+
+# Dynamic network with pooling
+mats <- replicate(6, mat, simplify = FALSE)
+net_dyn <- signNetwork(mats, matrix.type = "adjacency", timepoints = 2, tie.breaker = "positive")
+
+# Custom timepoint pooling
+net_custom <- signNetwork(mats, matrix.type = "adjacency", timepoints = list(1:3, 4:6), tie.breaker = "first")
 
 }

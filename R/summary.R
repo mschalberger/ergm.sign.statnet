@@ -15,22 +15,22 @@
 #'
 #' @export
 summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
-  nws <- UnLayer(net)
+  nws <- net$gal$NetList
   if (is.null(time)) {
     time <- 1:length(nws)
   }
 
   mat <- data.frame()
   for (i in time) {
-    nw <- nws[[i]]
-    MultiNet <- nws[[i]][[6]]
+    nw <- UnLayer(nws[[i]])
+    MultiNet <- nws[[i]]
     n <- network.size(nw)
     a <- data.frame(Directed = nw$gal[["directed"]],
                     Loops = nw$gal[["loops"]],
                     Nodes = network.size(nw),
                     Edges = summary_formula(MultiNet ~ edges),
-                    `+ edges` = summary_formula(MultiNet ~ L(~ edges, ~ `+`)),
-                    `- edges` = summary_formula(MultiNet ~ L(~ edges, ~ `-`)),
+                    "Edges+" = summary_formula(MultiNet ~ L(~ edges, ~ `+`)),
+                    "Edges-" = summary_formula(MultiNet ~ L(~ edges, ~ `-`)),
                     Triads = summary_formula(MultiNet ~ L(~ triangle, ~ `+` | `-`)),
                     `+++` = summary_formula(MultiNet ~ L(~ triangle, ~ `+`)),
                     `---` = summary_formula(MultiNet ~ L(~ triangle, ~ `-`)),
@@ -57,7 +57,7 @@ summary.dynamic.sign <- function(net, time = NULL, names = NULL) {
 #' @export
 summary.static.sign <- function(net) {
   net <- UnLayer(net)
-  MultiNet <- net$mlt
+  MultiNet <- net$gal$mlt
 
   a <- as.data.frame(c(as.character(net$gal[["directed"]]),
                        as.character(net$gal[["loops"]]),
@@ -81,7 +81,7 @@ summary.static.sign <- function(net) {
                                                     espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ISP")) *c(1:n)),
                               sum(summary_formula(MultiNet ~ espL(d = c(1:n), L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * c(1:n))),
                        round(network.density(net),2)))
-  rownames(a) <- c("Directed", "Loops","Nodes","Edges","   + edges", "   - edges", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
+  rownames(a) <- c("Directed", "Loops","Nodes","Edges","Edges+", "Edges-", "Triads", "   +++", "   ---", "   ++-","   +--", "Density")
   colnames(a) <- ""
   cat("Network Attributes:")
   return(a)

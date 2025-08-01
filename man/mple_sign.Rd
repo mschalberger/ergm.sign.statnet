@@ -4,11 +4,7 @@
 \alias{mple_sign}
 \title{Fit an ERGM with MPLE using a logistic regression model}
 \usage{
-mple_sign(
-  formula,
-  control = control.ergm(MPLE.covariance.method = "Godambe"),
-  ...
-)
+mple_sign(formula, control = control.ergm(), seed = NULL, ...)
 }
 \arguments{
 \item{formula}{An ERGM formula, with the left-hand side being the network}
