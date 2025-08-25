@@ -16,5 +16,8 @@
 #' @importFrom  tergm NetSeries tergm control.tergm
 #' @importFrom Rdpack reprompt
 #' @importFrom dplyr bind_rows
+#' @importFrom intergraph asIgraph
+#' @importFrom graphlayouts layout_with_stress
+#' @importFrom igraph induced_subgraph
 #' @name ergm.sign
 NULL
