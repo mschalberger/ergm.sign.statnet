@@ -10,6 +10,8 @@
 \item{net}{A signed network object of class \code{static.sign} or \code{dynamic.sign}.}
 
 \item{time}{A list of integers indicating what timepoints should be summarised.}
+
+\item{names}{A character vector of names for the timepoints. If NULL, the time points will be numbered.}
 }
 \value{
 Matrix with network attributes.

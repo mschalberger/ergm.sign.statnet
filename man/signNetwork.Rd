@@ -9,7 +9,7 @@ signNetwork(
   directed = FALSE,
   loops = FALSE,
   matrix.type = c("adjacency", "edgelist"),
-  names = NULL,
+  vertex.names = NULL,
   vertex.attr = NULL,
   timepoints = NULL,
   tie.breaker = c("zero", "positive", "negative", "first", "last"),
@@ -26,7 +26,7 @@ Adjacency matrices must contain only -1, 0, or 1. Edgelists must have three colu
 
 \item{matrix.type}{Either "adjacency" or "edgelist", indicating the format of the input.}
 
-\item{names}{Optional. A vector or list of vertex names. If dynamic, provide a list aligned with `mat`.}
+\item{vertex.names}{Optional. A vector or list of vertex names. If dynamic, provide a list aligned with `mat`.}
 
 \item{vertex.attr}{Optional. Additional vertex attributes passed to the network constructor.}
 

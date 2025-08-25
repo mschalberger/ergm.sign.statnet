@@ -15,7 +15,7 @@
 #' tribes_sgl <- UnLayer(tribes)
 #'
 #' @export
-UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
+UnLayer <- function(net, color_pos = "green3", color_neg = "red3", neg.lyt = c("solid", "dashed", "dotted")) {
   if("static.sign" %in% class(net)) {
     multi <- net
 
@@ -35,6 +35,9 @@ UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
 
     #add edge color
     net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
+
+    net%e%'weights' <- ifelse(net%e%'sign'== 1, 2, 1)
+    net%e%'type' <- ifelse(net%e%'sign'== 1, "solid", neg.lyt)
 
      #add vertex attributes
      for (v in list.vertex.attributes(pos)) {
@@ -67,6 +70,10 @@ UnLayer <- function(net, color_pos = "green3", color_neg = "red3") {
 
       #add edge color
       net%e%'col' <- ifelse(net%e%'sign'== 1, color_pos, color_neg)
+
+      net%e%'weights' <- ifelse(net%e%'sign'== 1, 2, 1)
+
+      net%e%'type' <- ifelse(net%e%'sign'== 1, "solid", "dashed")
 
       #add vertex attributes
       for (v in list.vertex.attributes(pos)) {

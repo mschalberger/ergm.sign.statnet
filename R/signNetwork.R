@@ -145,7 +145,7 @@ signNetwork <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("a
     return(MultiNet)
   }
 
-  if (is.list(mat)) {
+  if (is.list(mat) && !is.data.frame(mat)) {
     if (!is.null(timepoints)) {
       if (is.numeric(timepoints)) {
         n_groups <- timepoints

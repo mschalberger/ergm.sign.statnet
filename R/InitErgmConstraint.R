@@ -116,7 +116,6 @@ InitErgmConstraint.fixL<-function(nw, arglist,  ...) {
                       vartypes = c("formula,list"),
                       defaultvalues = list(NULL),
                       required = c(TRUE))
-
   list(Ls = a$Ls, dependence=TRUE)
 }
 

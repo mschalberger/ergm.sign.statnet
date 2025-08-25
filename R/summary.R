@@ -4,6 +4,7 @@
 #'
 #' @param net A signed network object of class \code{static.sign} or \code{dynamic.sign}.
 #' @param time A list of integers indicating what timepoints should be summarised.
+#' @param names A character vector of names for the timepoints. If NULL, the time points will be numbered.
 #'
 #' @return Matrix with network attributes.
 #'

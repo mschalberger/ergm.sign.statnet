@@ -2,16 +2,19 @@
 % Please edit documentation in R/signNetworks.R
 \name{signNetworks}
 \alias{signNetworks}
-\title{A signed multinetwork network representation.}
+\title{A signed multi- or dynamic-network representation.}
 \usage{
-signNetworks(...)
+signNetworks(..., dynamic = FALSE)
 }
 \arguments{
 \item{...}{Several signed networks or a list of signed networks.}
+
+\item{dynamic}{Logical. If \code{TRUE}, treat the input as a dynamic network; otherwise, as a multilayer network.}
 }
 \value{
-A network object comprising the provided networks, with multinetwork metadata.
+A combined network object with appropriate constraints for model fitting.
 }
 \description{
-A function for specifying the LHS of a signed multi-network (a.k.a. multilevel) ERGM. Typically used in conjunction with the \code{N()} term operator.
+Combines multiple signed networks into a single object for ERGM modeling.
+Can represent either multilayer or dynamic network structures.
 }

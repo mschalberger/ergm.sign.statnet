@@ -4,7 +4,12 @@
 \alias{UnLayer}
 \title{Multilayer network to single layer network.}
 \usage{
-UnLayer(net, color_pos = "green3", color_neg = "red3")
+UnLayer(
+  net,
+  color_pos = "green3",
+  color_neg = "red3",
+  neg.lyt = c("solid", "dashed", "dotted")
+)
 }
 \arguments{
 \item{net}{A signed network object of class \code{static.sign} or \code{dynamic.sign}.}
