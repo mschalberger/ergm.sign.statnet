@@ -21,6 +21,9 @@
   if(!is.null(sm)){
     packageStartupMessage(sm)
   }
+  packageStartupMessage(pkgname," removes the enforcement of strict nesting structures
+across multilayer networks. If you need strict enforcement
+of nesting across layers, please use the original ergm.multi package.")
 }
 
 .onLoad <- function(libname, pkgname){
