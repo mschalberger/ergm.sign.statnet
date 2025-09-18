@@ -14,3 +14,5 @@ Imports: ergm.multi, ergm, Rdpack, tergm
 LinkingTo: ergm.multi, ergm
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr
+Depends: 
+    R (>= 2.10)

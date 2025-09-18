@@ -8,7 +8,7 @@
   net,
   col_pos = "green3",
   col_neg = "red3",
-  neg.lyt = "dotted",
+  neg.lty = 2,
   inv_weights = TRUE,
   ...
 )
@@ -20,7 +20,7 @@
 
 \item{col_neg}{Color for negative edges. Default is 'red3'.}
 
-\item{neg.lyt}{Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".}
+\item{neg.lty}{Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".}
 
 \item{inv_weights}{Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.}
 

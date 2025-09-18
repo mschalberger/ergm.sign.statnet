@@ -12,7 +12,7 @@
 #' @import network
 #' @import ergm
 #' @import ergm.multi
-#' @importFrom dplyr bind_rows
+#' @importFrom dplyr bind_rows %>%
 #' @importFrom  tergm NetSeries tergm control.tergm
 #' @importFrom Rdpack reprompt
 #' @importFrom dplyr bind_rows

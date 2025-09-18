@@ -468,3 +468,4 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 # body(InitErgmTerm.N)[[7]] <- quote(nattrs <- as_tibble.combined_networks(nw, unit = "networks", .NetworkID = a$.NetworkID,
 #                                                         .NetworkName = a$.NetworkName))
 # assignInNamespace("InitErgmTerm.N", InitErgmTerm.N, ns="ergm.multi")
+

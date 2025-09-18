@@ -27,7 +27,7 @@ NULL
 #'
 #' @name rebels
 #' @docType data
-#' @format An undirected \code{dynamic.sign} object with no loops and three timepoints.
+#' @format An undirected \code{dynamic.sign} object with no loops and eight timepoints.
 #' @references \insertRef{fritz2023all}{ergm.sign} \insertRef{raleigh2010introducing}{ergm.sign}
 #'
 #' @examples

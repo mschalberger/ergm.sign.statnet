@@ -31,13 +31,39 @@
   .RegisterProposals()
   .RegisterKeywords()
 
-  InitErgmTerm..layer.net <- getFromNamespace("InitErgmTerm..layer.net", ns="ergm.multi")
-  body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net",
-                                                   coef.names = c(),
-                                                   iinputs = c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)),
-                                                               if(is.directed(nw)) sapply(nwl, function(nw) (nw %v% ".undirected")[1]), ll),
-                                                   dependence = dependence))
-  assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
+  #InitErgmTerm..layer.net <- getFromNamespace("InitErgmTerm..layer.net", ns="ergm.multi")
+  #body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net",
+  #                                                 coef.names = c(),
+  #                                                 iinputs = c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)),
+  #                                                             if(is.directed(nw)) sapply(nwl, function(nw) (nw %v% ".undirected")[1]), ll),
+  #                                                 dependence = dependence))
+  #assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
+
+  ns <- getNamespace("ergm.multi")
+    # Define replacement
+    patched_fun <- function (nw,
+                             split.vattr = nw %n% ".blockID.vattr",
+                             names.vattr = nw %n% ".blockName.vattr",
+                             copy.ergmlhs = c("response")) {
+      uncombine_network(
+        nw,
+        split.vattr = split.vattr,
+        names.vattr = names.vattr,
+        use.subnet.cache = TRUE
+      ) %>%
+        purrr::map(function(nw1) {
+          for (name in copy.ergmlhs) {
+            nw1 %ergmlhs% name <- nw %ergmlhs% name
+          }
+          nw1
+        })
+    }
+
+    try({
+      unlockBinding("subnetwork_templates", ns)
+      assign("subnetwork_templates", patched_fun, envir = ns)
+      lockBinding("subnetwork_templates", ns)
+    }, silent = TRUE)
 }
 
 ## BEGIN boilerplate: should be kept in sync with statnet.common.

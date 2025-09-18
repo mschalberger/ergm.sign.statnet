@@ -172,7 +172,7 @@ signNetwork <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("a
     MultiDyn <- signNetworks(nets, dynamic = T)
     #MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+` & `-`))
     MultiDyn$gal$NetList <- nets
-    class(MultiDyn) <- c("dynamic.sign", class(MultiDyn), "combined_networks")
+    class(MultiDyn) <- c("dynamic.sign", class(MultiDyn))
     return(MultiDyn)
   } else {
     if (is.null(vertex.names) && matrix.type == "adjacency") {

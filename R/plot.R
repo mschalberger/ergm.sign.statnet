@@ -12,7 +12,7 @@
 #' @param net A signed network object of class \code{static.sign}.
 #' @param col_pos Color for positive edges. Default is 'green3'.
 #' @param col_neg Color for negative edges. Default is 'red3'.
-#' @param neg.lyt Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".
+#' @param neg.lty Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".
 #' @param inv_weights Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.
 #' @param ... Additional arguments passed to the plot function.
 #'
@@ -30,14 +30,14 @@
 #'
 #' @export
 plot.static.sign <- function(net, col_pos = "green3", col_neg = "red3",
-                             neg.lyt = "dotted", inv_weights = TRUE, ...) {
-  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lyt = neg.lyt)
+                             neg.lty = 2, inv_weights = TRUE, ...) {
+  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lty = neg.lty)
 
   tmp_graph <- intergraph::asIgraph(sgl)
   weights <- if (inv_weights) 1 / sgl%e%"weights" else sgl%e%"weights"
   layout <- graphlayouts::layout_with_stress(tmp_graph, weights = weights)
 
-  p <- plot(sgl,
+  p <- network::plot.network(sgl,
             edge.col = "col",
             edge.lty = "type",
             coord = layout,
@@ -59,53 +59,48 @@ plot.static.sign <- function(net, col_pos = "green3", col_neg = "red3",
 #' @return A list of plots, one for each selected timepoint.
 #'
 #' @export
-plot.dynamic.sign <- function(net, col_pos = "green3", col_neg = "red3",
-                              neg.lyt = "dotted", inv_weights = TRUE,
+plot.dynamic.sign <- function(net, col_pos = "#008000", col_neg = "#E3000F",
+                              neg.lty = 2, inv_weights = TRUE,
                               time = NULL, titles = NULL, fix.pos = TRUE, ...) {
-  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lyt = neg.lyt)
+  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lty = neg.lty)
 
   if (is.null(time)) {
     time <- seq_len(length(sgl))
   }
 
+  p <- vector("list", length(time))
+
   if (fix.pos) {
+    # Reference layout: t = 1
     ref_sgl <- sgl[[1]]
     ref_graph <- intergraph::asIgraph(ref_sgl)
+    weights_ref <- if (inv_weights) 1 / ref_sgl%e%"weights" else ref_sgl%e%"weights"
+    E(ref_graph)$weights <- weights_ref
 
-    weights <- if (inv_weights) 1 / ref_sgl%e%"weights" else ref_sgl%e%"weights"
+    layout_ref <- graphlayouts::layout_with_stress(ref_graph, weights = E(ref_graph)$weights)
 
-    deg <- igraph::degree(ref_graph)
-    connected <- which(deg > 0)
-    isolates <- which(deg == 0)
-
-    layout_conn <- graphlayouts::layout_with_stress(
-      igraph::induced_subgraph(ref_graph, connected),
-      weights = weights
-    )
-
-    center <- colMeans(layout_conn)
-    radius <- max(sqrt(rowSums((layout_conn - matrix(center, nrow(layout_conn), 2, byrow=TRUE))^2)))
-
-    n_iso <- length(isolates)
-    if (n_iso > 0) {
-      angles <- seq(0, 2*pi, length.out = n_iso+1)[-(n_iso+1)]
-      layout_iso <- cbind(center[1] + (radius * 1.2) * cos(angles),
-                          center[2] + (radius * 1.2) * sin(angles))
-    }
-
-    layout <- matrix(0, nrow = vcount(ref_graph), ncol = 2)
-    layout[connected, ] <- layout_conn
-    if (n_iso > 0) layout[isolates, ] <- layout_iso
-
-    p <- vector("list", length(time))
     for (t in time) {
+      tmp_graph <- intergraph::asIgraph(sgl[[t]])
+      tmp_weights <- if (inv_weights) 1 / sgl[[t]]%e%"weights" else sgl[[t]]%e%"weights"
+      E(tmp_graph)$weights <- tmp_weights
+
+      # Full stress layout for current graph
+      layout_t <- graphlayouts::layout_with_stress(tmp_graph, weights = E(tmp_graph)$weights)
+
+      # Rotate/translate the entire layout to match reference
+      Yrot <- vegan::procrustes(layout_ref, layout_t, scale = F)$Yrot
+      layout_t <- Yrot
+
+      # Plot using rotated layout
       p[[t]] <- plot(sgl[[t]],
                      edge.col = "col",
                      edge.lty = "type",
-                     coord = layout,
-                     main = titles[t],
+                     coord = layout_t,
+                     main = if (!is.null(titles)) titles[t] else NULL,
                      ...)
     }
+
+
   } else {
     p <- vector("list", length(time))
     for (t in time) {
