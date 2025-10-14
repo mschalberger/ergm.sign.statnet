@@ -19,5 +19,6 @@
 #' @importFrom intergraph asIgraph
 #' @importFrom graphlayouts layout_with_stress
 #' @importFrom igraph induced_subgraph
+#' @importFrom purrr map
 #' @name ergm.sign
 NULL

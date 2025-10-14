@@ -18,44 +18,44 @@ signNetworks <- function(..., dynamic = FALSE) {
   }else stop("Unrecognized format for multinetwork specification. See help for information.")
 
   # cycle through time and add lagged attributes
-  for (i in seq_along(nwl)) {
-    nw <- nwl[[i]]
-
-    # vertex attributes
-    vattrs <- list.vertex.attributes(nw)
-    if (i > 1) {
-      prev <- nwl[[i-1]]
-      for (nm in vattrs) {
-        nw %v% paste0("lag_", nm) <- prev %v% nm
-      }
-    } else {
-      for (nm in vattrs) {
-        nw %v% paste0("lag_", nm) <- NA
-      }
-    }
-
-    # edge attributes
-    eattrs <- list.edge.attributes(nw)
-    if (i > 1) {
-      prev <- nwl[[i-1]]
-      for (nm in eattrs) {
-        nw %e% paste0("lag_", nm) <- prev %e% nm
-      }
-    } else {
-      for (nm in eattrs) {
-        nw %e% paste0("lag_", nm) <- NA
-      }
-    }
-
-    nwl[[i]] <- nw
-  }
-
-  nwl[[1]]%n%"lag_neg" <-  matrix(NA, nrow = network.size(nwl[[1]]), ncol = network.size(nwl[[1]]))  # first time step has no lagged neg
-  for (i in 2:length(nwl)) {
-    prev <- nwl[[i-1]]
-    mat <- as.sociomatrix(prev, attrname = "neg")  # numeric 0/1 matrix
-    nwl[[i]]%n%"lag_neg"<- mat                  # network attribute for this time step
-  }
+  # for (i in seq_along(nwl)) {
+  #   nw <- nwl[[i]]
+  #
+  #   # vertex attributes
+  #   vattrs <- list.vertex.attributes(nw)
+  #   if (i > 1) {
+  #     prev <- nwl[[i-1]]
+  #     for (nm in vattrs) {
+  #       nw %v% paste0("lag_", nm) <- prev %v% nm
+  #     }
+  #   } else {
+  #     for (nm in vattrs) {
+  #       nw %v% paste0("lag_", nm) <- NA
+  #     }
+  #   }
+  #
+  #   # edge attributes
+  #   eattrs <- list.edge.attributes(nw)
+  #   if (i > 1) {
+  #     prev <- nwl[[i-1]]
+  #     for (nm in eattrs) {
+  #       nw %e% paste0("lag_", nm) <- prev %e% nm
+  #     }
+  #   } else {
+  #     for (nm in eattrs) {
+  #       nw %e% paste0("lag_", nm) <- NA
+  #     }
+  #   }
+  #
+  #   nwl[[i]] <- nw
+  # }
+  #
+  # nwl[[1]]%n%"lag_neg" <-  matrix(NA, nrow = network.size(nwl[[1]]), ncol = network.size(nwl[[1]]))  # first time step has no lagged neg
+  # for (i in 2:length(nwl)) {
+  #   prev <- nwl[[i-1]]
+  #   mat <- as.sociomatrix(prev, attrname = "neg")  # numeric 0/1 matrix
+  #   nwl[[i]]%n%"lag_neg"<- mat                  # network attribute for this time step
+  # }
 
   # Remove constraints
   nwl <- lapply(nwl, function(nw) {
@@ -66,6 +66,8 @@ signNetworks <- function(..., dynamic = FALSE) {
   # Combine networks
   comb <- if (dynamic) NetSeries(nwl) else Networks(nwl)
   group_var <- if (dynamic) ".TimeID" else ".NetworkID"
+
+  #comb[["gal"]][[".subnetcache"]] <- NULL
 
   # Create grouping ID for blockdiag
   comb %v% ".NetworkID_new" <- as.numeric(factor(paste(comb %v% group_var, comb%v%".LayerID", sep = "-")))

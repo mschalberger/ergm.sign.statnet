@@ -5,7 +5,7 @@
 \alias{rebels}
 \title{Conflict Events in Syrian Civil War}
 \format{
-An undirected \code{dynamic.sign} object with no loops and three timepoints.
+An undirected \code{dynamic.sign} object with no loops and eight timepoints.
 }
 \description{
 A dynamic network of combat events in the Syrian civil war between 2017 and

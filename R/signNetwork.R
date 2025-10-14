@@ -141,6 +141,7 @@ signNetwork <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("a
 
     MultiNet <- Layer(static_net, c(`+` = "pos", `-` = "neg"))
     MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+`&`-`))
+    MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
     class(MultiNet) <- c("static.sign", "network", class(MultiNet))
     return(MultiNet)
   }
