@@ -528,14 +528,15 @@ InitErgmTerm.delese <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
+  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # build delayed covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
   tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
-  if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
+  # Check this for Marc
+  # if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
 
   tmp[base_nodes, base_nodes] <- tmp_sub
 
@@ -624,14 +625,15 @@ InitErgmTerm.delesf <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
+  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # build delayed covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
   tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
-  if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
+  # Check this!
+  # if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
   tmp[base_nodes, base_nodes] <- tmp_sub
 
   # create edgecov term
@@ -698,7 +700,7 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
+  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
@@ -709,7 +711,7 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
   # Geometric weights: 1 - (1 - exp(-d))^sp
   # but only apply weights to edges present in adj > 0
   weights <- exp(decay)* (1 - (1 - exp(-decay))^sp)
-  weights[adj <= 0] <- 0  # zero weight for non-edges
+  # weights[adj <= 0] <- 0  # zero weight for non-edges
 
   tmp_sub <- weights
 
@@ -781,7 +783,7 @@ InitErgmTerm.gwdelesf <- function(nw, arglist, gw.cutoff=30, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
+  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
@@ -792,7 +794,7 @@ InitErgmTerm.gwdelesf <- function(nw, arglist, gw.cutoff=30, ...) {
   # Geometric weights: 1 - (1 - exp(-d))^sp
   # but only apply weights to edges present in adj > 0
   weights <-exp(decay)* (1 - (1 - exp(-decay))^sp)
-  weights[adj <= 0] <- 0  # zero weight for non-edges
+  # weights[adj <= 0] <- 0  # zero weight for non-edges
 
   tmp_sub <- weights
 
