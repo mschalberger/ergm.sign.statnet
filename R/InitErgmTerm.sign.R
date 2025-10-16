@@ -528,17 +528,13 @@ InitErgmTerm.delese <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # build delayed covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
-  tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
-  # Check this for Marc
-  # if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
-
-  tmp[base_nodes, base_nodes] <- tmp_sub
+  if(!is.null(d)) sp[sp == d] <- 1
+  tmp[base_nodes, base_nodes] <- sp
 
   # create edgecov term
   cl <- call("edgecov", x = tmp)
@@ -625,16 +621,13 @@ InitErgmTerm.delesf <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # build delayed covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
-  tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
-  # Check this!
-  # if(!is.null(d)) tmp_sub[adj > 0 & sp == d] <- 1 else tmp_sub[adj > 0] <- sp[adj > 0]
-  tmp[base_nodes, base_nodes] <- tmp_sub
+  if(!is.null(d)) sp[sp == d] <- 1
+  tmp[base_nodes, base_nodes] <- sp
 
   # create edgecov term
   cl <- call("edgecov", x = tmp)
@@ -700,26 +693,19 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # Build geometrically weighted covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
-  tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
 
   # Geometric weights: 1 - (1 - exp(-d))^sp
-  # but only apply weights to edges present in adj > 0
   weights <- exp(decay)* (1 - (1 - exp(-decay))^sp)
-  # weights[adj <= 0] <- 0  # zero weight for non-edges
-
-  tmp_sub <- weights
-
-  tmp[base_nodes, base_nodes] <- tmp_sub
+  tmp[base_nodes, base_nodes] <- weights
 
   # create edgecov term with weighted shared partner covariate matrix
   cl <- call("edgecov", x = tmp)
-  trm <- call.ErgmTerm(cl, nw, ..., term.options = list(terms.only = TRUE))
+  trm <- call.ErgmTerm(cl, nw, ...)
 
   trm$coef.names <- paste0("gwdelese", decay, base, ifelse(is_directed, paste0("~", type), ""))
   trm
@@ -783,26 +769,19 @@ InitErgmTerm.gwdelesf <- function(nw, arglist, gw.cutoff=30, ...) {
   diag(sp) <- 0
 
   # current adjacency of requested base layer
-  # adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base)))
   n <- network.size(nw)
   base_nodes <- which(nw %v% ".LayerName" == base)
 
   # Build geometrically weighted covariate matrix
   tmp <- matrix(0, nrow = n, ncol = n)
-  tmp_sub <- matrix(0, length(base_nodes), length(base_nodes))
 
   # Geometric weights: 1 - (1 - exp(-d))^sp
-  # but only apply weights to edges present in adj > 0
   weights <-exp(decay)* (1 - (1 - exp(-decay))^sp)
-  # weights[adj <= 0] <- 0  # zero weight for non-edges
-
-  tmp_sub <- weights
-
-  tmp[base_nodes, base_nodes] <- tmp_sub
+  tmp[base_nodes, base_nodes] <- weights
 
   # create edgecov term with weighted shared partner covariate matrix
   cl <- call("edgecov", x = tmp)
-  trm <- call.ErgmTerm(cl, nw, ..., terms.only = TRUE)
+  trm <- call.ErgmTerm(cl, nw, ...)
 
   trm$coef.names <- paste0("gwdelesf", decay, base, ifelse(is_directed, paste0("~", type), ""))
   trm
@@ -824,36 +803,25 @@ InitErgmTerm.gwdelesf <- function(nw, arglist, gw.cutoff=30, ...) {
 #' @concept delayed
 InitErgmTerm.delrecip <- function(nw, arglist, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = "base",
-                      vartypes = "character",
-                      defaultvalues = list(NULL),
-                      required = FALSE)
+                      varnames = NULL,
+                      vartypes = NULL,
+                      defaultvalues = list(),
+                      required = NULL)
 
-  base <- a$base
-  nw1 <- nw
+  if (!is.directed(nw)) {
+    stop("delrecip term only applicable to directed networks")
+  }
 
   prev_net <- nw$gal$.PrevNets[[1]]
   if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
   if (is.null(prev_net)) stop("No previous network found")
 
-  # adjacency of previous net restricted to requested layer
-  if (!is.null(base)) {
-  prev_net <- get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == base))
-  nw1 <- get.inducedSubgraph(nw, which(nw %v% ".LayerName" == base))
+  if (!is.null(nw$gal$sign)) {
+    prev_net <- get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == nw$gal$sign))
   }
   prev_adj <- as.matrix(prev_net)
-  curr_adj <- as.matrix(nw1)
 
-  # reciprocity: 1 if current i->j and previous j->i
-  result_matrix <- (curr_adj == 1 & t(prev_adj) == 1) * 1
-
-  n <- network.size(nw)
-  base_nodes <- which(nw %v% ".LayerName" == base)
-
-  tmp <- matrix(0, nrow = n, ncol = n)
-  tmp[base_nodes, base_nodes] <- result_matrix
-
-  cl <- call("edgecov", x = tmp)
+  cl <- call("edgecov", x = t(prev_adj))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- paste("delrecip")
   trm
@@ -884,11 +852,6 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
   if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
   if (is.null(prev_net)) stop("No previous network found")
 
-  # if (!is.null(nw$gal$sign)) {
-  #   prev_net <- get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == nw$gal$sign
-  #   ))
-  #   }
-
   # copy attribute values from previous net to a temporary attribute on current net
   nw %v% paste("delnodecov", a$attr, sep = "_") <- prev_net %v% a$attr
 
@@ -898,56 +861,3 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
   trm$coef.names <- paste("delnodematch", a$attr, sep = "_")
   trm
 }
-
-
-#InitErgmTerm..layer.net <- ergm.multi:::InitErgmTerm..layer.net
-#body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net", coef.names=c(), iinputs=c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)), if(is.directed(nw)) sapply(nwl, function(nw) (nw%v% ".undirected")[1]), ll), dependence=dependence))
-#assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
-
-# uncombine_network <- ergm.multi:::uncombine_network
-# body(uncombine_network)[[6]][[4]][[4]][[4]][[2]] <- quote({
-#   if ("combined_networks" %in% class(nwl[[i]])) {
-#     class(nwl[[i]]) <- class(nwl[[i]])[-seq_len(min(which(class(nwl[[i]]) == "combined_networks")))]
-#   }
-# })
-# assignInNamespace("uncombine_network", uncombine_network, ns="ergm.multi")
-#
-# InitErgmTerm.N <- ergm.multi:::InitErgmTerm.N
-# body(InitErgmTerm.N)[[7]] <- quote(nattrs <- as_tibble.combined_networks(nw, unit = "networks", .NetworkID = a$.NetworkID,
-#                                                         .NetworkName = a$.NetworkName))
-# assignInNamespace("InitErgmTerm.N", InitErgmTerm.N, ns="ergm.multi")
-#
-# patched_uncombine <-
-#   function(nw,
-#            split.vattr = nw %n% ".blockID.vattr",
-#            names.vattr = nw %n% ".blockName.vattr",
-#            use.subnet.cache = FALSE) {
-#     if (!is(nw, "combined_networks"))
-#       stop("Specified network was not constructed by combine_networks().")
-#
-#     tmp <- ergm.multi:::.pop_vattrv(nw, split.vattr)
-#     nw <- tmp$nw
-#     f <- tmp$vattr
-#
-#     if (!is.null(names.vattr)) {
-#       tmp <- ergm.multi:::.pop_vattrv(nw, names.vattr)
-#       nw <- tmp$nw
-#       nwnames <- tmp$vattr
-#     }
-#
-#     # if (use.subnet.cache && ".subnetcache" %in% list.network.attributes(nw) &&
-#     #     names(nw %n% ".subnetcache") == split.vattr) {
-#     #   nwl <- (nw %n% ".subnetcache")[[split.vattr]]
-#     # } else {
-#       # just split, skip the for-loop
-#       nwl <- split(nw, f)
-#     #}
-#
-#     if (!is.null(names.vattr))
-#       names(nwl) <- unique(nwnames)
-#
-#     class(nwl) <- c("network.list", class(nwl))
-#     nwl
-#   }
-#
-

@@ -27,7 +27,7 @@ GoF <- function(model, nsim = 200, seed = NULL) {
     pos <- as.sociomatrix(model[["network"]][["gal"]][[".subnetcache"]][[".LayerID"]][["+"]])
     neg <- as.sociomatrix(model[["network"]][["gal"]][[".subnetcache"]][[".LayerID"]][["-"]])*-1
     comb <- pos + neg
-    net <- signNetwork(mat = comb, matrix.type = "adjacency")
+    net <- network.sign(mat = comb, matrix.type = "adjacency")
 
     n <- ncol(pos)
     e <- summary_formula(net ~ edges)

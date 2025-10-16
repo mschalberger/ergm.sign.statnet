@@ -9,7 +9,7 @@
 #'
 #' @return A data frame or matrix with network attributes.
 #'
-#' @seealso \link{signNetwork}
+#' @seealso \link{network.sign}
 #'
 #' @examples
 #' data("tribes")

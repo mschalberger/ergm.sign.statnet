@@ -33,5 +33,5 @@ summary.static.sign(tribes)
 
 }
 \seealso{
-\link{signNetwork}
+\link{network.sign}
 }

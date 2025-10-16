@@ -8,7 +8,7 @@
 #'
 #' @return Single layer network object.
 #'
-#' @seealso \link{signNetwork}
+#' @seealso \link{network.sign}
 #'
 #' @examples
 #' data("tribes")
@@ -88,7 +88,7 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", neg.lty =
 
 
   } else{
-    stop("The input should be a network created by the signNetwork() function")
+    stop("The input should be a network created by the network.sign() function")
   }
   return(comb)
 }

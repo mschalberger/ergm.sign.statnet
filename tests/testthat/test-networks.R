@@ -8,11 +8,11 @@ test_that("multinetwork network representation works", {
   full_adj <- rbind(cbind(adj_matrix_1, matrix(0, nrow = nrow(adj_matrix_1), ncol = ncol(adj_matrix_2))),
         cbind(matrix(0, nrow = nrow(adj_matrix_2), ncol = ncol(adj_matrix_1)), adj_matrix_2))
 
-  full_net <- signNetwork(full_adj, matrix.type = "adjacency", directed = T)
+  full_net <- network.sign(full_adj, matrix.type = "adjacency", directed = T)
   set.vertex.attribute(full_net, "adj", c(rep(1, nrow(adj_matrix_1)), rep(2, nrow(adj_matrix_2))))
 
-  net1 <- signNetwork(adj_matrix_1, matrix.type = "adjacency", directed = T)
-  net2 <- signNetwork(adj_matrix_2, matrix.type = "adjacency", directed = T)
+  net1 <- network.sign(adj_matrix_1, matrix.type = "adjacency", directed = T)
+  net2 <- network.sign(adj_matrix_2, matrix.type = "adjacency", directed = T)
 
   # fit ergm
   ergm1 <- ergm(net1 ~ Pos(~edges) + Neg(~edges))

@@ -25,17 +25,17 @@
 #' @examples
 #' # Static adjacency matrix
 #' mat <- matrix(c(0, 1, -1, 1, 0, 0, -1, 0, 0), nrow = 3)
-#' net <- signNetwork(mat, matrix.type = "adjacency")
+#' net <- network.sign(mat, matrix.type = "adjacency")
 #'
 #' # Dynamic network with pooling
 #' mats <- replicate(6, mat, simplify = FALSE)
-#' net_dyn <- signNetwork(mats, matrix.type = "adjacency", timepoints = 2, tie.breaker = "positive")
+#' net_dyn <- network.sign(mats, matrix.type = "adjacency", timepoints = 2, tie.breaker = "positive")
 #'
 #' # Custom timepoint pooling
-#' net_custom <- signNetwork(mats, matrix.type = "adjacency", timepoints = list(1:3, 4:6), tie.breaker = "first")
+#' net_custom <- network.sign(mats, matrix.type = "adjacency", timepoints = list(1:3, 4:6), tie.breaker = "first")
 #'
 #' @export
-signNetwork <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("adjacency", "edgelist"),
+network.sign <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("adjacency", "edgelist"),
                         vertex.names = NULL, vertex.attr = NULL, timepoints = NULL,
                         tie.breaker = c("zero", "positive", "negative", "first", "last"), ...) {
 
@@ -170,7 +170,7 @@ signNetwork <- function(mat, directed = FALSE, loops = FALSE, matrix.type = c("a
                    vertex.names,
                    SIMPLIFY = FALSE)
 
-    MultiDyn <- signNetworks(nets, dynamic = T)
+    MultiDyn <- networks.sign(nets, dynamic = T)
     #MultiDyn %ergmlhs% "constraints" <- update(MultiDyn %ergmlhs% "constraints", ~ . + fixL(~`+` & `-`))
     MultiDyn$gal$NetList <- nets
     class(MultiDyn) <- c("dynamic.sign", class(MultiDyn))

@@ -25,5 +25,5 @@ tribes_sgl <- UnLayer(tribes)
 
 }
 \seealso{
-\link{signNetwork}
+\link{network.sign}
 }

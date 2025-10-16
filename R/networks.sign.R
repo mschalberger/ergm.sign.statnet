@@ -9,7 +9,7 @@
 #' @export
 
 
-signNetworks <- function(..., dynamic = FALSE) {
+networks.sign <- function(..., dynamic = FALSE) {
   args <- list(...)
   if(all(sapply(args, is, "static.sign"))){
     nwl <- as.list(args)

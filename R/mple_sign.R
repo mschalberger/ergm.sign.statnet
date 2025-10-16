@@ -147,7 +147,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   if (control$MPLE.covariance.method == 'Godambe') {
   if ("combined_networks" %in% class(net)) {
     list_net <- uncombine_network(net)
-    small <- signNetwork(matrix(0, nrow = 1, ncol = 1), matrix.type= "adjacency", directed = is_directed, loops = has_loops)
+    small <- network.sign(matrix(0, nrow = 1, ncol = 1), matrix.type= "adjacency", directed = is_directed, loops = has_loops)
     vnames <- net%v%"vertex.names"
     sub_list <- list()
 
@@ -168,7 +168,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
       start_name <- start_name + block_size  # Update correctly
 
       class(blocks) <- c("static.sign", class(blocks))
-      net_list <- signNetworks(blocks, small)
+      net_list <- networks.sign(blocks, small)
 
       sub_net <- ergm::simulate_formula(
           object = formula,
@@ -194,7 +194,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
       lapply(sub_list, `[[`, i)
     })
 
-    sim_mple <- lapply(transposed_list, signNetworks)
+    sim_mple <- lapply(transposed_list, networks.sign)
   } else {
     sim_mple <- ergm::simulate_formula(
       object = formula,
