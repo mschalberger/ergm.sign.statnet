@@ -10,7 +10,7 @@ Description: This package builds on the ergm.multi package from the statnet pack
 Encoding: UTF-8
 LazyData: true
 LazyLoad: yes
-RoxygenNote: 7.3.1
+RoxygenNote: 7.3.3
 RdMacros: Rdpack
 Imports:
     statnet.common,
