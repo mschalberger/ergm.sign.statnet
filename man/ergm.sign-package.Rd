@@ -7,4 +7,18 @@
 \description{
 This package builds on the ergm.multi package from the statnet packages and makes it possible to fit an ERGM for signed networks.
 }
+\author{
+\strong{Maintainer}: Marc Schalberger \email{m.schalberger@fu-berlin.de}
+
+Authors:
+\itemize{
+  \item Cornelius Fritz \email{FRITZC@tcd.ie}
+}
+
+Other contributors:
+\itemize{
+  \item Pavel Krivitsky \email{p.krivitsky@unsw.edu.au} [contributor]
+}
+
+}
 \keyword{internal}

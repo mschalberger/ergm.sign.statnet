@@ -5,22 +5,22 @@
 \title{Visualization for Signed Networks}
 \usage{
 \method{plot}{static.sign}(
-  net,
+  x,
   col_pos = "green3",
   col_neg = "red3",
-  neg.lty = 2,
+  neg.lty = 1,
   inv_weights = TRUE,
   ...
 )
 }
 \arguments{
-\item{net}{A signed network object of class \code{static.sign}.}
+\item{x}{A signed network object of class \code{static.sign}.}
 
 \item{col_pos}{Color for positive edges. Default is 'green3'.}
 
 \item{col_neg}{Color for negative edges. Default is 'red3'.}
 
-\item{neg.lty}{Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".}
+\item{neg.lty}{Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".}
 
 \item{inv_weights}{Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.}
 
@@ -45,7 +45,7 @@ via \code{layout_with_stress()}. Similar to Kamada-Kawai, but generally faster a
 
 \examples{
 data("tribes")
-plot.static.sign(tribes, col_pos = "green", col_neg = "red")
+plot(tribes, col_pos = "green", col_neg = "red")
 
 }
 \references{

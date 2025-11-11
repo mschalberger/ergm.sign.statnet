@@ -26,5 +26,6 @@ InitErgmProposal.TNTFixL <- function(nw, arguments, ...){
   if(is(Ls, "formula")) Ls <- list(Ls)
   auxiliaries <- ergm.multi:::.mk_.layer.net_auxform(Ls)
 
+
   list(name = "TNTFixL", dyadgen = ergm_dyadgen_select(arguments, nw), bd = ergm_bd_init(arguments, nw), auxiliaries = auxiliaries)
 }

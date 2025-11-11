@@ -53,7 +53,7 @@ summary(tribes)
 If we would like to get other descriptive statistics using the `summary_formula` function:
 
 ```{r}
-ergm::summary_formula(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
+summary(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
 ```
 
 # Plotting the network

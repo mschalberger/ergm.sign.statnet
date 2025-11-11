@@ -1,7 +1,6 @@
 test_that("multinetwork network representation works", {
   set.seed(1)
 
-
   adj_matrix_1 <- matrix(sample(c(-1, 0, 1), 100, replace = TRUE), nrow = 10)
   adj_matrix_2 <- matrix(sample(c(-1, 0, 1), 25, replace = TRUE), nrow = 5)
 
@@ -15,6 +14,6 @@ test_that("multinetwork network representation works", {
   net2 <- network.sign(adj_matrix_2, matrix.type = "adjacency", directed = T)
 
   # fit ergm
-  ergm1 <- ergm(net1 ~ Pos(~edges) + Neg(~edges))
-  ergm2 <- ergm(Networks(full_net) ~N(~Pos(~edges) + Neg(~edges)))
+  s1 <- summary(full_net ~ Pos(~edges) + Neg(~edges))
+  s2 <- summary(Networks(full_net) ~N(~Pos(~edges) + Neg(~edges)))
 })

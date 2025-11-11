@@ -5,16 +5,18 @@
 \alias{summary.dynamic.sign}
 \title{Network Attributes for Signed Networks}
 \usage{
-\method{summary}{static.sign}(net)
+\method{summary}{static.sign}(object, ...)
 
-\method{summary}{dynamic.sign}(net, time = NULL, names = NULL)
+\method{summary}{dynamic.sign}(object, time = NULL, names = NULL, ...)
 }
 \arguments{
-\item{net}{A signed network object of class \code{static.sign}.}
+\item{object}{A signed network object of class \code{dynamic.sign}.}
 
-\item{time}{A vector of integers indicating which timepoints should be summarized.}
+\item{...}{Additional arguments.}
 
-\item{names}{A character vector of names for the timepoints. If \code{NULL}, timepoints are numbered.}
+\item{time}{Integer vector of timepoints to summarize. Defaults to all.}
+
+\item{names}{Character vector of names for timepoints. If NULL, uses "Time 1", "Time 2", etc.}
 }
 \value{
 A data frame or matrix with network attributes.
@@ -29,9 +31,9 @@ Print descriptive statistics of a signed network.
 
 \examples{
 data("tribes")
-summary.static.sign(tribes)
+summary(tribes)
 
 }
 \seealso{
-\link{network.sign}
+\link{network.sign}, \link{UnLayer}
 }

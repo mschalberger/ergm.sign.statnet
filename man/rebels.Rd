@@ -9,15 +9,14 @@ An undirected \code{dynamic.sign} object with no loops and eight timepoints.
 }
 \description{
 A dynamic network of combat events in the Syrian civil war between 2017 and
-2019. The dataset is taken from \insertCite{fritz2023all;textual}{ergm.sign}.
-The raw data for this example Armed Conflict Location & Event Data Project \insertCite{raleigh2010introducing;textual}{ergm.sign}.
+2025. The dataset is taken from \insertCite{fritz2023all;textual}{ergm.sign}.
+The raw data comes from the Armed Conflict Location & Event Data Project \insertCite{raleigh2010introducing;textual}{ergm.sign}.
 }
 \examples{
-
 \donttest{
 data(rebels)
 }
 }
 \references{
-\insertRef{fritz2023all}{ergm.sign} \insertRef{raleigh2010introducing}{ergm.sign}
+\insertRef{fritz2023all}{ergm.sign}, \insertRef{raleigh2010introducing}{ergm.sign}
 }

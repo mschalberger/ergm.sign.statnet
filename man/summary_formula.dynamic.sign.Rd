@@ -2,29 +2,22 @@
 % Please edit documentation in R/summary.R
 \name{summary_formula.dynamic.sign}
 \alias{summary_formula.dynamic.sign}
-\alias{summary.formula}
-\title{Calculation of summary statistics for dynamic signed netowrks}
+\title{Summary formula method for dynamic signed networks}
 \usage{
 \method{summary_formula}{dynamic.sign}(object, at, ..., basis = NULL)
 }
 \arguments{
-\item{object}{An [`formula`] object with a
-[`dynamic.sign`] as its LHS.}
+\item{object}{A formula with a dynamic.sign network as LHS.}
 
-\item{at}{Numeric vector specifying the time point(s) at which to
-calculate the statistics. If missing, statistics are calculated at all time points.}
+\item{at}{Numeric vector of timepoints. Defaults to all if missing.}
 
-\item{...}{Additional arguments passed to or used by methods.}
+\item{...}{Additional arguments passed to summary_formula for network objects.}
 
-\item{basis}{An optional [`dynamic.sign`] object. If `NULL`, the network from the formula's LHS is used.}
+\item{basis}{Optional dynamic.sign network. If NULL, uses LHS network.}
 }
 \value{
-A matrix with \code{length(at)} row, one for each time
-point in \code{at}, and columns for each term of the formula,
-containing the corresponding statistics measured on the network
+Matrix of statistics for each timepoint.
 }
 \description{
-A method for [summary_formula()] to calculate the
-specified statistics for an observed [`dynamic.sign`] at the
-specified time point(s).
+Calculates statistics for dynamic.sign objects at specified timepoints.
 }

@@ -22,8 +22,8 @@
     packageStartupMessage(sm)
   }
   #packageStartupMessage(pkgname," removes the enforcement of strict nesting structures
-#across multilayer networks. If you need strict enforcement
-#of nesting across layers, please use the original ergm.multi package.")
+  #across multilayer networks. If you need strict enforcement
+  #of nesting across layers, please use the original ergm.multi package.")
 }
 
 .onLoad <- function(libname, pkgname){
@@ -35,12 +35,12 @@
   .RegisterKeywords()
 
   my_subnetwork_templates <- function(nw, split.vattr = ".LayerID", names.vattr = ".LayerName") {
-    if (!is(nw, "combined_networks")) class(nw) <- c("combined_networks", class(nw))
+    class(nw) <- c("combined_networks", setdiff(class(nw), "combined_networks"))
     uncombine_network(
       nw,
       split.vattr = split.vattr,
       names.vattr = names.vattr,
-      use.subnet.cache = !any(c(".PrevNet", ".PrevNets") %in% names(nw[["gal"]]))
+      use.subnet.cache = is.null(nw[["gal"]][["sign"]])
     ) %>%
       purrr::map(function(nw1) {
         for (name in c("response")) {
@@ -52,7 +52,7 @@
 
   # Define function to patch ergm.multi when it loads
   patch_ergm_multi <- function() {
-    assignInNamespace(
+    utils::assignInNamespace(
       "subnetwork_templates",
       my_subnetwork_templates,
       ns = "ergm.multi"
@@ -70,41 +70,6 @@
       function(...) patch_ergm_multi()
     )
   }
-
-  #InitErgmTerm..layer.net <- getFromNamespace("InitErgmTerm..layer.net", ns="ergm.multi")
-  #body(InitErgmTerm..layer.net)[[7]] <- quote(list(name="_layer_net",
-  #                                                 coef.names = c(),
-  #                                                 iinputs = c(unlist(.block_vertexmap(nw, ".LayerID", FALSE)),
-  #                                                             if(is.directed(nw)) sapply(nwl, function(nw) (nw %v% ".undirected")[1]), ll),
-  #                                                 dependence = dependence))
-  #assignInNamespace("InitErgmTerm..layer.net", InitErgmTerm..layer.net, ns="ergm.multi")
-
-  # ns <- getNamespace("ergm.multi")
-  #   # Define replacement
-  #   patched_fun <- function (nw,
-  #                            split.vattr = nw %n% ".blockID.vattr",
-  #                            names.vattr = nw %n% ".blockName.vattr",
-  #                            copy.ergmlhs = c("response")) {
-  #     ergm.sign:::patched_uncombine(
-  #       nw,
-  #       split.vattr = split.vattr,
-  #       names.vattr = names.vattr,
-  #       use.subnet.cache = TRUE
-  #     ) %>%
-  #       purrr::map(function(nw1) {
-  #         for (name in copy.ergmlhs) {
-  #           nw1 %ergmlhs% name <- nw %ergmlhs% name
-  #         }
-  #         nw1
-  #       })
-  #   }
-  #
-  #   try({
-  #     unlockBinding("subnetwork_templates", ns)
-  #     #assign("subnetwork_templates", patched_fun, envir = ns)
-  #     #assign("uncombine_network", patched_uncombine, envir = ns)
-  #     lockBinding("subnetwork_templates", ns)
-  #   }, silent = TRUE)
 }
 
 ## BEGIN boilerplate: should be kept in sync with statnet.common.

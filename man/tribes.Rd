@@ -8,20 +8,17 @@
 An undirected \code{static.sign} object with no loops.
 }
 \source{
-\url{http://vlado.fmf.uni-lj.si/pub/networks/data/UciNet/UciData.htm#gama},
-with corrections from \insertCite{read1954cultures;textual}{ergm.sign}.
+\url{http://vlado.fmf.uni-lj.si/pub/networks/data/UciNet/UciData.htm#gama}, with corrections from \insertCite{read1954cultures;textual}{ergm.sign}.
 }
 \description{
 A static network of political alliances and enmities among the 16 Gahuku-Gama
 sub-tribes of Eastern Central Highlands of New Guinea, documented by \insertCite{read1954cultures;textual}{ergm.sign}.
 }
 \examples{
-
 \donttest{
 data(tribes)
 }
-
 }
 \references{
-Taken from UCINET IV, which cites the following: \insertRef{hage1983structural}{ergm.sign}  \insertRef{read1954cultures}{ergm.sign}
+Taken from UCINET IV, which cites the following: \insertRef{hage1983structural}{ergm.sign}, \insertRef{read1954cultures}{ergm.sign}
 }

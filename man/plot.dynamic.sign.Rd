@@ -5,10 +5,10 @@
 \title{Visualization for Dynamic Signed Networks}
 \usage{
 \method{plot}{dynamic.sign}(
-  net,
+  x,
   col_pos = "#008000",
   col_neg = "#E3000F",
-  neg.lty = 2,
+  neg.lty = 1,
   inv_weights = TRUE,
   time = NULL,
   titles = NULL,
@@ -17,13 +17,13 @@
 )
 }
 \arguments{
-\item{net}{A signed network object of class \code{dynamic.sign}.}
+\item{x}{A signed network object of class \code{dynamic.sign}.}
 
 \item{col_pos}{Color for positive edges. Default is 'green3'.}
 
 \item{col_neg}{Color for negative edges. Default is 'red3'.}
 
-\item{neg.lty}{Line type for negative edges. Default is "dotted". Other options are "solid" and "dashed".}
+\item{neg.lty}{Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".}
 
 \item{inv_weights}{Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.}
 

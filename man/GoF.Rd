@@ -2,29 +2,47 @@
 % Please edit documentation in R/GoF.R
 \name{GoF}
 \alias{GoF}
-\title{Conduct Goodness-of-Fit Diagnostics on a Signed Exponential Family Random Graph Model}
+\title{Conduct Goodness-of-Fit Diagnostics for a Signed ERGM}
 \usage{
 GoF(model, nsim = 200, seed = NULL)
 }
 \arguments{
-\item{model}{A fitted SERGM model.}
+\item{model}{A fitted signed ERGM (SERGM) object.}
 
-\item{nsim}{An integer representing the number of simulated networks to generate. Defaults to 200.}
+\item{nsim}{Integer; number of simulated networks to generate. Defaults to 200.}
 
-\item{seed}{Seed value (interger) for the random number generator. See \link{set.seed}}
+\item{seed}{Optional integer seed for reproducibility. Passed to
+\code{\link{set.seed}}.}
 }
 \value{
-Plots 6 diagnostics for the goodness-of-fit of signed exponential family random graph models.
+Produces six diagnostic boxplots comparing observed and simulated
+  statistics for the fitted model.
 }
 \description{
-This function calculates the goodness-of-fit (GoF) for a fitted SERGM model by simulating new networks using the same model and comparing the statistics of the original network with those of the simulated networks. The statistics used in the comparison are the positive and negative degree distributions, edge-wise shared enemies distributions for positive and negative edges, and edge-wise shared friend distributions for positive and negative edges.
+Computes the goodness-of-fit (GoF) for a fitted signed exponential random
+graph model (SERGM). The function simulates new networks using the fitted
+model and compares key network statistics from the observed network with
+those from the simulated ones.
+}
+\details{
+The following diagnostics are plotted:
+\itemize{
+  \item Positive degree distribution
+  \item Negative degree distribution
+  \item Edgewise shared enemies distribution (positive edges)
+  \item Edgewise shared enemies distribution (negative edges)
+  \item Edgewise shared friends distribution (positive edges)
+  \item Edgewise shared friends distribution (negative edges)
+}
 }
 \examples{
+\dontrun{
 data("tribes")
-fit <- ergm(tribes ~ Pos(~ edges) + Neg(~ edges))
+fit <- ergm(tribes ~ Pos(~edges) + Neg(~edges))
 GoF(fit, nsim = 20)
+}
 
 }
 \seealso{
-\link{sergm}, \link{gof_tsergm}
+\code{\link{ergm}}, \code{\link{mple_sign}}
 }

@@ -35,6 +35,7 @@ make_multi_networks <- function() {
   net3%v%"party" <- c("A", "A", "B", "B")
 
   nets <- networks.sign(list(net1,net2,net3), dynamic = T)
+  class(nets) <-class(nets)[-1]
 
   return(nets)
 }
@@ -64,6 +65,7 @@ make_multi_networks_directed <- function() {
   net3%v%"party" <- c("A", "A", "B", "B", "B")
 
   nets <- networks.sign(list(net1, net2, net3), dynamic = TRUE)
+  class(nets) <-class(nets)[-1]
   return(nets)
 }
 

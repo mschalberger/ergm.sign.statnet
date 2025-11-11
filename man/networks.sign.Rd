@@ -2,19 +2,35 @@
 % Please edit documentation in R/networks.sign.R
 \name{networks.sign}
 \alias{networks.sign}
-\title{A signed multi- or dynamic-network representation.}
+\title{Combine Signed Networks into a Multi- or Dynamic-Network Object}
 \usage{
-networks.sign(..., dynamic = FALSE)
+networks.sign(..., dynamic = FALSE, dual.sign = FALSE)
 }
 \arguments{
-\item{...}{Several signed networks or a list of signed networks.}
+\item{...}{One or more signed networks (objects of class \code{"static.sign"}),
+or a list of such networks.}
 
-\item{dynamic}{Logical. If \code{TRUE}, treat the input as a dynamic network; otherwise, as a multilayer network.}
+\item{dynamic}{Logical. If \code{TRUE}, treat input as a dynamic network;
+otherwise as a multilayer network. Defaults to \code{FALSE}.}
+
+\item{dual.sign}{Logical. If \code{TRUE}, disables the layer fixing constraint. Defaults to \code{FALSE}.}
 }
 \value{
-A combined network object with appropriate constraints for model fitting.
+A combined network object of class \code{"multi.sign"} or
+  \code{"dynamic.sign"}, with the appropriate ERGM constraint formula.
 }
 \description{
-Combines multiple signed networks into a single object for ERGM modeling.
-Can represent either multilayer or dynamic network structures.
+Creates a composite network object from multiple signed networks,
+suitable for ERGM modeling. Can represent either a multilayer
+or dynamic signed network structure.
+}
+\examples{
+\dontrun{
+data("tribes")
+nw1 <- as.static.sign(tribes)
+nw2 <- as.static.sign(tribes)
+multi_net <- networks.sign(nw1, nw2)
+dyn_net <- networks.sign(list(nw1, nw2), dynamic = TRUE)
+}
+
 }

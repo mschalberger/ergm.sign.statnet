@@ -7,28 +7,36 @@
 mple_sign(formula, control = control.ergm(), seed = NULL, ...)
 }
 \arguments{
-\item{formula}{An ERGM formula, with the left-hand side being the network}
+\item{formula}{An ERGM formula with the network on the left-hand side.}
 
-\item{control}{A list of control parameters for the \code{\link{ergmMPLE}} function. Per default the method to estimate the convariance method is set to Godambe.}
+\item{control}{A list of control parameters for \code{\link{ergmMPLE}}.
+By default, the covariance method is set to "Godambe".}
 
-\item{...}{Additional arguments passed to \code{\link{ergmMPLE}}}
+\item{seed}{Optional integer to set the random seed for reproducibility when
+simulating networks for Godambe covariance estimation.}
+
+\item{...}{Additional arguments passed to \code{\link{ergmMPLE}}.}
 }
 \value{
-A fitted logistic regression model
+An object of class \code{\link[ergm]{ergm}}.
 }
 \description{
-Return a fitted logistic regression model to calculate the MPLE of an ERGM.
+Returns a fitted logistic regression model used to calculate the maximum
+pseudolikelihood estimate (MPLE) of an exponential random graph model (ERGM).
 }
 \details{
-The MPLE for an ERGM is calculated by first finding the matrices of
-positive and negative change statistics. The resulting change matrices are
-then used to calculate the MPLE using a logistic regression model.
+The MPLE is calculated by first computing matrices of positive and negative
+change statistics. These are then used to estimate the MPLE via logistic
+regression. Optionally, the covariance can be estimated using the Godambe
+method.
 }
 \examples{
+\dontrun{
 data(tribes)
 mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
+}
 
 }
 \seealso{
-\code{\link{ergmMPLE}}
+\code{\link{ergmMPLE}}, \code{\link[ergm]{ergm}}, \code{\link[stats]{glm}}
 }

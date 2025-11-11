@@ -456,7 +456,7 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   trm
 }
 
-#' @name delese
+#' @templateVar name delese
 #' @title Delayed edgewise shared enemies
 #'
 #' @description
@@ -481,11 +481,11 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @param type
 #' For directed networks, the definition of shared enemies:
 #' \describe{
-#'   \item{"OTP"}{Outgoing two-path (\( i \to k \to j \))}
-#'   \item{"ITP"}{Incoming two-path (\( j \to k \to i \))}
-#'   \item{"RTP"}{Reciprocated two-path (\( i \leftrightarrow k \leftrightarrow j \))}
-#'   \item{"OSP"}{Outgoing shared partner (\( i \to k, j \to k \))}
-#'   \item{"ISP"}{Incoming shared partner (\( k \to i, k \to j \))}
+#'   \item{"OTP"}{Outgoing two-path (\( i -> k -> j \))}
+#'   \item{"ITP"}{Incoming two-path (\( j -> k -> i \))}
+#'   \item{"RTP"}{Reciprocated two-path (\( i <- k <- j \))}
+#'   \item{"OSP"}{Outgoing shared partner (\( i -> k, j -> k \))}
+#'   \item{"ISP"}{Incoming shared partner (\( k -> i, k -> j \))}
 #' }
 #' Ignored for undirected networks.
 #'
@@ -515,7 +515,7 @@ InitErgmTerm.delese <- function(nw, arglist, ...) {
   if (is.null(prev_net)) stop("No previous network found")
 
   # previous adjacency
-  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerID" == 2)))
+  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == "-")))
 
   # shared partner matrix depending on directed type
   sp <- switch(type,
@@ -545,7 +545,7 @@ InitErgmTerm.delese <- function(nw, arglist, ...) {
 }
 
 
-#' @name delesf
+#' @templateVar name delesf
 #' @title Delayed edgewise shared friends
 #'
 #' @description
@@ -570,11 +570,11 @@ InitErgmTerm.delese <- function(nw, arglist, ...) {
 #' @param type
 #' For directed networks, the definition of shared friends:
 #' \describe{
-#'   \item{"OTP"}{Outgoing two-path (\( i \to k \to j \))}
-#'   \item{"ITP"}{Incoming two-path (\( j \to k \to i \))}
-#'   \item{"RTP"}{Reciprocated two-path (\( i \leftrightarrow k \leftrightarrow j \))}
-#'   \item{"OSP"}{Outgoing shared partner (\( i \to k, j \to k \))}
-#'   \item{"ISP"}{Incoming shared partner (\( k \to i, k \to j \))}
+#'   \item{"OTP"}{Outgoing two-path (\( i -> k -> j \))}
+#'   \item{"ITP"}{Incoming two-path (\( j -> k -> i \))}
+#'   \item{"RTP"}{Reciprocated two-path (\( i <- k <- j \))}
+#'   \item{"OSP"}{Outgoing shared partner (\( i -> k, j -> k \))}
+#'   \item{"ISP"}{Incoming shared partner (\( k -> i, k -> j \))}
 #' }
 #' Ignored for undirected networks.
 #'
@@ -608,7 +608,7 @@ InitErgmTerm.delesf <- function(nw, arglist, ...) {
   if (is.null(prev_net)) stop("No previous network found")
 
   # previous adjacency
-  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerID" == 1)))
+  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == "+")))
 
   # shared partner matrix depending on directed type
   sp <- switch(type,
@@ -638,7 +638,7 @@ InitErgmTerm.delesf <- function(nw, arglist, ...) {
 }
 
 
-#' @name gwdelese
+#' @templateVar name gwdelese
 #' @title Geometrically weighted delayed edgewise shared enemies
 #' @description This term calculates the number of shared enemies based on the previous network.
 #' It then applies a geometric transformation to these counts to reduce the influence of large counts.
@@ -647,7 +647,7 @@ InitErgmTerm.delesf <- function(nw, arglist, ...) {
 #' where \code{k} is the count of shared partners and \code{decay} controls how quickly the weight decreases as counts increase.
 #'
 #' @usage
-#' gwdelese(d, base, type = "OTP")
+#' # binary: gwdelese(decay, base, type = "OTP")
 #'
 #' @param decay Numeric decay parameter controlling weighting intensity. If \code{NULL}, raw counts are used.
 #' @param base Character indicating which edges in the current network are used as the base:
@@ -680,7 +680,7 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
   if (is.null(prev_net)) stop("No previous network found")
 
   # previous adjacency matrix for selected layer nodes
-  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerID" == 2)))
+  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == "-")))
 
   # shared partner matrix depending on directed type
   sp <- switch(type,
@@ -713,7 +713,7 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
 
 
 
-#' @name gwdelesf
+#' @templateVar name gwdelesf
 #' @title Geometrically weighted delayed edgewise shared friends
 #' @description This term calculates the number of shared friends based on the previous network.
 #' It then applies a geometric transformation to these counts to reduce the influence of large counts.
@@ -723,7 +723,7 @@ InitErgmTerm.gwdelese <- function(nw, arglist, ...) {
 #' If \code{decay} is no
 #'
 #' @usage
-#' gwdelesf(d, base, type = "OTP")
+#' # binary: gwdelesf(decay, base, type = "OTP")
 #'
 #' @param decay Numeric decay parameter controlling weighting intensity. If \code{NULL}, raw counts are used.
 #' @param base Character indicating which edges in the current network are used as the base:
@@ -756,7 +756,7 @@ InitErgmTerm.gwdelesf <- function(nw, arglist, gw.cutoff=30, ...) {
   if (is.null(prev_net)) stop("No previous network found")
 
   # previous adjacency matrix for selected layer nodes
-  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerID" == 1)))
+  prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == "+")))
 
   # shared partner matrix depending on directed type
   sp <- switch(type,

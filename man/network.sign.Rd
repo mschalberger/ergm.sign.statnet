@@ -5,60 +5,50 @@
 \title{Create Signed Network Object}
 \usage{
 network.sign(
-  mat,
+  mat = NULL,
+  pos.mat = NULL,
+  neg.mat = NULL,
   directed = FALSE,
   loops = FALSE,
   matrix.type = c("adjacency", "edgelist"),
   vertex.names = NULL,
   vertex.attr = NULL,
+  dual.sign = FALSE,
   timepoints = NULL,
   tie.breaker = c("zero", "positive", "negative", "first", "last"),
   ...
 )
 }
 \arguments{
-\item{mat}{(List of) adjacency matrices or edgelists. For dynamic networks, provide a list.
+\item{mat}{(List of) signed adjacency matrices or edgelists. For dynamic networks, provide a list.
 Adjacency matrices must contain only -1, 0, or 1. Edgelists must have three columns: "From", "To", and "Sign".}
+
+\item{pos.mat}{Optional. Positive adjacency matrix or list of matrices.}
+
+\item{neg.mat}{Optional. Negative adjacency matrix or list of matrices.
+If provided, these are treated as two separate layers of the same network.}
 
 \item{directed}{Logical; should edges be interpreted as directed? Defaults to FALSE.}
 
 \item{loops}{Logical; should loops be allowed? Defaults to FALSE.}
 
-\item{matrix.type}{Either "adjacency" or "edgelist", indicating the format of the input.}
+\item{matrix.type}{Either "adjacency" or "edgelist".}
 
-\item{vertex.names}{Optional. A vector or list of vertex names. If dynamic, provide a list aligned with `mat`.}
+\item{vertex.names}{Optional. A vector or list of vertex names.}
 
-\item{vertex.attr}{Optional. Additional vertex attributes passed to the network constructor.}
+\item{vertex.attr}{Optional. Additional vertex attributes.}
 
-\item{timepoints}{Optional. Either a single integer (number of desired pooled timepoints) or a list of index groups (e.g., list(1:3, 4:6)). Only applies to dynamic networks.}
+\item{dual.sign}{Logical. Allow positive and negative edges simultaneously between the same pair.}
 
-\item{tie.breaker}{Character. Determines how to resolve sign conflicts when positives and negatives are equal within a pooling window. One of:
-\itemize{
-  \item `"zero"`: set to 0 (default)
-  \item `"positive"`: set to 1
-  \item `"negative"`: set to -1
-  \item `"first"`: use the first nonzero sign
-  \item `"last"`: use the last nonzero sign
-}}
+\item{timepoints}{Optional. Pooling definition for dynamic networks.}
 
-\item{...}{Additional arguments passed to \code{network::network}.}
+\item{tie.breaker}{How to resolve ties when pooling signed matrices.}
+
+\item{...}{Additional arguments passed to `network::network`.}
 }
 \value{
-A signed network of class \code{"static.sign"} or \code{"dynamic.sign"}.
+A signed network of class `static.sign` or `dynamic.sign`.
 }
 \description{
-Turn an adjacency matrix or an edgelist into a static or dynamic signed network.
-}
-\examples{
-# Static adjacency matrix
-mat <- matrix(c(0, 1, -1, 1, 0, 0, -1, 0, 0), nrow = 3)
-net <- network.sign(mat, matrix.type = "adjacency")
-
-# Dynamic network with pooling
-mats <- replicate(6, mat, simplify = FALSE)
-net_dyn <- network.sign(mats, matrix.type = "adjacency", timepoints = 2, tie.breaker = "positive")
-
-# Custom timepoint pooling
-net_custom <- network.sign(mats, matrix.type = "adjacency", timepoints = list(1:3, 4:6), tie.breaker = "first")
-
+Turn adjacency matrices or edgelists into static or dynamic signed networks.
 }
