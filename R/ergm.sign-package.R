@@ -10,8 +10,8 @@
 #' Marc Schalberger
 #'
 #' @import network
-#' @import ergm
-#' @import ergm.multi
+#' @importFrom ergm.multi Layer uncombine_network subnetwork_templates Networks
+#' @importFrom ergm ergmMPLE summary_formula ergm.getnetwork
 #' @importFrom dplyr bind_rows
 #' @importFrom magrittr %>%
 #' @importFrom tergm NetSeries control.tergm
@@ -19,8 +19,12 @@
 #' @importFrom intergraph asIgraph
 #' @importFrom graphlayouts layout_with_stress
 #' @importFrom vegan procrustes
-#' @importFrom igraph induced_subgraph E
+#' @importFrom igraph induced_subgraph E E<-
 #' @importFrom purrr map
+#' @importFrom graphics boxplot lines
+#' @importFrom methods is
+#' @importFrom utils getFromNamespace packageVersion
+#'
 #' @name ergm.sign
 NULL
 

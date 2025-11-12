@@ -21,9 +21,7 @@
   if(!is.null(sm)){
     packageStartupMessage(sm)
   }
-  #packageStartupMessage(pkgname," removes the enforcement of strict nesting structures
-  #across multilayer networks. If you need strict enforcement
-  #of nesting across layers, please use the original ergm.multi package.")
+  packageStartupMessage("Patched ergm.multi::subnetwork_templates()")
 }
 
 .onLoad <- function(libname, pkgname){
@@ -57,17 +55,16 @@
       my_subnetwork_templates,
       ns = "ergm.multi"
     )
-    packageStartupMessage("Patched ergm.multi::subnetwork_templates()")
   }
 
   # Apply immediately if ergm.multi is already loaded
   if ("ergm.multi" %in% loadedNamespaces()) {
-    patch_ergm_multi()
+    suppressWarnings(patch_ergm_multi())
   } else {
     # Or hook into ergm.multi's onLoad if it loads later
     setHook(
       packageEvent("ergm.multi", "onLoad"),
-      function(...) patch_ergm_multi()
+      function(...) suppressWarnings(patch_ergm_multi())
     )
   }
 }
@@ -102,7 +99,7 @@ snctrl <- statnet.common::snctrl
   ergm_keyword(name="layer-aware", short="layer", description="operates on multilayer network constructs", popular=TRUE, package="ergm.multi")
 }
 
-#' @useDynLib ergm.sign
+#' @useDynLib ergm.sign, .registration=TRUE
 .onUnload <- function(libpath){
   library.dynam.unload("ergm.sign",libpath)
 }

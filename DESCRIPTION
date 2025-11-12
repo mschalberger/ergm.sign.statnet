@@ -25,7 +25,10 @@ Imports:
     graphlayouts,
     vegan,
     igraph,
-    purrr
+    purrr,
+    graphics,
+    methods,
+    utils
 LinkingTo: ergm.multi, ergm
 Suggests: knitr, rmarkdown, testthat
 VignetteBuilder: knitr

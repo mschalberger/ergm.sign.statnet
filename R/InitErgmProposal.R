@@ -5,9 +5,12 @@
 #' @template ergmProposal-general
 NULL
 InitErgmProposal.randomtoggleFixL <- function(arguments, nw){
-  Ls <- ergm.multi:::.set_layer_namemap(arguments$constraints$fixL$Ls, nw)
+  set_layer_namemap <- utils::getFromNamespace(".set_layer_namemap", "ergm.multi")
+  mk_layer_net_auxform <- utils::getFromNamespace(".mk_.layer.net_auxform", "ergm.multi")
+
+  Ls <- set_layer_namemap(arguments$constraints$fixL$Ls, nw)
   if(is(Ls, "formula")) Ls <- list(Ls)
-  auxiliaries <- ergm.multi:::.mk_.layer.net_auxform(Ls)
+  auxiliaries <- mk_layer_net_auxform(Ls)
 
   list(name = "randomtoggleFixL", dyadgen = ergm_dyadgen_select(arguments, nw), bd = ergm_bd_init(arguments, nw), auxiliaries = auxiliaries)
 }
@@ -22,9 +25,12 @@ InitErgmProposal.randomtoggleFixL <- function(arguments, nw){
 #' @template ergmProposal-general
 NULL
 InitErgmProposal.TNTFixL <- function(nw, arguments, ...){
-  Ls <- ergm.multi:::.set_layer_namemap(arguments$constraints$fixL$Ls, nw)
+  set_layer_namemap <- utils::getFromNamespace(".set_layer_namemap", "ergm.multi")
+  mk_layer_net_auxform <- utils::getFromNamespace(".mk_.layer.net_auxform", "ergm.multi")
+
+  Ls <- set_layer_namemap(arguments$constraints$fixL$Ls, nw)
   if(is(Ls, "formula")) Ls <- list(Ls)
-  auxiliaries <- ergm.multi:::.mk_.layer.net_auxform(Ls)
+  auxiliaries <- mk_layer_net_auxform(Ls)
 
 
   list(name = "TNTFixL", dyadgen = ergm_dyadgen_select(arguments, nw), bd = ergm_bd_init(arguments, nw), auxiliaries = auxiliaries)
