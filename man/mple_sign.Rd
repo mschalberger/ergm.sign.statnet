@@ -9,13 +9,13 @@ mple_sign(formula, control = control.ergm(), seed = NULL, ...)
 \arguments{
 \item{formula}{An ERGM formula with the network on the left-hand side.}
 
-\item{control}{A list of control parameters for \code{\link{ergmMPLE}}.
+\item{control}{A list of control parameters for \code{\link[ergm]{ergmMPLE}}.
 By default, the covariance method is set to "Godambe".}
 
 \item{seed}{Optional integer to set the random seed for reproducibility when
 simulating networks for Godambe covariance estimation.}
 
-\item{...}{Additional arguments passed to \code{\link{ergmMPLE}}.}
+\item{...}{Additional arguments passed to \code{\link[ergm]{ergmMPLE}}.}
 }
 \value{
 An object of class \code{\link[ergm]{ergm}}.
@@ -31,12 +31,10 @@ regression. Optionally, the covariance can be estimated using the Godambe
 method.
 }
 \examples{
-\dontrun{
 data(tribes)
 mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
-}
 
 }
 \seealso{
-\code{\link{ergmMPLE}}, \code{\link[ergm]{ergm}}, \code{\link[stats]{glm}}
+\code{\link[ergm]{ergmMPLE}}, \code{\link[ergm]{ergm}}, \code{\link[stats]{glm}}
 }

@@ -25,7 +25,7 @@ MH_P_FN(MH_randomtoggleFixL){
     });
   for(unsigned int ml=0; ml < MHp->n_aux; ml++){
     GET_AUX_STORAGE_NUM(StoreLayerLogic, ll, ml);
-    if(ergm_LayerLogic_affects(Mtail[0], Mhead[0], ll, TRUE,  NULL, NULL)){
+    if(ergm_LayerLogic_affects(Mtail[0], Mhead[0], ll, (LayerLogicTask) TRUE, NULL, NULL)){
       Mtail[0]=MH_FAILED;
       Mhead[0]=MH_CONSTRAINT;
       return;
@@ -82,7 +82,7 @@ MH_P_FN(Mp_TNTFixL){
     });
   for(unsigned int ml=0; ml < MHp->n_aux; ml++){
     GET_AUX_STORAGE_NUM(StoreLayerLogic, ll, ml);
-    if(ergm_LayerLogic_affects(Mtail[0], Mhead[0], ll, TRUE,  NULL, NULL)){
+    if(ergm_LayerLogic_affects(Mtail[0], Mhead[0], ll, (LayerLogicTask)TRUE, NULL, NULL)){
       Mtail[0]=MH_FAILED;
       Mhead[0]=MH_CONSTRAINT;
       return;

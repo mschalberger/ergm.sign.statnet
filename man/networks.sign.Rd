@@ -25,12 +25,8 @@ suitable for ERGM modeling. Can represent either a multilayer
 or dynamic signed network structure.
 }
 \examples{
-\dontrun{
 data("tribes")
-nw1 <- as.static.sign(tribes)
-nw2 <- as.static.sign(tribes)
-multi_net <- networks.sign(nw1, nw2)
-dyn_net <- networks.sign(list(nw1, nw2), dynamic = TRUE)
-}
+multi_net <- networks.sign(tribes, tribes)
+dyn_net <- networks.sign(list(tribes, tribes), dynamic = TRUE)
 
 }

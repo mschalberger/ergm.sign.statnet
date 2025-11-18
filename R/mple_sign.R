@@ -9,21 +9,19 @@
 #' method.
 #'
 #' @param formula An ERGM formula with the network on the left-hand side.
-#' @param control A list of control parameters for \code{\link{ergmMPLE}}.
+#' @param control A list of control parameters for \code{\link[ergm]{ergmMPLE}}.
 #'   By default, the covariance method is set to "Godambe".
 #' @param seed Optional integer to set the random seed for reproducibility when
 #'   simulating networks for Godambe covariance estimation.
-#' @param ... Additional arguments passed to \code{\link{ergmMPLE}}.
+#' @param ... Additional arguments passed to \code{\link[ergm]{ergmMPLE}}.
 #'
 #' @return An object of class \code{\link[ergm]{ergm}}.
 #'
-#' @seealso \code{\link{ergmMPLE}}, \code{\link[ergm]{ergm}}, \code{\link[stats]{glm}}
+#' @seealso \code{\link[ergm]{ergmMPLE}}, \code{\link[ergm]{ergm}}, \code{\link[stats]{glm}}
 #'
 #' @examples
-#' \dontrun{
 #' data(tribes)
 #' mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
-#' }
 #'
 #' @export
 mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
@@ -115,6 +113,9 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
     family = "binomial"
   )
 
+
+
+  res$network <- net
   res$coefficients <- glm_fit$coefficients
   res$iterations <- glm_fit$iter
   res$MCMCtheta <- glm_fit$coefficients
@@ -127,6 +128,8 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   res$null.lik <- logLik(glm_fit_null)
   res$estimate <- "MPLE"
   res$control <- control
+  res$call <- match.call()
+  res$constraints <- net[["gal"]][["ergm"]][["constraints"]]
   res$ergm_version <- as.package_version(as.character(packageVersion("ergm")))
   res$formula <- formula
   res$info <- list(
@@ -138,7 +141,8 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   )
   res$etamap$offsettheta <- rep(FALSE, length(res$coefficients))
   res$glm <- glm_fit
-  class(res) <- c("ergm", "mple_sign")
+
+  class(res) <- c("ergm")
 
   return(res)
 }

@@ -6,10 +6,11 @@
 \usage{
 \method{plot}{static.sign}(
   x,
-  col_pos = "green3",
-  col_neg = "red3",
+  col_pos = "#008000",
+  col_neg = "#E3000F",
   neg.lty = 1,
   inv_weights = TRUE,
+  coord = NULL,
   ...
 )
 }
@@ -23,6 +24,8 @@
 \item{neg.lty}{Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".}
 
 \item{inv_weights}{Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.}
+
+\item{coord}{Optional matrix of coordinates for node positions. If NULL, layout is computed using stress majorization.}
 
 \item{...}{Additional arguments passed to the plot function.}
 }
@@ -49,8 +52,7 @@ plot(tribes, col_pos = "green", col_neg = "red")
 
 }
 \references{
-Gansner, E. R., Koren, Y., & North, S. (2004). Graph drawing by stress majorization.
-*In International Symposium on Graph Drawing* (pp. 239-250). Springer, Berlin, Heidelberg.
+\insertRef{gansner2004graph}{ergm.sign}
 }
 \seealso{
 \link{UnLayer}, \link[graphlayouts]{layout_with_stress}

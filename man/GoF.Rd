@@ -36,13 +36,13 @@ The following diagnostics are plotted:
 }
 }
 \examples{
-\dontrun{
+\donttest{
 data("tribes")
-fit <- ergm(tribes ~ Pos(~edges) + Neg(~edges))
-GoF(fit, nsim = 20)
+fit <- mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
+GoF(fit, nsim = 100)
 }
 
 }
 \seealso{
-\code{\link{ergm}}, \code{\link{mple_sign}}
+\code{\link[ergm]{ergm}}, \code{\link{mple_sign}}
 }

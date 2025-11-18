@@ -14,13 +14,12 @@
 #' @param col_neg Color for negative edges. Default is 'red3'.
 #' @param neg.lty Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".
 #' @param inv_weights Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.
+#' @param coord Optional matrix of coordinates for node positions. If NULL, layout is computed using stress majorization.
 #' @param ... Additional arguments passed to the plot function.
 #'
 #' @return A plot of the signed network.
 #'
-#' @references
-#' Gansner, E. R., Koren, Y., & North, S. (2004). Graph drawing by stress majorization.
-#' *In International Symposium on Graph Drawing* (pp. 239-250). Springer, Berlin, Heidelberg.
+#' @references \insertRef{gansner2004graph}{ergm.sign}
 #'
 #' @seealso \link{UnLayer}, \link[graphlayouts]{layout_with_stress}
 #'
@@ -29,8 +28,8 @@
 #' plot(tribes, col_pos = "green", col_neg = "red")
 #'
 #' @export
-plot.static.sign <- function(x, col_pos = "green3", col_neg = "red3",
-                             neg.lty = 1, inv_weights = TRUE, ...) {
+plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F",
+                             neg.lty = 1, inv_weights = TRUE, coord = NULL, ...) {
   net <- x
   sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lty = neg.lty)
 
@@ -38,14 +37,20 @@ plot.static.sign <- function(x, col_pos = "green3", col_neg = "red3",
   weights <- sgl%e%"weights"
   if (inv_weights) weights <- 1 / pmax(weights, .Machine$double.eps)
 
-  layout <- graphlayouts::layout_with_stress(tmp_graph, weights = weights)
+  # Only compute layout if no coord is provided
+  if (is.null(coord)) {
+    coord <- graphlayouts::layout_with_stress(tmp_graph, weights = weights)
+  }
 
-  network::plot.network(sgl,
-                        edge.col = sgl%e%"col",
-                        edge.lty = sgl%e%"type",
-                        coord = layout,
-                        ...)
+  network::plot.network(
+    sgl,
+    edge.col = sgl%e%"col",
+    edge.lty = sgl%e%"type",
+    coord = coord,
+    ...
+  )
 }
+
 
 #' Visualization for Dynamic Signed Networks
 #'

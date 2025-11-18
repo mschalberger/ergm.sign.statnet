@@ -1,6 +1,3 @@
-#' @keywords internal
-"_PACKAGE"
-
 #' ergm.sign: A Package for Exponential Random Graph Models for Signed Networks
 #'
 #' The ergm.sign package implements tools to simulate and estimate Signed Exponential Random Graph Models
@@ -11,7 +8,7 @@
 #'
 #' @import network
 #' @importFrom ergm.multi Layer uncombine_network subnetwork_templates Networks
-#' @importFrom ergm ergmMPLE summary_formula ergm.getnetwork
+#' @importFrom ergm ergm ergmMPLE summary_formula ergm.getnetwork
 #' @importFrom dplyr bind_rows
 #' @importFrom magrittr %>%
 #' @importFrom tergm NetSeries control.tergm

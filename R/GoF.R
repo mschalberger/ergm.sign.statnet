@@ -23,23 +23,25 @@
 #' @return Produces six diagnostic boxplots comparing observed and simulated
 #'   statistics for the fitted model.
 #'
-#' @seealso \code{\link{ergm}}, \code{\link{mple_sign}}
+#' @seealso \code{\link[ergm]{ergm}}, \code{\link{mple_sign}}
 #'
 #' @examples
-#' \dontrun{
+#'\donttest{
 #' data("tribes")
-#' fit <- ergm(tribes ~ Pos(~edges) + Neg(~edges))
-#' GoF(fit, nsim = 20)
+#' fit <- mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
+#' GoF(fit, nsim = 100)
 #' }
 #'
 #' @importFrom dplyr bind_rows
 #' @importFrom stats simulate
+#' @importFrom graphics axis
 #' @export
 GoF <- function(model, nsim = 200, seed = NULL) {
 
   # simulate networks
-  sim <- simulate(model, nsim = nsim, seed = seed)
   net <- model$network
+  sim <- simulate(model$formula, coef = unname(model$coefficients), nsim = nsim, seed = seed, basis = net,
+                  constraints = net[["gal"]][["ergm"]][["constraints"]])
 
   # select appropriate formula based on model type
   if ("static.sign" %in% class(net)) {
@@ -156,7 +158,10 @@ GoF <- function(model, nsim = 200, seed = NULL) {
             xlab = xlab,
             ylab = ylab,
             ylim = c(0, max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)),
-            xlim = c(0, max(get_max_indices(sim_data), get_max_indices(obs_data)) + 0.5))
+            xlim = c(0, max(get_max_indices(sim_data), get_max_indices(obs_data)) + 0.5),
+            xaxt = "n")               # suppress x-axis
+    # add numeric x-axis from 0 to n
+    axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1))
     lines(obs_data, lwd = 3)
   }
 

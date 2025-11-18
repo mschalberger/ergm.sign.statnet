@@ -16,4 +16,6 @@ test_that("multinetwork network representation works", {
   # fit ergm
   s1 <- summary(full_net ~ Pos(~edges) + Neg(~edges))
   s2 <- summary(Networks(full_net) ~N(~Pos(~edges) + Neg(~edges)))
+
+  expect_equal(unname(s1),unname(s2))
 })
