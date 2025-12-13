@@ -13,6 +13,7 @@
 #'   By default, the covariance method is set to "Godambe".
 #' @param seed Optional integer to set the random seed for reproducibility when
 #'   simulating networks for Godambe covariance estimation.
+#' @param eval_lik Logical indicating whether to evaluate the likelihood using path sampling.
 #' @param ... Additional arguments passed to \code{\link[ergm]{ergmMPLE}}.
 #'
 #' @return An object of class \code{\link[ergm]{ergm}}.
@@ -24,7 +25,7 @@
 #' mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
 #'
 #' @export
-mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
+mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik = FALSE,...) {
   net <- ergm.getnetwork(formula)
 
   has_fixL <- any(grepl("fixL", deparse(net[["gal"]][["ergm"]][["constraints"]])))
@@ -122,9 +123,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   res$gradient <- rep(NA, length(glm_fit$coefficients))
   res$hessian <- -solve(glm_summary$cov.unscaled)
   res$failure <- !glm_fit$converged
-  res$mple.lik <- logLik(glm_fit)
   res$mple.lik.null <- logLik(glm_fit_null)
-  res$mle.lik <- logLik(glm_fit)
   res$null.lik <- logLik(glm_fit_null)
   res$estimate <- "MPLE"
   res$control <- control
@@ -141,6 +140,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, ...) {
   )
   res$etamap$offsettheta <- rep(FALSE, length(res$coefficients))
   res$glm <- glm_fit
+  res$mle.lik <- res$mple.lik <- ifelse(eval_lik,eval_loglik(glm_fit),logLik(glm_fit))
 
   class(res) <- c("ergm")
 

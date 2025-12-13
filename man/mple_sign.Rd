@@ -4,7 +4,13 @@
 \alias{mple_sign}
 \title{Fit an ERGM with MPLE using a logistic regression model}
 \usage{
-mple_sign(formula, control = control.ergm(), seed = NULL, ...)
+mple_sign(
+  formula,
+  control = control.ergm(),
+  seed = NULL,
+  eval_lik = FALSE,
+  ...
+)
 }
 \arguments{
 \item{formula}{An ERGM formula with the network on the left-hand side.}
@@ -14,6 +20,8 @@ By default, the covariance method is set to "Godambe".}
 
 \item{seed}{Optional integer to set the random seed for reproducibility when
 simulating networks for Godambe covariance estimation.}
+
+\item{eval_lik}{Logical indicating whether to evaluate the likelihood using path sampling.}
 
 \item{...}{Additional arguments passed to \code{\link[ergm]{ergmMPLE}}.}
 }

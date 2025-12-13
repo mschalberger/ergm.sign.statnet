@@ -39,15 +39,17 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", neg.lty =
     comb%e%'weights' <- ifelse(comb%e%'sign' == 1, 2, 1)
     comb%e%'type' <- ifelse(comb%e%'sign' == 1, 1, neg.lty)
 
+    attributes <- setdiff(list.vertex.attributes(pos), c(".LayerName", ".LayerID"))
+
     # Copy vertex attributes
-    for (v in list.vertex.attributes(pos)) {
+    for (v in attributes) {
       comb%v%v <- pos%v%v
     }
 
     # Store original multilayer network
     comb$gal$mlt <- net
 
-  } else if ("dynamic.sign" %in% class(net)) {
+  } else if (any(c("dynamic.sign", "multi.sign") %in% class(net))) {
 
     multi <- net$gal$NetList
     comb <- lapply(multi, function(x) {
@@ -70,8 +72,10 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", neg.lty =
       net_sgl%e%'weights' <- ifelse(net_sgl%e%'sign' == 1, 2, 1)
       net_sgl%e%'type' <- ifelse(net_sgl%e%'sign' == 1, 1, neg.lty)
 
+      attributes <- setdiff(list.vertex.attributes(pos), c(".LayerName", ".LayerID"))
+
       # Copy vertex attributes
-      for (v in list.vertex.attributes(pos)) {
+      for (v in attributes) {
         net_sgl%v%v <- pos%v%v
       }
 

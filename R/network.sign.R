@@ -182,7 +182,7 @@ network.sign <- function(mat = NULL,
   }
 
   # --- CASE 2: single signed matrix (original logic) ---
-  build_network <- function(x, vertex.names = NULL, vertex.attr = NULL) {
+  build_network <- function(x, vertex.names = NULL, vertex.attr = NULL, ...) {
     if (matrix.type == "adjacency") {
       pos_mat <- (x > 0) * 1
       neg_mat <- (x < 0) * 1
@@ -202,13 +202,39 @@ network.sign <- function(mat = NULL,
     } else if (matrix.type == "edgelist") {
       x <- as.data.frame(x)
       colnames(x) <- c("from", "to", "sign")
+
       edges_pos <- x[x[, 3] == 1, ]
       edges_neg <- x[x[, 3] == -1, ]
 
-      pos_net <- network::network(edges_pos, directed = directed, loops = loops,
-                                  matrix.type = "edgelist", vertex.attr = vertex.attr, ...)
-      neg_net <- network::network(edges_neg, directed = directed, loops = loops,
-                                  matrix.type = "edgelist", vertex.attr = vertex.attr, ...)
+      # number of nodes (adjust if your vertex attribute uses a different field)
+      n_nodes <- length(vertex.attr$vertex.names)
+
+      # positive layer
+      if (nrow(edges_pos) == 0) {
+        pos_net <- network::network.initialize(n_nodes,
+                                               directed = directed,
+                                               loops = loops)
+      } else {
+        pos_net <- network::network(edges_pos,
+                                    directed = directed,
+                                    loops = loops,
+                                    matrix.type = "edgelist",
+                                    vertex.attr = vertex.attr, ...)
+      }
+
+      # negative layer
+      if (nrow(edges_neg) == 0) {
+        neg_net <- network::network.initialize(n_nodes,
+                                               directed = directed,
+                                               loops = loops)
+      } else {
+        neg_net <- network::network(edges_neg,
+                                    directed = directed,
+                                    loops = loops,
+                                    matrix.type = "edgelist",
+                                    vertex.attr = vertex.attr, ...)
+      }
+
       MultiNet <- Layer(`+` = pos_net, `-` = neg_net)
 
       if (!dual.sign)
@@ -242,7 +268,7 @@ network.sign <- function(mat = NULL,
       vertex.names <- rep(list(vertex.names), length(mat))
     }
 
-    nets <- mapply(function(x, nms) build_network(x, vertex.names = nms, vertex.attr = vertex.attr),
+    nets <- mapply(function(x, nms) build_network(x, vertex.names = nms, vertex.attr = vertex.attr, ... = ...),
                    mat,
                    vertex.names,
                    SIMPLIFY = FALSE)
@@ -254,7 +280,7 @@ network.sign <- function(mat = NULL,
       dn <- dimnames(mat)
       if (!is.null(dn[[1]])) vertex.names <- dn[[1]]
     }
-    return(build_network(mat, vertex.names = vertex.names, vertex.attr = vertex.attr))
+    return(build_network(mat, vertex.names = vertex.names, vertex.attr = vertex.attr, ... = ...))
   }
 }
 

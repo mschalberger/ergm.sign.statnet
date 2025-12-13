@@ -20,7 +20,7 @@
 #' @importFrom purrr map
 #' @importFrom graphics boxplot lines
 #' @importFrom methods is
-#' @importFrom utils getFromNamespace packageVersion
+#' @importFrom utils getFromNamespace packageVersion modifyList
 #'
 #' @name ergm.sign
 NULL

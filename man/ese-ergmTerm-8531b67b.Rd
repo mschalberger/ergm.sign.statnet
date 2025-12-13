@@ -10,6 +10,8 @@
 \arguments{
 \item{d}{a vector of distinct integers}
 
+\item{lag}{logical; if TRUE, compute the lagged version of the ese statistic based on the previous time point's network}
+
 \item{type}{A string indicating the type of shared partner or path to be considered for directed networks: `"OTP"` (default for directed), `"ITP"`, `"RTP"`, `"OSP"`, and `"ISP"`; has no effect for undirected. See the section below on Shared partner types for details.}
 
 \item{base}{specify the base of the triad, either by '+' and '-' or 1 and -1}

@@ -79,6 +79,7 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
     comb$gal$NetList <- nwl
     class(comb) <- c("dynamic.sign", class(comb))
   } else {
+    comb$gal$NetList <- nwl
     class(comb) <- c("multi.sign", class(comb))
   }
 

@@ -16,6 +16,8 @@ exponential-family model (see Hunter and Handcock, 2006). The
 default is `FALSE` , which means the scale parameter is not
 fixed and thus the model is a curved exponential family.}
 
+\item{lag}{logical; if TRUE, compute the lagged version of the gwesf statistic based on the previous time point's network}
+
 \item{cutoff}{This optional argument sets the number of underlying ESF terms
 to use in computing the statistics when `fixed=FALSE`, in order to reduce
 the computational burden.  Its default value can also be controlled by the

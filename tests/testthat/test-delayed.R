@@ -73,10 +73,10 @@ make_multi_networks_directed <- function() {
 
 test_that("delayed ese and and gwese work as expected and give the same value for delay = 0 and no specified d", {
   net <- make_multi_networks()
-  s_pos <- summary(net ~ Cross(~delese(base="+")))
-  s_neg <- summary(net ~ Cross(~delese(base="-")))
-  gw_s_pos <- summary(net ~ Cross(~gwdelese(decay=0, base="+")))
-  gw_s_neg <- summary(net ~ Cross(~gwdelese(decay=0, base="-")))
+  s_pos <- summary(net ~ Cross(~ ese(d=1, base="+", lag = TRUE)))
+  s_neg <- summary(net ~ Cross(~ese(d=1,base="-", lag = TRUE)))
+  gw_s_pos <- summary(net ~ Cross(~gwese(decay=0, base="+", lag = TRUE, fixed = TRUE)))
+  gw_s_neg <- summary(net ~ Cross(~gwese(decay=0, base="-", lag = TRUE, fixed = TRUE)))
   expect_equal(unname(gw_s_pos), 1)
   expect_equal(unname(s_pos), 1)
   expect_equal(unname(gw_s_neg), 1)
@@ -85,10 +85,10 @@ test_that("delayed ese and and gwese work as expected and give the same value fo
 
 test_that("delayed esf and and gwes work as expected and give the same value for delay = 0 and no specified d", {
   net <- make_multi_networks()
-  gw_s_pos <- summary(net ~ Cross(~delesf(base="+")))
-  gw_s_neg <- summary(net ~ Cross(~delesf(base="-")))
-  s_pos <- summary(net ~ Cross(~gwdelesf(decay=0, base="+")))
-  s_neg <- summary(net ~ Cross(~gwdelesf(decay=0, base="-")))
+  gw_s_pos <- summary(net ~ Cross(~esf(d = 1, base="+", lag = TRUE)))
+  gw_s_neg <- summary(net ~ Cross(~esf(d = 1, base="-", lag = TRUE)))
+  s_pos <- summary(net ~ Cross(~gwesf(decay=0, base="+", lag = TRUE, fixed = TRUE)))
+  s_neg <- summary(net ~ Cross(~gwesf(decay=0, base="-", lag = TRUE, fixed = TRUE)))
   expect_equal(unname(gw_s_pos), 1)
   expect_equal(unname(s_pos), 1)
   expect_equal(unname(gw_s_neg), 1)

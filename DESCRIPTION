@@ -1,12 +1,12 @@
 Package: ergm.sign
 Type: Package
 Title: Exponential-Family Models for Signed Networks
-Version: 0.1.0
+Version: 0.1.1
 Authors@R: c(
     person("Marc", "Schalberger", email = "m.schalberger@fu-berlin.de", role = "cre"),
     person("Cornelius", "Fritz", email = "FRITZC@tcd.ie", role = "aut"),
     person("Pavel", "Krivitsky", email = "p.krivitsky@unsw.edu.au", role = "ctb"))
-Description: Extends the 'ergm.multi' packages from the statnet suite to fit (temporal) exponential-family random graph models for signed networks. The framework models positive and negative ties as interdependent, which allows estimation and testing of structural balance theory. The package also includes options for descriptive summaries, visualization, and simulation of signed networks. See Krivitsky, Koehly, and Marcum (2020) <doi:10.1007/s11336-020-09720-7> and Fritz, C., Mehrl, M., Thurner, P. W., & Kauermann, G. (2025) <doi:10.1017/pan.2024.21>.
+Description: Extends the 'ergm.multi' packages from the Statnet suite to fit (temporal) exponential-family random graph models for signed networks. The framework models positive and negative ties as interdependent, which allows estimation and testing of structural balance theory. The package also includes options for descriptive summaries, visualization, and simulation of signed networks. See Krivitsky, Koehly, and Marcum (2020) <doi:10.1007/s11336-020-09720-7> and Fritz, C., Mehrl, M., Thurner, P. W., & Kauermann, G. (2025) <doi:10.1017/pan.2024.21>.
 Encoding: UTF-8
 LazyData: true
 LazyLoad: yes
