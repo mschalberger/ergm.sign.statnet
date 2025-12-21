@@ -98,10 +98,10 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     message("Estimating Godambe Matrix using ", R, " simulated networks.")
     theta.mple <- unname(glm_fit$coefficients)
     invHess <- glm_summary$cov.unscaled
-
-    for (i in seq_len(R)) {
+    i <- 1
+    for (sim_net  in sim_mple) {
       message("  Processing simulated network ", i, " of ", R)
-      dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_mple[[i]])
+      dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_net)
       sim_mple[[i]] <- NULL
       gc(FALSE)
 
@@ -125,10 +125,10 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
       info <- t(X) %*% (X * Wvec)
       u.data[i,] <- solve(info, gradient)
       old.data[i,] <- gradient
+      i <- i +1
     }
-
-    res$old_covar <- invHess %*% var(t(old.data)) %*% invHess
-    res$covar <- var(t(u.data))
+    res$old_covar <- invHess %*% var(old.data) %*% invHess
+    res$covar <- var(u.data)
   } else {
     res$covar <- glm_summary$cov.unscaled
   }
