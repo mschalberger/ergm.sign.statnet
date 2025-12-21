@@ -34,6 +34,13 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
   # Remove constraints from each network
   nwl <- lapply(nwl, function(nw) {
     nw %ergmlhs% "constraints" <- NULL
+    attrs <- c(".NetworkID_new", ".NetworkID", ".NetworkName", ".TimeID")
+
+    for (attr in attrs) {
+      if (attr %in% list.vertex.attributes(nw)) {
+        nw <- delete.vertex.attribute(nw, attr)
+      }
+    }
     nw
   })
 
@@ -57,18 +64,16 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
     sapply(pairs, function(p) paste0("(`", p[1], "` & `", p[2], "`)")),
     collapse = " + "
   )
-  fixL_str <- paste0("~ fixL(~", pair_str, ") + ")
+  fixL_str <- paste0("+ fixL(~", pair_str, ")  ")
 
   # Define ERGM constraints
   new_constraints <- if (dynamic) {
-    as.formula(paste0(
-      ifelse(dual.sign, "~", fixL_str),
-      " blockdiag('.NetworkID_new') + discord('.PrevNet')"
+    as.formula(paste0("~ blockdiag('.NetworkID_new') + discord('.PrevNet')",
+      ifelse(dual.sign, "~", fixL_str)
     ))
   } else {
-    as.formula(paste0(
-      ifelse(dual.sign, "", fixL_str),
-      " blockdiag('.NetworkID_new')"
+    as.formula(paste0("~ blockdiag('.NetworkID_new')",
+      ifelse(dual.sign, "", fixL_str)
     ))
   }
 

@@ -66,43 +66,69 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   )
 
   glm_summary <- summary(glm_fit)
+
   res <- list()
 
   # Godambe covariance estimation
   if (control$MPLE.covariance.method == "Godambe") {
+    R <- control$MPLE.covariance.samplesize
+    mple.burnin <- control$MPLE.covariance.sim.burnin
+    mple.interval <- control$MPLE.covariance.sim.interval
+
     sim_mple <- ergm::simulate_formula(
       object = formula,
       basis = net,
-      nsim = control$MPLE.covariance.samplesize,
-      coef = glm_fit$coefficients,
-      seed = seed,
+      nsim = R,
+      coef = unname(glm_fit$coefficients),
       control = control.simulate.formula(
         MCMC.prop = ~sparse,
-        MCMC.burnin = control$MPLE.covariance.sim.burnin,
-        MCMC.interval = control$MPLE.covariance.sim.interval
+        MCMC.burnin = mple.burnin,
+        MCMC.interval = mple.interval
       ),
       output = "network",
       ...
     )
 
-    num_variables <- length(glm_fit$coefficients)
-    nsim <- length(sim_mple)
-    gradient_matrix <- matrix(0, nrow = num_variables, ncol = nsim)
+    message("Simulating networks for Godambe covariance estimation...")
 
-    for (i in seq_len(nsim)) {
-      sim_net <- sim_mple[[i]]
-      dat <- ergm::ergmMPLE(formula = formula, basis = sim_net, control = control,
-                            output = "dyadlist")
+    num.variables <- length(glm_fit$coefficients)
+    #U <- matrix(0, nrow = R, ncol = num_variables)
+    u.data <- matrix(0, nrow = R, ncol = num.variables)
+    old.data <- matrix(0, nrow = R, ncol = num.variables)
+    message("Estimating Godambe Matrix using ", R, " simulated networks.")
+    theta.mple <- unname(glm_fit$coefficients)
+    invHess <- glm_summary$cov.unscaled
 
-      covariates <- dat$predictor[, -(1:2), drop = FALSE]
-      predictions <- 1 / (1 + exp(-covariates %*% glm_fit$coefficients))
-      gradient <- t(covariates) %*% (dat$response - predictions)
-      gradient_matrix[, i] <- gradient
+    for (i in seq_len(R)) {
+      message("  Processing simulated network ", i, " of ", R)
+      dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_mple[[i]])
+      sim_mple[[i]] <- NULL
+      gc(FALSE)
+
+       if (has_fixL) {
+         tmp_keep <- dat$predictor[, ncol(dat$predictor)] == 0
+         X <- dat$predictor[tmp_keep, -ncol(dat$predictor), drop = FALSE]
+         y  <- dat$response[tmp_keep]
+         w   <- dat$weights[tmp_keep]
+       } else {
+         X <- dat$predictor
+         y  <- dat$response
+         w   <- dat$weights
+       }
+
+      rm(dat)
+      gc(FALSE)
+      predictions <- 1 / (1 + exp(-X %*% theta.mple))
+      weighted_residuals <- w * (y - predictions)
+      gradient <- t(X) %*% weighted_residuals
+      Wvec <- as.vector(w * predictions * (1 - predictions))
+      info <- t(X) %*% (X * Wvec)
+      u.data[i,] <- solve(info, gradient)
+      old.data[i,] <- gradient
     }
 
-    variability_matrix <- var(t(gradient_matrix))
-    invHess <- glm_summary$cov.unscaled
-    res$covar <- invHess %*% variability_matrix %*% invHess
+    res$old_covar <- invHess %*% var(t(old.data)) %*% invHess
+    res$covar <- var(t(u.data))
   } else {
     res$covar <- glm_summary$cov.unscaled
   }
@@ -113,8 +139,6 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     weights = weights,
     family = "binomial"
   )
-
-
 
   res$network <- net
   res$coefficients <- glm_fit$coefficients
@@ -140,7 +164,14 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   )
   res$etamap$offsettheta <- rep(FALSE, length(res$coefficients))
   res$glm <- glm_fit
-  res$mle.lik <- res$mple.lik <- ifelse(eval_lik,eval_loglik(glm_fit),logLik(glm_fit))
+  if (eval_lik) {
+    res$mle.lik  <- eval_loglik(glm_fit)
+    res$mple.lik <- eval_loglik(glm_fit)
+  } else {
+    ll <- logLik(glm_fit)
+    res$mle.lik  <- ll
+    res$mple.lik <- ll
+  }
 
   class(res) <- c("ergm")
 

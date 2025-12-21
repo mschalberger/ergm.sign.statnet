@@ -133,8 +133,11 @@ eval_loglik <- function(object) {
   net <- object$network
   coef <- object$coef
 
-  flattened <- flatten_formula(formula)
-  idep <- list_rhs.formula(flattened)[is.dyad.independent(flattened, byterm = T)]
+  f2 <- update(formula, net ~ .)
+
+  flattened <- flatten_formula(f2)
+
+  idep <- list_rhs.formula(flattened)[is.dyad.independent(flattened, byterm = T, basis = net)]
   idep <- Filter(Negate(is.null), idep)
   idep_formula <- as.formula(paste("net ~", paste(idep, collapse = " + ")))
 
@@ -145,9 +148,10 @@ eval_loglik <- function(object) {
   coef_idep[] <- 0
   names_sub <- clean_names(names(coef(sub_model)))
   names_idep <- clean_names(names(coef_idep))
+  names(coef_idep) <- names_idep
 
   common <- intersect(names_sub, names_idep)
-  coef_idep[common] <- coef(sub_model)[match(common, names_sub)]
+  coef_idep[common] <- unname(coef(sub_model)[match(common, names_sub)])
 
   loglk <- path_sampling(formula = formula,
                                coef = coef,
