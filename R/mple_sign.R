@@ -92,9 +92,8 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     message("Simulating networks for Godambe covariance estimation...")
 
     num.variables <- length(glm_fit$coefficients)
-    #U <- matrix(0, nrow = R, ncol = num_variables)
     u.data <- matrix(0, nrow = R, ncol = num.variables)
-    old.data <- matrix(0, nrow = R, ncol = num.variables)
+    #old.data <- matrix(0, nrow = R, ncol = num.variables)
     message("Estimating Godambe Matrix using ", R, " simulated networks.")
     theta.mple <- unname(glm_fit$coefficients)
     invHess <- glm_summary$cov.unscaled
@@ -124,10 +123,10 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
       Wvec <- as.vector(w * predictions * (1 - predictions))
       info <- t(X) %*% (X * Wvec)
       u.data[i,] <- solve(info, gradient)
-      old.data[i,] <- gradient
+      #old.data[i,] <- gradient
       i <- i +1
     }
-    res$old_covar <- invHess %*% var(old.data) %*% invHess
+    #res$old_covar <- invHess %*% var(old.data) %*% invHess
     res$covar <- var(u.data)
   } else {
     res$covar <- glm_summary$cov.unscaled
