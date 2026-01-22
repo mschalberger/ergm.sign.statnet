@@ -49,11 +49,10 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
   group_var <- if (dynamic) ".TimeID" else ".NetworkID"
 
   # Create grouping variable for blockdiag
-  comb %v% ".NetworkID_new" <- as.numeric(factor(paste(
-    comb %v% group_var,
-    comb %v% ".LayerID",
-    sep = "-"
-  )))
+  comb %v% ".NetworkID_new" <- as.numeric(factor(
+    paste(comb %v% group_var, comb %v% ".LayerID", sep = "-"),
+    levels = unique(paste(comb %v% group_var, comb %v% ".LayerID", sep = "-"))
+  ))
   comb %v% ".LayerID" <- comb %v% ".NetworkID_new"
 
   ids <- unique(comb %v% ".LayerID")

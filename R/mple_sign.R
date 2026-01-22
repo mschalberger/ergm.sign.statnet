@@ -164,8 +164,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   res$etamap$offsettheta <- rep(FALSE, length(res$coefficients))
   res$glm <- glm_fit
   if (eval_lik) {
-    res$mle.lik  <- eval_loglik(glm_fit)
-    res$mple.lik <- eval_loglik(glm_fit)
+    res$mle.lik  <- res$mple.lik  <- eval_loglik(res)
   } else {
     ll <- logLik(glm_fit)
     res$mle.lik  <- ll

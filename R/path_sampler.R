@@ -131,7 +131,7 @@ eval_loglik <- function(object) {
   cat("Evaluating log-likelihood...\n")
   formula <- object$formula
   net <- object$network
-  coef <- object$coef
+  coef <- object$coefficients
 
   f2 <- update(formula, net ~ .)
 
