@@ -1,7 +1,7 @@
 Package: ergm.sign
 Type: Package
 Title: Exponential-Family Models for Signed Networks
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Marc", "Schalberger", email = "m.schalberger@fu-berlin.de", role = "cre"),
     person("Cornelius", "Fritz", email = "FRITZC@tcd.ie", role = "aut"),
