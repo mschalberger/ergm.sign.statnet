@@ -4,7 +4,14 @@
 \alias{UnLayer}
 \title{Multilayer network to single layer network.}
 \usage{
-UnLayer(net, color_pos = "#008000", color_neg = "#E3000F", neg.lty = 2)
+UnLayer(
+  net,
+  color_pos = "#008000",
+  color_neg = "#E3000F",
+  color_both = "#333333",
+  neg.lty = 2,
+  both.lty = 2
+)
 }
 \arguments{
 \item{net}{A signed network object of class \code{static.sign} or \code{dynamic.sign}.}
@@ -13,7 +20,11 @@ UnLayer(net, color_pos = "#008000", color_neg = "#E3000F", neg.lty = 2)
 
 \item{color_neg}{Color for negative edges. Default is '#E3000F'.}
 
+\item{color_both}{Color for edges that are both positive and negative. Default is '#333333'.}
+
 \item{neg.lty}{Line type for negative edges. Default is 2.}
+
+\item{both.lty}{Line type for edges that are both positive and negative. Default is 2.}
 }
 \value{
 Single layer network object or a list of network objects for dynamic.sign.

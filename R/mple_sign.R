@@ -101,22 +101,22 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     for (sim_net  in sim_mple) {
       message("  Processing simulated network ", i, " of ", R)
       dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_net)
-      sim_mple[[i]] <- NULL
-      gc(FALSE)
+      #sim_mple[[i]] <- NULL
+      #gc(FALSE)
 
-       if (has_fixL) {
-         tmp_keep <- dat$predictor[, ncol(dat$predictor)] == 0
-         X <- dat$predictor[tmp_keep, -ncol(dat$predictor), drop = FALSE]
-         y  <- dat$response[tmp_keep]
-         w   <- dat$weights[tmp_keep]
-       } else {
-         X <- dat$predictor
-         y  <- dat$response
-         w   <- dat$weights
-       }
+      if (has_fixL) {
+        tmp_keep <- dat$predictor[, ncol(dat$predictor)] == 0
+        X <- dat$predictor[tmp_keep, -ncol(dat$predictor), drop = FALSE]
+        y  <- dat$response[tmp_keep]
+        w   <- dat$weights[tmp_keep]
+      } else {
+        X <- dat$predictor
+        y  <- dat$response
+        w   <- dat$weights
+      }
 
-      rm(dat)
-      gc(FALSE)
+      #rm(dat)
+      #gc(FALSE)
       predictions <- 1 / (1 + exp(-X %*% theta.mple))
       weighted_residuals <- w * (y - predictions)
       gradient <- t(X) %*% weighted_residuals
@@ -138,6 +138,8 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     weights = weights,
     family = "binomial"
   )
+
+  names(glm_fit$coefficients) <- gsub("`", "", names(coef(glm_fit)))
 
   res$network <- net
   res$coefficients <- glm_fit$coefficients

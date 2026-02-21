@@ -8,7 +8,9 @@
   x,
   col_pos = "#008000",
   col_neg = "#E3000F",
+  col_both = "#333333",
   neg.lty = 1,
+  both.lty = 1,
   inv_weights = TRUE,
   coord = NULL,
   ...
@@ -17,11 +19,15 @@
 \arguments{
 \item{x}{A signed network object of class \code{static.sign}.}
 
-\item{col_pos}{Color for positive edges. Default is 'green3'.}
+\item{col_pos}{Color for positive edges. Default is green.}
 
-\item{col_neg}{Color for negative edges. Default is 'red3'.}
+\item{col_neg}{Color for negative edges. Default is red.}
+
+\item{col_both}{Color for edges that are both positive and negative. Default is darkgrey.}
 
 \item{neg.lty}{Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".}
+
+\item{both.lty}{Line type for edges that are both positive and negative. Default is "solid". Other options are "dotted" and "dashed".}
 
 \item{inv_weights}{Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.}
 

@@ -16,7 +16,7 @@
 
 \item{time}{Integer vector of timepoints to summarize. Defaults to all.}
 
-\item{names}{Character vector of names for timepoints. If NULL, uses "Time 1", "Time 2", etc.}
+\item{names}{Character vector of names for timepoints.}
 }
 \value{
 A data frame or matrix with network attributes.

@@ -96,7 +96,7 @@ path_sampling <- function(net, formula, coef, coef_indep, bridges , nsim = 1, se
   has_loop <- network::has.loops(net)
   # Get the number of actors
   n_actors = network.size(net)/2
-  global_stats = summary_formula(formula)
+  global_stats = ergm:::summary_formula.default(formula)
   llrs = numeric(length = bridges)
   llrs = lapply(X = seq_len(bridges), FUN = function(x){
     theta <- path$theta[x, ]

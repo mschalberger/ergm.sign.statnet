@@ -60,7 +60,7 @@ summary.static.sign <- function(object, ...) {
 #' @rdname summary.static.sign
 #' @param object A signed network object of class \code{dynamic.sign}.
 #' @param time Integer vector of timepoints to summarize. Defaults to all.
-#' @param names Character vector of names for timepoints. If NULL, uses "Time 1", "Time 2", etc.
+#' @param names Character vector of names for timepoints.
 #' @export
 summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
   net <- object
@@ -102,7 +102,7 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       check.names = FALSE
     )
 
-    rownames(row) <- if (is.null(names)) paste0("Time ", i) else names[i]
+    rownames(row) <- if (is.null(names)) net$gal$names[i] else names[i]
     row
   }))
 
@@ -115,19 +115,26 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
 #'
 #' @param object A formula with a dynamic.sign network as LHS.
 #' @param at Numeric vector of timepoints. Defaults to all if missing.
+#' @param names Character vector of names for timepoints.
 #' @param basis Optional dynamic.sign network. If NULL, uses LHS network.
 #' @param ... Additional arguments passed to summary_formula for network objects.
 #' @return Matrix of statistics for each timepoint.
 #' @importFrom ergm summary_formula
 #' @importFrom utils getS3method
 #' @export
-summary_formula.dynamic.sign <- function(object, at, ..., basis = NULL) {
+summary_formula.dynamic.sign <- function(object, at, names = NULL,  ..., basis = NULL) {
   basis <- if (is.null(basis)) ergm.getnetwork(object) else basis
+  if (is.null(names)) names <- basis$gal$names
   if (missing(at) || !is.numeric(at)) at <- seq_along(basis$gal$NetList)
+  names <- names[at]
 
-  do.call(rbind, lapply(at, function(t) {
+  res_list <- lapply(at, function(t) {
     nw <- basis$gal$NetList[[t]]
     getS3method("summary_formula", "network")(object, basis = nw, ...)
-  }))
+  })
+
+  res <- do.call(rbind, res_list)
+  rownames(res) <- names
+  return(res)
 }
 

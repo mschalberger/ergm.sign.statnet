@@ -48,7 +48,7 @@ network.sign <- function(mat = NULL,
   }
 
   pool_timepoints <- function(mats, timepoints, tie.breaker = "zero") {
-    stopifnot(all(sapply(mats, function(x) all(x %in% c(-1, 0, 1)))))
+    #stopifnot(all(sapply(mats, function(x) all(x %in% c(-1, 0, 1)))))
 
     pooled <- vector("list", length(timepoints))
 
@@ -94,6 +94,8 @@ network.sign <- function(mat = NULL,
       if (!is.null(ref_dimnames[[1]]) && !is.null(ref_dimnames[[2]])) {
         dimnames(result) <- ref_dimnames
       }
+      pool_label <- paste0("Timepoints ", min(group), "-", max(group))
+      attr(result, "pool_label") <- pool_label
       pooled[[i]] <- result
     }
     return(pooled)
@@ -126,6 +128,8 @@ network.sign <- function(mat = NULL,
       })
 
       MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
+      MultiDyn$gal$names <- paste("Timepoint", seq_along(pos.mat))
+      MultiDyn$gal$dual.sign <- dual.sign
       return(MultiDyn)
     }
 
@@ -140,12 +144,13 @@ network.sign <- function(mat = NULL,
       MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
 
     MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
+    MultiNet$gal$dual.sign <- dual.sign
     class(MultiNet) <- c("static.sign", "network", class(MultiNet))
     return(MultiNet)
   }
 
   # --- CASE 1a: dual-sign pooling ---
-  if (!is.null(pos.mat) && !is.null(neg.mat) && !is.null(timepoints)) {
+  if (!is.null(pos.mat) && !is.null(neg.mat) && !is.null(timepoints) && dual.sign) {
 
     # Ensure lists
     if (!is.list(pos.mat)) pos.mat <- list(pos.mat)
@@ -176,12 +181,17 @@ network.sign <- function(mat = NULL,
       class(net) <- c("static.sign", class(net))
       net
     })
-
-    MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
+    if (length(nets) >1) {
+      MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
+    } else {
+      MultiDyn <- nets[[1]]
+    }
+    MultiDyn$gal$names <- sapply(pooled_pos, attr, "pool_label")
+    MultiDyn$gal$dual.sign <- dual.sign
     return(MultiDyn)
   }
 
-  # --- CASE 2: single signed matrix (original logic) ---
+  # --- CASE 2: single signed matrix  ---
   build_network <- function(x, vertex.names = NULL, vertex.attr = NULL, ...) {
     if (matrix.type == "adjacency") {
       pos_mat <- (x > 0) * 1
@@ -203,36 +213,42 @@ network.sign <- function(mat = NULL,
       x <- as.data.frame(x)
       colnames(x) <- c("from", "to", "sign")
 
-      edges_pos <- x[x[, 3] == 1, ]
-      edges_neg <- x[x[, 3] == -1, ]
+      edges_pos <- x[x$sign ==  1, c("from","to")]
+      edges_neg <- x[x$sign == -1, c("from","to")]
 
-      # number of nodes (adjust if your vertex attribute uses a different field)
-      n_nodes <- length(vertex.attr$vertex.names)
-
-      # positive layer
-      if (nrow(edges_pos) == 0) {
-        pos_net <- network::network.initialize(n_nodes,
-                                               directed = directed,
-                                               loops = loops)
+      if (is.null(vertex.names)) {
+        n_nodes <- length(unique(c(x$from, x$to)))
       } else {
-        pos_net <- network::network(edges_pos,
-                                    directed = directed,
-                                    loops = loops,
-                                    matrix.type = "edgelist",
-                                    vertex.attr = vertex.attr, ...)
+        n_nodes <- length(vertex.attr$vertex.names)
       }
 
-      # negative layer
-      if (nrow(edges_neg) == 0) {
-        neg_net <- network::network.initialize(n_nodes,
-                                               directed = directed,
-                                               loops = loops)
-      } else {
-        neg_net <- network::network(edges_neg,
-                                    directed = directed,
-                                    loops = loops,
-                                    matrix.type = "edgelist",
-                                    vertex.attr = vertex.attr, ...)
+      pos_net <- network::network.initialize(n_nodes,
+                                             directed = directed,
+                                             loops = loops)
+      neg_net <- network::network.initialize(n_nodes,
+                                             directed = directed,
+                                             loops = loops)
+
+      if(!is.null(vertex.names)) {
+        network::set.vertex.attribute(pos_net, "vertex.names", vertex.attr$vertex.names)
+        network::set.vertex.attribute(neg_net, "vertex.names", vertex.attr$vertex.names)
+      }
+
+      for(nm in names(vertex.attr)) {
+        network::set.vertex.attribute(pos_net, nm, vertex.attr[[nm]])
+        network::set.vertex.attribute(neg_net, nm, vertex.attr[[nm]])
+      }
+
+      if(nrow(edges_pos) > 0) {
+        network::add.edges(pos_net,
+                           tail = edges_pos$from,
+                           head = edges_pos$to)
+      }
+
+      if(nrow(edges_neg) > 0) {
+        network::add.edges(neg_net,
+                           tail = edges_neg$from,
+                           head = edges_neg$to)
       }
 
       MultiNet <- Layer(`+` = pos_net, `-` = neg_net)
@@ -241,6 +257,7 @@ network.sign <- function(mat = NULL,
         MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
 
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
+      MultiNet$gal$dual.sign <- dual.sign
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
       return(MultiNet)
     } else {
@@ -272,8 +289,13 @@ network.sign <- function(mat = NULL,
                    mat,
                    vertex.names,
                    SIMPLIFY = FALSE)
-
-    MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
+    if (length(nets)>1) {
+      MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
+    } else {
+      MultiDyn <- nets[[1]]
+    }
+    MultiDyn$gal$names <- sapply(mat, attr, "pool_label")
+    MultiDyn$gal$dual.sign <- dual.sign
     return(MultiDyn)
   } else {
     if (is.null(vertex.names) && matrix.type == "adjacency") {

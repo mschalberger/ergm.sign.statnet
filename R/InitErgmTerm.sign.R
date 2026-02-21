@@ -128,7 +128,11 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL,FALSE),
                       required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
-  cl <- call("dgwdspL", decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if (!is.null(a$decay)) a$fixed <- TRUE
+  cl <- call("dgwdspL", decay = a$decay, fixed = a$fixed, ,type = a$type, alpha = a$alpha, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if(!a$fixed) {
+    cl$cutoff <- a$cutoff
+  }
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if (is.directed(nw)) {
     paste("gwdsf", a$type, if (a$fixed) a$decay else NULL, sep = ".")
@@ -162,7 +166,11 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL,FALSE),
                       required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
-  cl <- call("dgwdspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if (!is.null(a$decay)) a$fixed <- TRUE
+  cl <- call("dgwdspL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if(!a$fixed) {
+    cl$cutoff <- a$cutoff
+  }
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if (is.directed(nw)) {
     paste("gwdse", a$type, if (a$fixed) a$decay else NULL, sep = ".")
@@ -336,8 +344,7 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical", "logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
-
-
+  if (!is.null(a$decay)) a$fixed <- TRUE
   if (!a$lag) {
     if (is.null(a$base)) {
       b <- NULL
@@ -346,8 +353,11 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
     }
-    cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type, alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
-  } else{
+    cl <- call("dgwespL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+    if(!a$fixed) {
+      cl$cutoff <- a$cutoff
+    }
+    } else{
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
     prev_net <- nw$gal$.PrevNets[[1]]
@@ -413,6 +423,7 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical", "logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE,FALSE, FALSE, FALSE))
+  if (!is.null(a$decay)) a$fixed <- TRUE
   if (!a$lag) {
   if (is.null(a$base)) {
       b <- NULL
@@ -421,7 +432,10 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
   }
-  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if(!a$fixed) {
+    cl$cutoff <- a$cutoff
+  }
   } else {
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
@@ -562,6 +576,7 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+  if (!is.null(a$decay)) a$fixed <- TRUE
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -569,7 +584,10 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  if(!a$fixed) {
+    cl$cutoff <- a$cutoff
+  }
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if (is.directed(nw)) {
     paste0("gwnsf(", a$base, ").", a$type, if (a$fixed) paste0(".", a$decay) else "")
@@ -604,6 +622,7 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
                       defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+  if (!is.null(a$decay)) a$fixed <- TRUE
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -611,7 +630,10 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed, cutoff = a$cutoff ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  if(!a$fixed) {
+    cl$cutoff <- a$cutoff
+  }
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if (is.directed(nw)) {
     paste0("gwnse(", a$base, ").", a$type, if (a$fixed) paste0(".", a$decay) else "")
@@ -693,5 +715,132 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
   cl <- call("nodematch", paste("delnodecov", a$attr, sep = "_"))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- paste("delnodematch", a$attr, sep = "_")
+  trm
+}
+
+#'@templateVar name CF
+#'@title At leat one common friend
+#'@description This term adds one network statistic to the model equal to the number of edges in the network with at least one shared friend. For a directed network, multiple shared friend definitions are possible.
+#'
+#'@usage
+#' #binary: CF(type="OTP")
+#'
+#' @template ergmTerm-sp-type
+#' @template ergmTerm-sp-types
+#' @template ergmTerm-cache-sp
+#' @template ergmTerm-general
+#' @concept directed
+#' @concept undirected
+InitErgmTerm.CF <- function(nw, arglist, ...) {
+  a <- check.ErgmTerm(
+    nw, arglist,
+    varnames = c("base","type"),
+    vartypes = c("character,numeric","character"),
+    defaultvalues = list(NULL,"OTP"),
+    required = c(FALSE,FALSE)
+  )
+
+  # adjacency matrix
+  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == "+")))
+
+  # compute shared-partner matrix based on type
+  sp <- switch(a$type,
+               OTP = adj %*% adj,
+               ITP = t(adj) %*% t(adj),
+               RTP = (adj * t(adj)) %*% (adj * t(adj)),
+               OSP = t(adj) %*% adj,
+               ISP = adj %*% t(adj),
+               # default: any common friend
+               any = adj %*% t(adj) + t(adj) %*% adj
+  )
+
+  diag(sp) <- 0               # remove self-loops
+  cf_mat <- (sp > 0) * 1      # indicator: at least one shared partner
+
+  n <- network.size(nw)
+  tmp <- matrix(0, nrow = n, ncol = n)
+
+  if(!is.null(a$base)) {
+    base <- which(nw %v% ".LayerName" == a$base)
+    tmp[base, base] <- cf_mat
+
+  } else {
+    pos <- which(nw %v% ".LayerName" == "+")
+    neg <- which(nw %v% ".LayerName" == "-")
+
+    tmp[pos, pos] <- cf_mat
+    tmp[neg, neg] <- cf_mat
+  }
+
+  # coefficient name
+  coef_name <- paste0("CF",a$base)
+
+  cl <- call("edgecov", x = tmp)
+  trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- coef_name
+  trm$dependence <- TRUE
+  trm
+}
+
+#'@templateVar name CE
+#'@title At least one common enemy
+#'@description This term adds one network statistic to the model equal to the number of edges in the network with at least one shared enemy. For a directed network, multiple shared enemy definitions are possible.
+#'
+#'@usage
+#' #binary: CE(type="OTP")
+#' @template ergmTerm-sp-type
+#' @template ergmTerm-sp-types
+#' @template ergmTerm-cache-sp
+#' @template ergmTerm-general
+#' @concept directed
+#' @concept undirected
+InitErgmTerm.CE <- function(nw, arglist, ...) {
+  a <- check.ErgmTerm(
+    nw, arglist,
+    varnames = c("base","type"),
+    vartypes = c("character,numeric","character"),
+    defaultvalues = list(NULL,"OTP"),
+    required = c(FALSE,FALSE)
+  )
+
+  # adjacency matrix
+  adj <- as.matrix(get.inducedSubgraph(nw, which(nw %v% ".LayerName" == "-")))
+
+  # compute shared-partner matrix based on type
+  sp <- switch(a$type,
+               OTP = adj %*% adj,
+               ITP = t(adj) %*% t(adj),
+               RTP = (adj * t(adj)) %*% (adj * t(adj)),
+               OSP = t(adj) %*% adj,
+               ISP = adj %*% t(adj),
+               # default: any common enemy
+               any = adj %*% t(adj) + t(adj) %*% adj
+  )
+
+  diag(sp) <- 0               # remove self-loops
+  ce_mat <- (sp > 0) * 1      # indicator: at least one shared partner
+
+  n <- network.size(nw)
+  tmp <- matrix(0, nrow = n, ncol = n)
+
+  if(!is.null(a$base)) {
+    base <- which(nw %v% ".LayerName" == a$base)
+    tmp[base, base] <- ce_mat
+
+  } else {
+    pos <- which(nw %v% ".LayerName" == "+")
+    neg <- which(nw %v% ".LayerName" == "-")
+
+    tmp[pos, pos] <- ce_mat
+    tmp[neg, neg] <- ce_mat
+  }
+
+  # coefficient name
+  coef_name <- paste0("CE",a$base)
+
+  cl <- call("edgecov", x = tmp)
+  trm <- call.ErgmTerm(cl, nw, ...)
+  trm$coef.names <- coef_name
+  trm$dependence <- TRUE
   trm
 }

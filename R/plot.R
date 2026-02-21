@@ -10,9 +10,11 @@
 #' \code{plot.static.sign()} visualizes a single (static) signed network.
 #'
 #' @param x A signed network object of class \code{static.sign}.
-#' @param col_pos Color for positive edges. Default is 'green3'.
-#' @param col_neg Color for negative edges. Default is 'red3'.
+#' @param col_pos Color for positive edges. Default is green.
+#' @param col_neg Color for negative edges. Default is red.
+#' @param col_both Color for edges that are both positive and negative. Default is darkgrey.
 #' @param neg.lty Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".
+#' @param both.lty Line type for edges that are both positive and negative. Default is "solid". Other options are "dotted" and "dashed".
 #' @param inv_weights Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.
 #' @param coord Optional matrix of coordinates for node positions. If NULL, layout is computed using stress majorization.
 #' @param ... Additional arguments passed to the plot function.
@@ -28,10 +30,10 @@
 #' plot(tribes, col_pos = "green", col_neg = "red")
 #'
 #' @export
-plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F",
-                             neg.lty = 1, inv_weights = TRUE, coord = NULL, ...) {
+plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
+                             neg.lty = 1, both.lty = 1, inv_weights = TRUE, coord = NULL, ...) {
   net <- x
-  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lty = neg.lty)
+  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, color_both = col_both, neg.lty = neg.lty, both.lty = both.lty)
 
   tmp_graph <- intergraph::asIgraph(sgl)
   weights <- sgl%e%"weights"
@@ -67,19 +69,39 @@ plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F",
 #' @return A list of plots, one for each selected timepoint.
 #'
 #' @export
-plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F",
-                              neg.lty = 1, inv_weights = TRUE,
-                              time = NULL, titles = NULL, fix.pos = TRUE, ...) {
+plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
+                              neg.lty = 1, both.lty = 1, inv_weights = TRUE,
+                              time = NULL, titles = x$gal$names, fix.pos = TRUE,
+                              coord = NULL, ...) {
+
   net <- x
-  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, neg.lty = neg.lty)
+  sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, color_both = col_both,
+                 neg.lty = neg.lty, both.lty = both.lty)
 
   if (is.null(time)) time <- seq_along(sgl)
   p <- vector("list", length(time))
 
+  # If user provides coord, just use it (must match timepoints)
+  if (!is.null(coord)) {
+    if (is.matrix(coord)) {
+      coord <- replicate(length(sgl), coord, simplify = FALSE)
+    }
+
+    for (t in time) {
+      p[[t]] <- network::plot.network(sgl[[t]],
+                                      edge.col = sgl[[t]]%e%"col",
+                                      edge.lty = sgl[[t]]%e%"type",
+                                      coord = coord[[t]],
+                                      main = titles[t],
+                                      ...)
+    }
+    return(p)
+  }
+
   if (fix.pos) {
-    # Reference layout from first timepoint
     ref_sgl <- sgl[[1]]
     ref_graph <- intergraph::asIgraph(ref_sgl)
+
     weights_ref <- ref_sgl%e%"weights"
     if (inv_weights) weights_ref <- 1 / pmax(weights_ref, .Machine$double.eps)
     E(ref_graph)$weights <- weights_ref
@@ -94,36 +116,36 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F",
 
       layout_t <- graphlayouts::layout_with_stress(tmp_graph, weights = E(tmp_graph)$weights)
 
-      # Align layout to reference
       layout_t <- vegan::procrustes(layout_ref, layout_t, scale = FALSE)$Yrot
 
       p[[t]] <- network::plot.network(sgl[[t]],
                                       edge.col = sgl[[t]]%e%"col",
                                       edge.lty = sgl[[t]]%e%"type",
                                       coord = layout_t,
-                                      main = if (!is.null(titles)) titles[t] else NULL,
+                                      main = titles[t],
                                       ...)
     }
+
   } else {
     for (t in time) {
-      tmp_sgl <- sgl[[t]]
-      tmp_graph <- intergraph::asIgraph(tmp_sgl)
-      tmp_weights <- tmp_sgl%e%"weights"
+      tmp_graph <- intergraph::asIgraph(sgl[[t]])
+      tmp_weights <- sgl[[t]]%e%"weights"
       if (inv_weights) tmp_weights <- 1 / pmax(tmp_weights, .Machine$double.eps)
       E(tmp_graph)$weights <- tmp_weights
 
       layout <- graphlayouts::layout_with_stress(tmp_graph, weights = E(tmp_graph)$weights)
 
-      p[[t]] <- network::plot.network(tmp_sgl,
-                                      edge.col = tmp_sgl%e%"col",
-                                      edge.lty = tmp_sgl%e%"type",
+      p[[t]] <- network::plot.network(sgl[[t]],
+                                      edge.col = sgl[[t]]%e%"col",
+                                      edge.lty = sgl[[t]]%e%"type",
                                       coord = layout,
-                                      main = if (!is.null(titles)) titles[t] else NULL,
+                                      main = titles[t],
                                       ...)
     }
   }
 
   p
 }
+
 
 

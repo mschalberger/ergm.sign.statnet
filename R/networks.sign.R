@@ -68,7 +68,7 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
   # Define ERGM constraints
   new_constraints <- if (dynamic) {
     as.formula(paste0("~ blockdiag('.NetworkID_new') + discord('.PrevNet')",
-      ifelse(dual.sign, "~", fixL_str)
+      ifelse(dual.sign, "", fixL_str)
     ))
   } else {
     as.formula(paste0("~ blockdiag('.NetworkID_new')",
