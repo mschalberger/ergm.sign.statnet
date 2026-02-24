@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.nse}
 \title{Non-edgewise shared enemies}
 \usage{
-# binary: nse(d, type="OTP", base=NULL, in_order=FALSE)
+# binary: nse(d, type="OTP", base=NULL)
 }
 \arguments{
 \item{d}{a vector of distinct integers}

@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.dsf}
 \title{Dyadwise shared friends}
 \usage{
-# binary: dsf(d, type="OTP", in_order=FALSE)
+# binary: dsf(d, type="OTP")
 }
 \description{
 This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of dyads in the network with exactly `d[i]` shared friends. For a directed network, multiple shared friends definitions are possible.

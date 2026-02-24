@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.nsf}
 \title{Non-edgewise shared friends}
 \usage{
-# binary: nsf(d, type="OTP", base=NULL, in_order=FALSE)
+# binary: nsf(d, type="OTP", base=NULL)
 }
 \arguments{
 \item{d}{a vector of distinct integers}

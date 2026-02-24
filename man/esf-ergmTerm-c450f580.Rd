@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.esf}
 \title{Edgewise shared friends}
 \usage{
-# binary: esf(d, type="OTP", L.base=NULL, in_order=FALSE)
+# binary: esf(d, type="OTP", L.base=NULL)
 }
 \arguments{
 \item{d}{a vector of distinct integers}

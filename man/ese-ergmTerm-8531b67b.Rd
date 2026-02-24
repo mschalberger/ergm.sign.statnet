@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.ese}
 \title{Edgewise shared enemies}
 \usage{
-# binary: ese(d, type="OTP", L.base=NULL, in_order=FALSE)
+# binary: ese(d, type="OTP", L.base=NULL)
 }
 \arguments{
 \item{d}{a vector of distinct integers}

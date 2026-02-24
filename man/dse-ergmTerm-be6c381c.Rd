@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.dse}
 \title{Dyadwise shared enemies}
 \usage{
-# binary: dse(d, type="OTP", in_order=FALSE)
+# binary: dse(d, type="OTP")
 }
 \description{
 This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of dyads in the network with exactly `d[i]` shared enemies. For a directed network, multiple shared enemies definitions are possible.

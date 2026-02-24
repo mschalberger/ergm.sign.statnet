@@ -59,7 +59,7 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of dyads in the network with exactly `d[i]` shared friends. For a directed network, multiple shared friends definitions are possible.
 #'
 #' @usage
-#' # binary: dsf(d, type="OTP", in_order=FALSE)
+#' # binary: dsf(d, type="OTP")
 #'
 #' @template ergmTerm-sp-types
 #' @template ergmTerm-cache-sp
@@ -69,11 +69,11 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
 #' @concept undirected
 InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","in_order"),
-                      vartypes = c("numeric","character","logical"),
-                      defaultvalues = list(NULL, "OTP", FALSE),
-                      required = c(TRUE, FALSE,FALSE))
-  cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+                      varnames = c("d","type"),
+                      vartypes = c("numeric","character"),
+                      defaultvalues = list(NULL, "OTP"),
+                      required = c(TRUE, FALSE))
+  cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`+`,~`+`))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if(is.directed(nw)) paste("dsf.", a$type, "#", a$d, sep = "") else paste("dsf#", a$d, sep = "")
   trm
@@ -84,7 +84,7 @@ InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of dyads in the network with exactly `d[i]` shared enemies. For a directed network, multiple shared enemies definitions are possible.
 #'
 #' @usage
-#' # binary: dse(d, type="OTP", in_order=FALSE)
+#' # binary: dse(d, type="OTP")
 #'
 #' @template ergmTerm-sp-types
 #' @template ergmTerm-cache-sp
@@ -94,11 +94,11 @@ InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","in_order"),
-                      vartypes = c("numeric","character","logical"),
-                      defaultvalues = list(NULL, "OTP", FALSE),
-                      required = c(TRUE, FALSE,FALSE))
-  cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+                      varnames = c("d","type"),
+                      vartypes = c("numeric","character"),
+                      defaultvalues = list(NULL, "OTP"),
+                      required = c(TRUE, FALSE))
+  cl <- call("ddspL", d = a$d, type = a$type, Ls.path= c(~`-`,~`-`))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if(is.directed(nw)) paste("dse.", a$type, "#", a$d, sep = "") else paste("dse#", a$d, sep = "")
   trm
@@ -109,7 +109,7 @@ InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds one network statistic to the model equal to the geometrically weighted dyadwise shared friends distribution with decay parameter. Note that the GWDSF statistic is equal to the sum of GWNSF plus GWESF. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: gwdsf(decay, fixed=FALSE, cutoff=30, type="OTP", in_order=FALSE)
+#' # binary: gwdsf(decay, fixed=FALSE, cutoff=30, type="OTP")
 #' @templateVar multiplicand shared friend or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @templateVar underlying DSF
@@ -124,12 +124,12 @@ InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL,FALSE),
-                      required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL),
+                      required = c(FALSE,FALSE,FALSE,FALSE,FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
-  cl <- call("dgwdspL", decay = a$decay, fixed = a$fixed, ,type = a$type, alpha = a$alpha, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  cl <- call("dgwdspL", decay = a$decay, fixed = a$fixed, ,type = a$type, alpha = a$alpha, Ls.path= c(~`+`,~`+`))
   if(!a$fixed) {
     cl$cutoff <- a$cutoff
   }
@@ -147,7 +147,7 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @description This term adds one network statistic to the model equal to the geometrically weighted dyadwise shared enemies distribution with decay parameter. Note that the GWDSE statistic is equal to the sum of GWNSE plus GWESE. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: gwdse(decay, fixed=FALSE, cutoff=30, type="OTP", in_order=FALSE)
+#' # binary: gwdse(decay, fixed=FALSE, cutoff=30, type="OTP")
 #' @templateVar multiplicand shared enemy or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @templateVar underlying DSE
@@ -162,12 +162,12 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept undirected
 InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL,FALSE),
-                      required = c(FALSE,FALSE,FALSE,FALSE,FALSE,FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP",NULL),
+                      required = c(FALSE,FALSE,FALSE,FALSE,FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
-  cl <- call("dgwdspL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwdspL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, Ls.path= c(~`-`,~`-`))
   if(!a$fixed) {
     cl$cutoff <- a$cutoff
   }
@@ -185,7 +185,7 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of edges in the network with exactly `d[i]` shared friends. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: esf(d, type="OTP", L.base=NULL, in_order=FALSE)
+#' # binary: esf(d, type="OTP", L.base=NULL)
 #' @param d a vector of distinct integers
 #' @param lag logical; if TRUE, compute the lagged version of the esf statistic based on the previous time point's network
 #' @template ergmTerm-sp-type
@@ -199,10 +199,10 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept undirected
 InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","base", "in_order", "lag"),
-                      vartypes = c("numeric","character", "character,numeric","logical", "logical"),
-                      defaultvalues = list(NULL, "OTP", NULL, FALSE, FALSE),
-                      required = c(TRUE, FALSE, FALSE, FALSE, FALSE))
+                      varnames = c("d","type","base", "lag"),
+                      vartypes = c("numeric","character", "character,numeric", "logical"),
+                      defaultvalues = list(NULL, "OTP", NULL, FALSE),
+                      required = c(TRUE, FALSE, FALSE, FALSE))
 
   if (!a$lag) {
     if (is.null(a$base)) {
@@ -212,7 +212,7 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
     }
-    cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+    cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`))
   } else {
     prev_net <- nw$gal$.PrevNets[[1]]
     if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
@@ -254,7 +254,7 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of edges in the network with exactly `d[i]` shared enemies. For a directed network, multiple shared enemy definitions are possible.
 #'
 #' @usage
-#' # binary: ese(d, type="OTP", L.base=NULL, in_order=FALSE)
+#' # binary: ese(d, type="OTP", L.base=NULL)
 #' @param d a vector of distinct integers
 #' @param lag logical; if TRUE, compute the lagged version of the ese statistic based on the previous time point's network
 #' @template ergmTerm-sp-type
@@ -268,10 +268,10 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","base", "in_order", "lag"),
-                      vartypes = c("numeric","character", "character,numeric","logical", "logical"),
-                      defaultvalues = list(NULL, "OTP", NULL, FALSE, FALSE),
-                      required = c(TRUE, FALSE, FALSE, FALSE, FALSE))
+                      varnames = c("d","type","base", "lag"),
+                      vartypes = c("numeric","character", "character,numeric", "logical"),
+                      defaultvalues = list(NULL, "OTP", NULL, FALSE),
+                      required = c(TRUE, FALSE, FALSE, FALSE))
 
   if(!a$lag) {
     if (is.null(a$base)) {
@@ -281,7 +281,7 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
     }
-    cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+    cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`))
   } else {
     prev_net <- nw$gal$.PrevNets[[1]]
     if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
@@ -323,7 +323,7 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds a statistic equal to the geometrically weighted edgewise (not dyadwise) shared friend distribution with decay parameter. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: gwesf(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: gwesf(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL)
 #' @templateVar multiplicand shared friend or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @param lag logical; if TRUE, compute the lagged version of the gwesf statistic based on the previous time point's network
@@ -340,10 +340,10 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order", "lag"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical", "logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha","base", "lag"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric", "logical"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
   if (!a$lag) {
     if (is.null(a$base)) {
@@ -353,7 +353,7 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
     }
-    cl <- call("dgwespL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+    cl <- call("dgwespL",decay = a$decay, fixed = a$fixed ,type = a$type, alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`))
     if(!a$fixed) {
       cl$cutoff <- a$cutoff
     }
@@ -402,7 +402,7 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @description This term adds a statistic equal to the geometrically weighted edgewise (not dyadwise) shared enemy distribution with decay parameter. For a directed network, multiple shared enemy definitions are possible.
 #'
 #' @usage
-#' # binary: gwese(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: gwese(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL)
 #' @templateVar multiplicand shared enemy or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @param lag logical; if TRUE, compute the lagged version of the gwese statistic based on the previous time point's network
@@ -419,10 +419,10 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept undirected
 InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order", "lag"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical", "logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE,FALSE, FALSE, FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha","base", "lag"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric", "logical"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL,NULL, FALSE),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE,FALSE, FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
   if (!a$lag) {
   if (is.null(a$base)) {
@@ -432,7 +432,7 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
   }
-  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`))
   if(!a$fixed) {
     cl$cutoff <- a$cutoff
   }
@@ -486,7 +486,7 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of non-edges in the network with exactly `d[i]` shared friends. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: nsf(d, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: nsf(d, type="OTP", base=NULL)
 #' @param d a vector of distinct integers
 #' @template ergmTerm-sp-type
 #' @template ergmTerm-L-base
@@ -499,10 +499,10 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 #' @concept undirected
 InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "character,numeric","logical"),
-                      defaultvalues = list(NULL, "OTP", NULL, FALSE),
-                      required = c(TRUE, FALSE, FALSE, FALSE))
+                      varnames = c("d","type","base"),
+                      vartypes = c("numeric","character", "character,numeric"),
+                      defaultvalues = list(NULL, "OTP", NULL),
+                      required = c(TRUE, FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -510,7 +510,7 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if(is.directed(nw)) paste("nsf(",a$base,").", a$type, "#", a$d, sep = "") else paste("nsf(",a$base, ")#", a$d,sep = "")
   trm
@@ -521,7 +521,7 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds one network statistic to the model for each element in `d` where the \eqn{i} th such statistic equals the number of non-edges in the network with exactly `d[i]` shared enemies. For a directed network, multiple shared enemy definitions are possible.
 #'
 #' @usage
-#' # binary: nse(d, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: nse(d, type="OTP", base=NULL)
 #' @param d a vector of distinct integers
 #' @template ergmTerm-sp-type
 #' @template ergmTerm-L-base
@@ -534,10 +534,10 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("d","type","base", "in_order"),
-                      vartypes = c("numeric","character", "character,numeric","logical"),
-                      defaultvalues = list(NULL, "OTP", NULL, FALSE),
-                      required = c(TRUE, FALSE, FALSE, FALSE))
+                      varnames = c("d","type","base"),
+                      vartypes = c("numeric","character", "character,numeric"),
+                      defaultvalues = list(NULL, "OTP", NULL),
+                      required = c(TRUE, FALSE, FALSE))
   if (is.null(a$base)) {
     b <- NULL
   } else if (a$base %in% c("+", 1)) {
@@ -545,7 +545,7 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dnspL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`))
   trm <- call.ErgmTerm(cl, nw, ...)
   trm$coef.names <- if(is.directed(nw)) paste("nse(",a$base,").", a$type, "#", a$d, sep = "") else paste("nse(",a$base, ")#", a$d,sep = "")
   trm
@@ -556,7 +556,7 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @description This term adds a statistic equal to the geometrically weighted nonedgewise (that is, over dyads that do not have an edge) shared friend distribution with decay parameter. For a directed network, multiple shared friend definitions are possible.
 #'
 #' @usage
-#' # binary: gwnsf(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: gwnsf(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL)
 #' @templateVar multiplicand shared friend or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @templateVar underlying NSF
@@ -572,10 +572,10 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept undirected
 InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha","base"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
   if (is.null(a$base)) {
     b <- NULL
@@ -584,7 +584,7 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`), L.in_order = a$in_order)
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`+`,~`+`))
   if(!a$fixed) {
     cl$cutoff <- a$cutoff
   }
@@ -602,7 +602,7 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
 #' @description This term adds a statistic equal to the geometrically weighted nonedgewise (that is, over dyads that do not have an edge) shared enemy distribution with decay parameter. For a directed network, multiple shared enemy definitions are possible.
 #'
 #' @usage
-#' # binary: gwnse(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL, in_order=FALSE)
+#' # binary: gwnse(decay, fixed=FALSE, cutoff=30, type="OTP", base=NULL)
 #' @templateVar multiplicand shared enemy or selected directed analogue count
 #' @template ergmTerm-gw-decay-fixed
 #' @templateVar underlying NSE
@@ -618,10 +618,10 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
 #' @concept undirected
 InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("decay", "fixed", "cutoff","type","alpha","base","in_order"),
-                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric","logical"),
-                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL, FALSE),
-                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
+                      varnames = c("decay", "fixed", "cutoff","type","alpha","base"),
+                      vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric"),
+                      defaultvalues = list(NULL,FALSE, gw.cutoff, "OTP", NULL, NULL),
+                      required = c(FALSE, FALSE, FALSE, FALSE, FALSE, FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
   if (is.null(a$base)) {
     b <- NULL
@@ -630,7 +630,7 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
   } else if (a$base %in% c("-", -1)) {
     b <- ~`-`
   }
-  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`), L.in_order = a$in_order)
+  cl <- call("dgwnspL",decay = a$decay, fixed = a$fixed ,type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`))
   if(!a$fixed) {
     cl$cutoff <- a$cutoff
   }

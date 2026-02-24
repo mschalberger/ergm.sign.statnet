@@ -5,7 +5,7 @@
 \alias{InitErgmTerm.gwdsf}
 \title{Geometrically weighted dyadwise shared friends distribution}
 \usage{
-# binary: gwdsf(decay, fixed=FALSE, cutoff=30, type="OTP", in_order=FALSE)
+# binary: gwdsf(decay, fixed=FALSE, cutoff=30, type="OTP")
 }
 \arguments{
 \item{decay}{nonnegative decay parameter for the shared friend or selected directed analogue count; required if `fixed=TRUE` and ignored with a warning otherwise.}

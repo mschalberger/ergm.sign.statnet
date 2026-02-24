@@ -61,23 +61,22 @@ summary(tribes ~ edges + Pos(~ edges) + Neg(~ edges))
 It is also possible to plot the signed network using the `plot` function. Which requires the `UnLayer` function that turns the multilayer network into a single layer network:
 
 ```{r}
-tribes_sgl <- UnLayer(tribes, color_pos = "green3", color_neg = "red3")
-plot(tribes_sgl, edge.col = "col", label = "vertex.names")
+plot(tribes, displaylabels = TRUE)
 ```
 
 # Fitting a model
 
-Just like in the unsigned case, we can call the `ergm` function to fit a model to the signed network. The `ergm` function requires a formula that specifies the model to be fitted. In addition to the normal ergm terms we can also use the `Pos` and the `Neg` function to specify terms that only apply to the positive or negative layer of the network.
+Just like in the unsigned case, we can call the `ergm.sign` function to fit a model to the signed network. The `ergm.sign` function requires a formula that specifies the model to be fitted. In addition to the normal ergm terms we can also use the `Pos` and the `Neg` function to specify terms that only apply to the positive or negative layer of the network.
 
 ```{r}
-fit <- ergm(tribes ~ Pos(~ edges) + Neg(~ edges))
+fit <- ergm.sign(tribes ~ Pos(~ edges) + Neg(~ edges))
 summary(fit)
 ```
 
 Triadic effects are of particular interest in the context of signed networks.
 
 ```{r}
-triad_fit <- ergm(tribes ~ gwese(0.5, fixed = TRUE, base = "+") + gwesf(0.5, fixed = TRUE, base = "+"))
+triad_fit <- ergm.sign(tribes ~ gwese(0.5, fixed = TRUE, base = "+") + gwesf(0.5, fixed = TRUE, base = "+"))
 summary(triad_fit)
 ```
 
@@ -88,7 +87,7 @@ Here, the `gwese` (geometrically weighted edgewise shared enemies) term models e
 In order to assess the goodness of fit of the model we can use the `GoF` function, which compares the observed network statistics to the statistics of simulated networks. The `nsim` argument specifies the number of simulations to be performed. For example, to perform 20 simulations we can use the following code:
 
 ```{r}
-GoF(fit, nsim = 20)
+gof.sign(fit, nsim = 20)
 ```
 
 # References
