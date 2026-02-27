@@ -76,7 +76,7 @@ summary(fit)
 Triadic effects are of particular interest in the context of signed networks.
 
 ```{r}
-triad_fit <- ergm.sign(tribes ~ gwese(0.5, fixed = TRUE, base = "+") + gwesf(0.5, fixed = TRUE, base = "+"))
+triad_fit <- ergm.sign(tribes ~ gwese(0.5, base = "+") + gwesf(0.5, base = "+"))
 summary(triad_fit)
 ```
 
@@ -84,10 +84,10 @@ Here, the `gwese` (geometrically weighted edgewise shared enemies) term models e
 
 # Goodness of fit
 
-In order to assess the goodness of fit of the model we can use the `GoF` function, which compares the observed network statistics to the statistics of simulated networks. The `nsim` argument specifies the number of simulations to be performed. For example, to perform 20 simulations we can use the following code:
+In order to assess the goodness of fit of the model we can use the `gof_sign` function, which compares the observed network statistics to the statistics of simulated networks. The `nsim` argument specifies the number of simulations to be performed. For example, to perform 20 simulations we can use the following code:
 
 ```{r}
-gof.sign(fit, nsim = 20)
+gof_sign(triad_fit, nsim = 20)
 ```
 
 # References

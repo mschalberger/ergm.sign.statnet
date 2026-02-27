@@ -36,7 +36,7 @@
 #' @importFrom stats simulate
 #' @importFrom graphics axis
 #' @export
-gof.sign <- function(model, nsim = 200, seed = NULL) {
+gof_sign <- function(model, nsim = 200, seed = NULL) {
 
   # simulate networks
   net <- model$network
