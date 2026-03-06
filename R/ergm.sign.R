@@ -13,7 +13,7 @@
 #'
 #' @examples
 #' \dontrun{
-#' ergm.sign(signed_net ~ edges + triangles) # signed network; uses mple_sign
+#' ergm.sign(signed_net ~ edges + triangles)
 #' }
 #'
 #' @export

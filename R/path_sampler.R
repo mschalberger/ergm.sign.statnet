@@ -115,8 +115,11 @@ path_sampling <- function(net, formula, coef, coef_indep, bridges , nsim = 1, se
       )
     return(res %*%Dtheta.Du)
   })
-  return((to-from)%*%global_stats - sum(unlist(llrs)))
-}
+  bridge_contribs <- unlist(llrs)
+  loglik_estimate <- (to - from) %*% global_stats - sum(bridge_contribs)
+  mc_se <- sd(bridge_contribs) * sqrt(bridges)
+
+  return(list(loglik = loglik_estimate, mc.se = mc_se))}
 
 #' Evaluate Log-Likelihood via Path Sampling
 #'
@@ -153,21 +156,27 @@ eval_loglik <- function(object) {
   common <- intersect(names_sub, names_idep)
   coef_idep[common] <- unname(coef(sub_model)[match(common, names_sub)])
 
-  loglk <- path_sampling(formula = formula,
-                               coef = coef,
-                               coef_indep = coef_idep,
-                               net = net,
-                               nsim = 1,
-                               seed = 123,
-                               verbose  = 0,
-                               bridges = 20,
-                               control = control.simulate.formula(MCMC.burnin = 10000*20,
-                                                                  MCMC.interval = 10000,
-                               ))
+  result <- path_sampling(
+    formula    = formula,
+    coef       = coef,
+    coef_indep = coef_idep,
+    net        = net,
+    nsim       = 1,
+    seed       = 123,
+    verbose    = 0,
+    bridges    = 20,
+    control    = control.simulate.formula(
+      MCMC.burnin   = 10000 * 20,
+      MCMC.interval = 10000
+    )
+  )
+
   loglik <- structure(
-    loglk + logLik(sub_model),
-    df = length(coef),
-    nobs = network.size(net)/2,
-    class = "logLik")
+    result$loglik + logLik(sub_model),
+    df    = length(coef),
+    nobs  = network.size(net) / 2,
+    vcov = result$mc.se,
+    class = "logLik"
+  )
   return(loglik)
 }

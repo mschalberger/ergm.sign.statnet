@@ -127,7 +127,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
       i <- i +1
     }
     #res$old_covar <- invHess %*% var(old.data) %*% invHess
-    res$covar <- var(u.data)
+    res$covar <-  var(u.data)
   } else {
     res$covar <- glm_summary$cov.unscaled
   }
