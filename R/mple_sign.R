@@ -90,44 +90,60 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
     )
 
     message("Simulating networks for Godambe covariance estimation...")
-
     num.variables <- length(glm_fit$coefficients)
     u.data <- matrix(0, nrow = R, ncol = num.variables)
-    #old.data <- matrix(0, nrow = R, ncol = num.variables)
     message("Estimating Godambe Matrix using ", R, " simulated networks.")
     theta.mple <- unname(glm_fit$coefficients)
-    invHess <- glm_summary$cov.unscaled
-    i <- 1
-    for (sim_net  in sim_mple) {
+    invHess    <- glm_summary$cov.unscaled
+    i          <- 1
+    skipped    <- 0
+
+    for (sim_net in sim_mple) {
       message("  Processing simulated network ", i, " of ", R)
       dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_net)
-      #sim_mple[[i]] <- NULL
-      #gc(FALSE)
 
       if (has_fixL) {
         tmp_keep <- dat$predictor[, ncol(dat$predictor)] == 0
         X <- dat$predictor[tmp_keep, -ncol(dat$predictor), drop = FALSE]
-        y  <- dat$response[tmp_keep]
-        w   <- dat$weights[tmp_keep]
+        y <- dat$response[tmp_keep]
+        w <- dat$weights[tmp_keep]
       } else {
         X <- dat$predictor
-        y  <- dat$response
-        w   <- dat$weights
+        y <- dat$response
+        w <- dat$weights
       }
 
-      #rm(dat)
-      #gc(FALSE)
-      predictions <- 1 / (1 + exp(-X %*% theta.mple))
+      predictions       <- 1 / (1 + exp(-X %*% theta.mple))
       weighted_residuals <- w * (y - predictions)
-      gradient <- t(X) %*% weighted_residuals
-      Wvec <- as.vector(w * predictions * (1 - predictions))
-      info <- t(X) %*% (X * Wvec)
-      u.data[i,] <- solve(info, gradient)
-      #old.data[i,] <- gradient
-      i <- i +1
+      gradient          <- t(X) %*% weighted_residuals
+      Wvec              <- as.vector(w * predictions * (1 - predictions))
+      info              <- t(X) %*% (X * Wvec)
+
+      result <- tryCatch(
+        solve(info, gradient),
+        error = function(e) {
+          message(sprintf("    Skipping simulation %d — singular info matrix: %s", i, conditionMessage(e)))
+          NULL
+        }
+      )
+
+      if (!is.null(result)) {
+        u.data[i - skipped, ] <- result
+      } else {
+        skipped <- skipped + 1
+      }
+
+      i <- i + 1
     }
-    #res$old_covar <- invHess %*% var(old.data) %*% invHess
-    res$covar <-  var(u.data)
+
+    # Trim unused rows if any draws were skipped
+    valid_rows <- R - skipped
+    if (skipped > 0) {
+      message(sprintf("Godambe: %d of %d simulations skipped due to singularity.", skipped, R))
+      u.data <- u.data[seq_len(valid_rows), , drop = FALSE]
+    }
+
+    res$covar <- if (valid_rows >= 2) var(u.data) else invHess
   } else {
     res$covar <- glm_summary$cov.unscaled
   }
