@@ -28,9 +28,9 @@
 mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik = FALSE,...) {
   net <- ergm.getnetwork(formula)
 
-  has_fixL <- any(grepl("fixL", deparse(net[["gal"]][["ergm"]][["constraints"]])))
+  dual.sign <- ifelse(is.null(net%n%"dual.sign"), TRUE, net%n%"dual.sign")
 
-  if (has_fixL) {
+  if (!dual.sign) {
     cons_term <- if ("dynamic.sign" %in% class(net)) {
       quote(Cross(~L(~edges, ~`+` & `-`)))
     } else if ("multi.sign" %in% class(net)) {
@@ -47,7 +47,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   # Fit the ergmMPLE model
   mple_data <- ergmMPLE(formula_use, control = control, ...)
 
-  if (has_fixL) {
+  if (!dual.sign) {
     keep <- mple_data$predictor[, ncol(mple_data$predictor)] == 0
     predictor <- mple_data$predictor[keep, -ncol(mple_data$predictor), drop = FALSE]
     response  <- mple_data$response[keep]
@@ -102,7 +102,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
       message("  Processing simulated network ", i, " of ", R)
       dat <- ergm::ergmMPLE(formula = formula_use, basis = sim_net)
 
-      if (has_fixL) {
+      if (!dual.sign) {
         tmp_keep <- dat$predictor[, ncol(dat$predictor)] == 0
         X <- dat$predictor[tmp_keep, -ncol(dat$predictor), drop = FALSE]
         y <- dat$response[tmp_keep]
@@ -169,7 +169,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   res$estimate <- "MPLE"
   res$control <- control
   res$call <- match.call()
-  res$constraints <- net[["gal"]][["ergm"]][["constraints"]]
+  res$constraints <- net%ergmlhs%"constraints"
   res$ergm_version <- as.package_version(as.character(packageVersion("ergm")))
   res$formula <- formula
   res$info <- list(

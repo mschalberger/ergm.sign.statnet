@@ -15,7 +15,7 @@ InitErgmTerm.Pos <- function(nw, arglist, ...) {
                        defaultvalues = list(NULL),
                        required = c(TRUE))
 
-  nw$gal$sign <- "+"
+  nw%n%"sign" <- "+"
 
   formula <- if(is(a$formula, "formula")) list(a$formula) else a$formula
   #
@@ -43,7 +43,7 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
                       defaultvalues = list(NULL),
                       required = c(TRUE))
 
-  nw$gal$sign <- "-"
+  nw%n%"sign" <- "-"
 
   formula <- if(is(a$formula, "formula")) list(a$formula) else a$formula
 
@@ -214,8 +214,8 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
     }
     cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`))
   } else {
-    prev_net <- nw$gal$.PrevNets[[1]]
-    if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+    prev_net <- nw%n%".PrevNets"[[1]]
+    if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
     # previous adjacency
@@ -283,8 +283,8 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
     }
     cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`))
   } else {
-    prev_net <- nw$gal$.PrevNets[[1]]
-    if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+    prev_net <- nw%n%".PrevNets"[[1]]
+    if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
     # previous adjacency
@@ -360,8 +360,8 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
     } else{
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
-    prev_net <- nw$gal$.PrevNets[[1]]
-    if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+    prev_net <- nw%n%".PrevNets"[[1]]
+    if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
     prev_adj <- as.matrix(get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == "+")))
@@ -439,8 +439,8 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   } else {
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
-    prev_net <- nw$gal$.PrevNets[[1]]
-    if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+    prev_net <- nw%n%".PrevNets"[[1]]
+    if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
     # previous adjacency matrix for selected layer nodes
@@ -668,12 +668,12 @@ InitErgmTerm.delrecip <- function(nw, arglist, ...) {
     stop("delrecip term only applicable to directed networks")
   }
 
-  prev_net <- nw$gal$.PrevNets[[1]]
-  if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+  prev_net <- nw%n%".PrevNets"[[1]]
+  if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
   if (is.null(prev_net)) stop("No previous network found")
 
-  if (!is.null(nw$gal$sign)) {
-    prev_net <- get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == nw$gal$sign))
+  if (!is.null(nw%n%"sign")) {
+    prev_net <- get.inducedSubgraph(prev_net, which(prev_net %v% ".LayerName" == nw%n%"sign"))
   }
   prev_adj <- as.matrix(prev_net)
 
@@ -704,8 +704,8 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
                       defaultvalues = list(NULL),
                       required = c(TRUE))
 
-  prev_net <- nw$gal$.PrevNets[[1]]
-  if (is.null(prev_net)) prev_net <- nw$gal$.PrevNet
+  prev_net <- nw%n%".PrevNets"[[1]]
+  if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
   if (is.null(prev_net)) stop("No previous network found")
 
   # copy attribute values from previous net to a temporary attribute on current net

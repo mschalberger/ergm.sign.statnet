@@ -20,7 +20,7 @@
 summary.static.sign <- function(object, ...) {
   net <- object
   net_sgl <- UnLayer(net)
-  multi <- net_sgl$gal$mlt
+  multi <- net_sgl%n%"mlt"
   n <- network.size(net_sgl)
 
   a <- data.frame(
@@ -64,7 +64,7 @@ summary.static.sign <- function(object, ...) {
 #' @export
 summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
   net <- object
-  nws <- net$gal$NetList
+  nws <- net%n%"NetList"
   if (is.null(time)) time <- seq_along(nws)
 
   mat <- do.call(rbind, lapply(time, function(i) {
@@ -102,7 +102,7 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       check.names = FALSE
     )
 
-    rownames(row) <- if (is.null(names)) net$gal$names[i] else names[i]
+    rownames(row) <- if (is.null(names)) net%n%"names"[i] else names[i]
     row
   }))
 
@@ -124,12 +124,12 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
 #' @export
 summary_formula.dynamic.sign <- function(object, at, names = NULL,  ..., basis = NULL) {
   basis <- if (is.null(basis)) ergm.getnetwork(object) else basis
-  if (is.null(names)) names <- basis$gal$names
-  if (missing(at) || !is.numeric(at)) at <- seq_along(basis$gal$NetList)
+  if (is.null(names)) names <- basis%n%"names"
+  if (missing(at) || !is.numeric(at)) at <- seq_along(basis%n%"NetList")
   names <- names[at]
 
   res_list <- lapply(at, function(t) {
-    nw <- basis$gal$NetList[[t]]
+    nw <- basis%n%"NetList"[[t]]
     getS3method("summary_formula", "network")(object, basis = nw, ...)
   })
 

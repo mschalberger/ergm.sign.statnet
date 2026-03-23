@@ -80,10 +80,10 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
 
   # Assign network type class
   if (dynamic) {
-    comb$gal$NetList <- nwl
+    comb%n%"NetList" <- nwl
     class(comb) <- c("dynamic.sign", class(comb))
   } else {
-    comb$gal$NetList <- nwl
+    comb%n%"NetList" <- nwl
     class(comb) <- c("multi.sign", class(comb))
   }
 

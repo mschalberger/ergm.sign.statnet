@@ -128,8 +128,8 @@ network.sign <- function(mat = NULL,
       })
 
       MultiDyn <- networks.sign(nets, dynamic = TRUE, dual.sign = dual.sign)
-      MultiDyn$gal$names <- paste("Timepoint", seq_along(pos.mat))
-      MultiDyn$gal$dual.sign <- dual.sign
+      MultiDyn%n%"names" <- paste("Timepoint", seq_along(pos.mat))
+      MultiDyn%n%"dual.sign" <- dual.sign
       return(MultiDyn)
     }
 
@@ -144,7 +144,7 @@ network.sign <- function(mat = NULL,
       MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
 
     MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
-    MultiNet$gal$dual.sign <- dual.sign
+    MultiNet%n%"dual.sign" <- dual.sign
     class(MultiNet) <- c("static.sign", "network", class(MultiNet))
     return(MultiNet)
   }
@@ -186,8 +186,8 @@ network.sign <- function(mat = NULL,
     } else {
       MultiDyn <- nets[[1]]
     }
-    MultiDyn$gal$names <- sapply(pooled_pos, attr, "pool_label")
-    MultiDyn$gal$dual.sign <- dual.sign
+    MultiDyn%n%"names" <- sapply(pooled_pos, attr, "pool_label")
+    MultiDyn%n%"dual.sign" <- dual.sign
     return(MultiDyn)
   }
 
@@ -207,6 +207,7 @@ network.sign <- function(mat = NULL,
 
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
+      MultiNet%n%"dual.sign" <- dual.sign
       return(MultiNet)
 
     } else if (matrix.type == "edgelist") {
@@ -257,7 +258,7 @@ network.sign <- function(mat = NULL,
         MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
 
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
-      MultiNet$gal$dual.sign <- dual.sign
+      MultiNet%n%"dual.sign" <- dual.sign
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
       return(MultiNet)
     } else {
@@ -294,8 +295,8 @@ network.sign <- function(mat = NULL,
     } else {
       MultiDyn <- nets[[1]]
     }
-    MultiDyn$gal$names <- sapply(mat, attr, "pool_label")
-    MultiDyn$gal$dual.sign <- dual.sign
+    MultiDyn%n%"names" <- sapply(mat, attr, "pool_label")
+    MultiDyn%n%"dual.sign" <- dual.sign
     return(MultiDyn)
   } else {
     if (is.null(vertex.names) && matrix.type == "adjacency") {

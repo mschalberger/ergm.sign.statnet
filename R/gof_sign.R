@@ -40,8 +40,7 @@ gof_sign <- function(model, nsim = 200, seed = NULL) {
 
   # simulate networks
   net <- model$network
-  sim <- simulate(model$formula, coef = unname(model$coefficients), nsim = nsim, seed = seed, basis = net,
-                  constraints = net[["gal"]][["ergm"]][["constraints"]])
+  sim <- simulate(model$formula, coef = unname(model$coefficients), nsim = nsim, seed = seed, basis = net)
 
   # select appropriate formula based on model type
   if ("static.sign" %in% class(net)) {

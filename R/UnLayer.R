@@ -31,7 +31,7 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", color_bot
     adj <- ((mat_pos + mat_neg) > 0) * 1
 
     comb <- as.network(adj, matrix.type = "adjacency",
-                       directed = pos$gal$directed, loops = pos$gal$loops)
+                       directed = pos%n%"directed", loops = pos%n%"loops")
 
     # Copy edge attributes
     for (e in list.edge.attributes(net)) {
@@ -60,11 +60,11 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", color_bot
     }
 
     # Store original multilayer network
-    comb$gal$mlt <- net
+    comb%n%"mlt" <- net
 
   } else if (any(c("dynamic.sign", "multi.sign") %in% class(net))) {
 
-    multi <- net$gal$NetList
+    multi <- net%n%"NetList"
     comb <- lapply(multi, function(x) {
 
       pos <- get.inducedSubgraph(x, v = which(x %v% ".LayerName" == "+"))
@@ -76,7 +76,7 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", color_bot
       adj <- ((mat_pos + mat_neg) > 0) * 1
 
       net_sgl <- as.network(adj, matrix.type = "adjacency",
-                            directed = pos$gal$directed, loops = pos$gal$loops)
+                            directed = pos%n%"directed", loops = pos%n%"loops")
 
       # Copy edge attributes
       for (e in list.edge.attributes(x)) {
@@ -104,7 +104,7 @@ UnLayer <- function(net, color_pos = "#008000", color_neg = "#E3000F", color_bot
       }
 
       # Store original multilayer network
-      net_sgl$gal$mlt <- x
+      net_sgl%n%"mlt" <- x
 
       net_sgl
     })

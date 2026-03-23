@@ -71,7 +71,7 @@ plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_bo
 #' @export
 plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
                               neg.lty = 1, both.lty = 1, inv_weights = TRUE,
-                              time = NULL, titles = x$gal$names, fix.pos = TRUE,
+                              time = NULL, titles = x%n%"names", fix.pos = TRUE,
                               coord = NULL, ...) {
 
   net <- x
