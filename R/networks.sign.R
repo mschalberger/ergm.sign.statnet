@@ -63,16 +63,16 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
     sapply(pairs, function(p) paste0("(`", p[1], "` & `", p[2], "`)")),
     collapse = " + "
   )
-  fixL_str <- paste0("+ fixL(~", pair_str, ")  ")
+  cons <- paste0("+ ChangeStats(~edges,~", pair_str, ")  ")
 
   # Define ERGM constraints
   new_constraints <- if (dynamic) {
     as.formula(paste0("~ blockdiag('.NetworkID_new') + discord('.PrevNet')",
-      ifelse(dual.sign, "", fixL_str)
+      ifelse(dual.sign, "", cons)
     ))
   } else {
     as.formula(paste0("~ blockdiag('.NetworkID_new')",
-      ifelse(dual.sign, "", fixL_str)
+      ifelse(dual.sign, "", cons)
     ))
   }
 

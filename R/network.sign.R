@@ -141,7 +141,7 @@ network.sign <- function(mat = NULL,
     MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
     if (!dual.sign)
-      MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
+      MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~`+` & `-`))
 
     MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
     MultiNet%n%"dual.sign" <- dual.sign
@@ -203,7 +203,7 @@ network.sign <- function(mat = NULL,
       MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
       if (!dual.sign)
-        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
+        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~`+` & `-`))
 
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
@@ -255,7 +255,7 @@ network.sign <- function(mat = NULL,
       MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
       if (!dual.sign)
-        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
+        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges ,~`+` & `-`))
 
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
       MultiNet%n%"dual.sign" <- dual.sign
