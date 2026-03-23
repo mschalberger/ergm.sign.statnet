@@ -119,7 +119,7 @@ network.sign <- function(mat = NULL,
                                     matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
         neg_net <- network::network(n, directed = directed, loops = loops,
                                     matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
-        Layer(`+` = pos_net, `-` = neg_net)
+        Signed(`+` = pos_net, `-` = neg_net)
       }, pos.mat, neg.mat, SIMPLIFY = FALSE)
 
       nets <- lapply(nets, function(net) {
@@ -138,7 +138,7 @@ network.sign <- function(mat = NULL,
                                 matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
     neg_net <- network::network(neg.mat, directed = directed, loops = loops,
                                 matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
-    MultiNet <- Layer(`+` = pos_net, `-` = neg_net)
+    MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
     if (!dual.sign)
       MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
@@ -174,7 +174,7 @@ network.sign <- function(mat = NULL,
                                   matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
       neg_net <- network::network(n, directed = directed, loops = loops,
                                   matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
-      Layer(`+` = pos_net, `-` = neg_net)
+      Signed(`+` = pos_net, `-` = neg_net)
     }, pooled_pos, pooled_neg, SIMPLIFY = FALSE)
 
     nets <- lapply(nets, function(net) {
@@ -200,7 +200,7 @@ network.sign <- function(mat = NULL,
                                   loops = loops, vertex.attr = vertex.attr, ...)
       neg_net <- network::network(neg_mat, matrix.type = "adjacency", directed = directed,
                                   loops = loops, vertex.attr = vertex.attr, ...)
-      MultiNet <- Layer(`+` = pos_net, `-` = neg_net)
+      MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
       if (!dual.sign)
         MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
@@ -252,7 +252,7 @@ network.sign <- function(mat = NULL,
                            head = edges_neg$to)
       }
 
-      MultiNet <- Layer(`+` = pos_net, `-` = neg_net)
+      MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
 
       if (!dual.sign)
         MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~`+` & `-`))
