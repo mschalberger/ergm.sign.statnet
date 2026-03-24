@@ -101,7 +101,7 @@ Signed <- function(..., dual.sign = FALSE, .symmetric = NULL, .bipartite = NULL,
   }
 
   if (exists("MultiNet")) {
-    if (!dual.sign) MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + fixL(~pos & neg))
+    if (!dual.sign) MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~pos & neg))
     return(MultiNet)
   }
 
