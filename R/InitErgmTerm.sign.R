@@ -1,3 +1,17 @@
+# Helper: stop if network is not a recognised signed-network class.
+# Called at the top of every InitErgmTerm that requires signed layers.
+.check_sign_network <- function(nw, term_name) {
+  sign_classes <- c("static.sign", "dynamic.sign", "multi.sign")
+  if (!inherits(nw, sign_classes)) {
+    ergm_Init_stop(
+      "Term `", term_name, "` requires a signed network ",
+      "(class 'static.sign', 'dynamic.sign', or 'multi.sign'), ",
+      "but the supplied network has class: ",
+      paste(class(nw), collapse = ", "), "."
+    )
+  }
+}
+
 #' @templateVar name Pos
 #' @title Evaluation of positive edges
 #' @description Evaluates the terms in `formula` of the positive edges and sums the results elementwise.
@@ -9,11 +23,13 @@
 #'
 #' @concept operator
 InitErgmTerm.Pos <- function(nw, arglist, ...) {
-   a <- check.ErgmTerm(nw, arglist,
-                       varnames = c("formula"),
-                       vartypes = c("formula"),
-                       defaultvalues = list(NULL),
-                       required = c(TRUE))
+  .check_sign_network(nw, "Pos")
+
+  a <- check.ErgmTerm(nw, arglist,
+                      varnames = c("formula"),
+                      vartypes = c("formula"),
+                      defaultvalues = list(NULL),
+                      required = c(TRUE))
 
   nw%n%"sign" <- "+"
 
@@ -37,6 +53,8 @@ InitErgmTerm.Pos <- function(nw, arglist, ...) {
 #'
 #' @concept operator
 InitErgmTerm.Neg <- function(nw, arglist, ...) {
+  .check_sign_network(nw, "Neg")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("formula"),
                       vartypes = c("formula"),
@@ -68,6 +86,8 @@ InitErgmTerm.Neg <- function(nw, arglist, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "dsf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type"),
                       vartypes = c("numeric","character"),
@@ -93,6 +113,8 @@ InitErgmTerm.dsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "dse")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type"),
                       vartypes = c("numeric","character"),
@@ -123,6 +145,8 @@ InitErgmTerm.dse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
+  .check_sign_network(nw, "gwdsf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha"),
                       vartypes = c("numeric","logical", "numeric","character","numeric"),
@@ -161,6 +185,8 @@ InitErgmTerm.gwdsf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
+  .check_sign_network(nw, "gwdse")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha"),
                       vartypes = c("numeric","logical", "numeric","character","numeric"),
@@ -198,6 +224,8 @@ InitErgmTerm.gwdse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "esf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "lag"),
                       vartypes = c("numeric","character", "character,numeric", "logical"),
@@ -267,6 +295,8 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "ese")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base", "lag"),
                       vartypes = c("numeric","character", "character,numeric", "logical"),
@@ -339,6 +369,8 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
+  .check_sign_network(nw, "gwesf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base", "lag"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric", "logical"),
@@ -357,7 +389,7 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
     if(!a$fixed) {
       cl$cutoff <- a$cutoff
     }
-    } else{
+  } else{
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
     prev_net <- nw%n%".PrevNets"[[1]]
@@ -418,6 +450,8 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
+  .check_sign_network(nw, "gwese")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base", "lag"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric", "logical"),
@@ -425,17 +459,17 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
                       required = c(FALSE, FALSE, FALSE, FALSE, FALSE,FALSE, FALSE))
   if (!is.null(a$decay)) a$fixed <- TRUE
   if (!a$lag) {
-  if (is.null(a$base)) {
+    if (is.null(a$base)) {
       b <- NULL
     } else if (a$base %in% c("+", 1)) {
       b <- ~`+`
     } else if (a$base %in% c("-", -1)) {
       b <- ~`-`
-  }
-  cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`))
-  if(!a$fixed) {
-    cl$cutoff <- a$cutoff
-  }
+    }
+    cl <- call("dgwespL",decay = a$decay, fixed = a$fixed, type = a$type,alpha = a$alpha, L.base = b, Ls.path= c(~`-`,~`-`))
+    if(!a$fixed) {
+      cl$cutoff <- a$cutoff
+    }
   } else {
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
@@ -498,6 +532,8 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "nsf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base"),
                       vartypes = c("numeric","character", "character,numeric"),
@@ -533,6 +569,8 @@ InitErgmTerm.nsf <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
+  .check_sign_network(nw, "nse")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("d","type","base"),
                       vartypes = c("numeric","character", "character,numeric"),
@@ -571,6 +609,8 @@ InitErgmTerm.nse <- function(nw, arglist, cache.sp=TRUE, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
+  .check_sign_network(nw, "gwnsf")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric"),
@@ -617,6 +657,8 @@ InitErgmTerm.gwnsf <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30,...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
+  .check_sign_network(nw, "gwnse")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("decay", "fixed", "cutoff","type","alpha","base"),
                       vartypes = c("numeric","logical", "numeric","character","numeric", "character,numeric"),
@@ -658,6 +700,8 @@ InitErgmTerm.gwnse <- function(nw, arglist,cache.sp=TRUE, gw.cutoff=30, ...) {
 #'
 #' @concept delayed
 InitErgmTerm.delrecip <- function(nw, arglist, ...) {
+  .check_sign_network(nw, "delrecip")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = NULL,
                       vartypes = NULL,
@@ -698,6 +742,8 @@ InitErgmTerm.delrecip <- function(nw, arglist, ...) {
 #'
 #' @concept delayed
 InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
+  .check_sign_network(nw, "delnodematch")
+
   a <- check.ErgmTerm(nw, arglist,
                       varnames = c("attr"),
                       vartypes = c("character"),
@@ -732,6 +778,8 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.CF <- function(nw, arglist, ...) {
+  .check_sign_network(nw, "CF")
+
   a <- check.ErgmTerm(
     nw, arglist,
     varnames = c("base","type"),
@@ -795,6 +843,8 @@ InitErgmTerm.CF <- function(nw, arglist, ...) {
 #' @concept directed
 #' @concept undirected
 InitErgmTerm.CE <- function(nw, arglist, ...) {
+  .check_sign_network(nw, "CE")
+
   a <- check.ErgmTerm(
     nw, arglist,
     varnames = c("base","type"),
