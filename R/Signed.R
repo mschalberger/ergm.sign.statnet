@@ -102,6 +102,9 @@ Signed <- function(..., dual.sign = FALSE, .symmetric = NULL, .bipartite = NULL,
 
   if (exists("MultiNet")) {
     if (!dual.sign) MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~pos & neg))
+    MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
+    class(MultiNet) <- c("static.sign", "network", class(MultiNet))
+    MultiNet%n%"dual.sign" <- dual.sign
     return(MultiNet)
   }
 
