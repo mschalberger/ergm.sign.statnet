@@ -24,8 +24,8 @@ summary.static.sign <- function(object, ...) {
   n <- network.size(net_sgl)
 
   a <- data.frame(
-    Directed = net_sgl$gal[["directed"]],
-    Loops = net_sgl$gal[["loops"]],
+    Directed = net_sgl%n%"directed",
+    Loops = net_sgl%n%"loops",
     Nodes = n,
     Edges = summary_formula(multi ~ edges),
     `Edges+` = summary_formula(multi ~ L(~ edges, ~ `+`)),
@@ -33,7 +33,7 @@ summary.static.sign <- function(object, ...) {
     Triads = summary_formula(multi ~ L(~ triangle, ~ `+` | `-`)),
     `+++` = summary_formula(multi ~ L(~ triangle, ~ `+`)),
     `---` = summary_formula(multi ~ L(~ triangle, ~ `-`)),
-    `++-` = if (net_sgl$gal[["directed"]]) {
+    `++-` = if (net_sgl%n%"directed") {
       sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
                             espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP") +
                             espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
@@ -41,7 +41,7 @@ summary.static.sign <- function(object, ...) {
     } else {
       sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * (1:n))
     },
-    `+--` = if (net_sgl$gal[["directed"]]) {
+    `+--` = if (net_sgl%n%"directed") {
       sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
                             espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP") +
                             espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
@@ -73,8 +73,8 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
     n <- network.size(nw_sgl)
 
     row <- data.frame(
-      Directed = nw_sgl$gal[["directed"]],
-      Loops = nw_sgl$gal[["loops"]],
+      Directed = nw_sgl%n%"directed",
+      Loops = nw_sgl%n%"loops",
       Nodes = n,
       Edges = summary_formula(multi ~ edges),
       `Edges+` = summary_formula(multi ~ L(~ edges, ~ `+`)),
@@ -82,7 +82,7 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       Triads = summary_formula(multi ~ L(~ triangle, ~ `+` | `-`)),
       `+++` = summary_formula(multi ~ L(~ triangle, ~ `+`)),
       `---` = summary_formula(multi ~ L(~ triangle, ~ `-`)),
-      `++-` = if (nw_sgl$gal[["directed"]]) {
+      `++-` = if (nw_sgl%n%"directed") {
         sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
                               espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP") +
                               espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
@@ -90,7 +90,7 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       } else {
         sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * (1:n))
       },
-      `+--` = if (nw_sgl$gal[["directed"]]) {
+      `+--` = if (nw_sgl%n%"directed") {
         sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
                               espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP") +
                               espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
@@ -101,8 +101,8 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       Density = round(network.density(nw_sgl), 2),
       check.names = FALSE
     )
-
-    rownames(row) <- if (is.null(names)) net%n%"names"[i] else names[i]
+    newnames <- ifelse(is.null(names), net%n%"names", names)
+    rownames(row) <- newnames[[i]]
     row
   }))
 
@@ -129,7 +129,8 @@ summary_formula.dynamic.sign <- function(object, at, names = NULL,  ..., basis =
   names <- names[at]
 
   res_list <- lapply(at, function(t) {
-    nw <- basis%n%"NetList"[[t]]
+    nw <- basis%n%"NetList"
+    nw <- nw[[t]]
     getS3method("summary_formula", "network")(object, basis = nw, ...)
   })
 
