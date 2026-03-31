@@ -242,7 +242,7 @@ InitErgmTerm.esf <- function(nw, arglist, cache.sp=TRUE, ...) {
     }
     cl <- call("despL", d = a$d, type = a$type, L.base = b, Ls.path= c(~`+`,~`+`))
   } else {
-    prev_net <- nw%n%".PrevNets"[[1]]
+    prev_net <- (nw%n%".PrevNets")[[1]]
     if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
@@ -313,7 +313,7 @@ InitErgmTerm.ese <- function(nw, arglist, cache.sp=TRUE, ...) {
     }
     cl <- call("despL",d = a$d, type = a$type, L.base = b, Ls.path= c(~`-`,~`-`))
   } else {
-    prev_net <- nw%n%".PrevNets"[[1]]
+    prev_net <- (nw%n%".PrevNets")[[1]]
     if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
@@ -392,7 +392,7 @@ InitErgmTerm.gwesf <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30, ...) {
   } else{
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
-    prev_net <- nw%n%".PrevNets"[[1]]
+    prev_net <- (nw%n%".PrevNets")[[1]]
     if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
@@ -473,7 +473,7 @@ InitErgmTerm.gwese <- function(nw, arglist, cache.sp=TRUE, gw.cutoff=30,...) {
   } else {
     if (!a$fixed) stop("Curved exponential family models are not supported with lagged terms.")
 
-    prev_net <- nw%n%".PrevNets"[[1]]
+    prev_net <- (nw%n%".PrevNets")[[1]]
     if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
     if (is.null(prev_net)) stop("No previous network found")
 
@@ -712,7 +712,7 @@ InitErgmTerm.delrecip <- function(nw, arglist, ...) {
     stop("delrecip term only applicable to directed networks")
   }
 
-  prev_net <- nw%n%".PrevNets"[[1]]
+  prev_net <- (nw%n%".PrevNets")[[1]]
   if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
   if (is.null(prev_net)) stop("No previous network found")
 
@@ -750,7 +750,7 @@ InitErgmTerm.delnodematch <- function(nw, arglist, ...) {
                       defaultvalues = list(NULL),
                       required = c(TRUE))
 
-  prev_net <- nw%n%".PrevNets"[[1]]
+  prev_net <- (nw%n%".PrevNets")[[1]]
   if (is.null(prev_net)) prev_net <- nw%n%".PrevNet"
   if (is.null(prev_net)) stop("No previous network found")
 
