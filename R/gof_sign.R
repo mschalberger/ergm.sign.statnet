@@ -164,18 +164,20 @@ gof_sign <- function(model, nsim = 200, seed = NULL) {
 
   # plotting
   plot_box <- function(sim_data, obs_data, xlab, ylab) {
+    par(bty="l")
     boxplot(sim_data,
             names = names(sim_data),
             xlab = xlab,
             ylab = ylab,
             ylim = c(0, max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)),
             xlim = c(0, max(get_max_indices(sim_data), get_max_indices(obs_data)) + 0.5),
-            xaxt = "n")               # suppress x-axis
+            xaxt = "n",
+            yaxt = "n")               # suppress x-axis
     # add numeric x-axis from 0 to n
     axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1))
+    axis(2, at = pretty(c(0, max(unlist(sim_data), unlist(obs_data), na.rm = TRUE))), las = 1)
     lines(obs_data, lwd = 3)
   }
-
   plot_box(sim_degree_pos, degree_pos, "Positive degrees", "Proportion of nodes")
   plot_box(sim_degree_neg, degree_neg, "Negative degrees", "Proportion of nodes")
   plot_box(sim_ese_neg, ese_neg, "k-Edgewise Shared Enemies (-)", "Proportion of negative edges")
