@@ -13,7 +13,7 @@
   both.lty = 1,
   inv_weights = TRUE,
   time = NULL,
-  titles = x$gal$names,
+  titles = x \%n\% "names",
   fix.pos = TRUE,
   coord = NULL,
   ...
