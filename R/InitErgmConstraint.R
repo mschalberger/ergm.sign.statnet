@@ -110,12 +110,12 @@
 #' @concept layer-aware
 #' @concept directed
 #' @concept undirected
-InitErgmConstraint.fixL<-function(nw, arglist,  ...) {
-  a <- check.ErgmTerm(nw, arglist,
-                      varnames = c("Ls"),
-                      vartypes = c("formula,list"),
-                      defaultvalues = list(NULL),
-                      required = c(TRUE))
-  list(Ls = a$Ls, dependence=TRUE)
-}
+# InitErgmConstraint.fixL<-function(nw, arglist,  ...) {
+#   a <- check.ErgmTerm(nw, arglist,
+#                       varnames = c("Ls"),
+#                       vartypes = c("formula,list"),
+#                       defaultvalues = list(NULL),
+#                       required = c(TRUE))
+#   list(Ls = a$Ls, dependence=TRUE)
+# }
 
