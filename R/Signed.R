@@ -59,7 +59,7 @@ Signed <- function(..., dual.sign = FALSE, .symmetric = NULL, .bipartite = NULL,
   if (length(args) == 2 && all(sapply(args, is, "network"))) {
     pos_nw <- args[[1]]
     neg_nw <- args[[2]]
-    nwl <- list(pos = pos_nw, neg = neg_nw)
+    nwl <- list(`+` = pos_nw, `-` = neg_nw)
     MultiNet <- Layer(nwl, .symmetric = .symmetric, .bipartite = .bipartite, .active = .active)
   }
 
@@ -69,7 +69,7 @@ Signed <- function(..., dual.sign = FALSE, .symmetric = NULL, .bipartite = NULL,
     if (length(args) == 3 && is.character(args[[2]]) && is.character(args[[3]])) {
       pos_attr <- args[[2]]
       neg_attr <- args[[3]]
-      MultiNet <- Layer(nw, c(pos = pos_attr, neg = neg_attr),
+      MultiNet <- Layer(nw, c(`+` = pos_attr, `-` = neg_attr),
                    .symmetric = .symmetric, .bipartite = .bipartite, .active = .active)
     }
 
@@ -94,14 +94,14 @@ Signed <- function(..., dual.sign = FALSE, .symmetric = NULL, .bipartite = NULL,
       nw %e% "pos" <- as.integer(sign_vals == 1)
       nw %e% "neg" <- as.integer(sign_vals == -1)
 
-      MultiNet <- Layer(nw, c(pos = "pos", neg = "neg"),
+      MultiNet <- Layer(nw, c(`+` = "pos", `-` = "neg"),
                         .symmetric = .symmetric, .bipartite = .bipartite, .active = .active)
 
     }
   }
 
   if (exists("MultiNet")) {
-    if (!dual.sign) MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~pos & neg))
+    if (!dual.sign) MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~L(~edges, ~`+` & `-`)))
     MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
     class(MultiNet) <- c("static.sign", "network", class(MultiNet))
     MultiNet%n%"dual.sign" <- dual.sign

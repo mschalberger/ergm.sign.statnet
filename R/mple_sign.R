@@ -162,7 +162,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   res$iterations <- glm_fit$iter
   res$MCMCtheta <- glm_fit$coefficients
   res$gradient <- rep(NA, length(glm_fit$coefficients))
-  res$hessian <- -solve(glm_summary$cov.unscaled)
+  res$hessian <- -t(model.matrix(glm_fit)) %*% (model.matrix(glm_fit) * glm_fit$weights)#-solve(glm_summary$cov.unscaled)
   res$failure <- !glm_fit$converged
   res$mple.lik.null <- logLik(glm_fit_null)
   res$null.lik <- logLik(glm_fit_null)

@@ -138,10 +138,7 @@ network.sign <- function(mat = NULL,
                                 matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
     neg_net <- network::network(neg.mat, directed = directed, loops = loops,
                                 matrix.type = "adjacency", vertex.attr = vertex.attr, ...)
-    MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
-
-    if (!dual.sign)
-      MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~`+` & `-`))
+    MultiNet <- Signed(`+` = pos_net, `-` = neg_net, dual.sign = dual.sign)
 
     MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
     MultiNet%n%"dual.sign" <- dual.sign
@@ -200,11 +197,7 @@ network.sign <- function(mat = NULL,
                                   loops = loops, vertex.attr = vertex.attr, ...)
       neg_net <- network::network(neg_mat, matrix.type = "adjacency", directed = directed,
                                   loops = loops, vertex.attr = vertex.attr, ...)
-      MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
-
-      if (!dual.sign)
-        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges, ~`+` & `-`))
-
+      MultiNet <- Signed(`+` = pos_net, `-` = neg_net, dual.sign = dual.sign)
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
       MultiNet%n%"dual.sign" <- dual.sign
@@ -230,6 +223,11 @@ network.sign <- function(mat = NULL,
                                              directed = directed,
                                              loops = loops)
 
+      all_names <- unique(c(x$from, x$to))
+
+      network::set.vertex.attribute(pos_net, "vertex.names", all_names)
+      network::set.vertex.attribute(neg_net, "vertex.names", all_names)
+
       if(!is.null(vertex.names)) {
         network::set.vertex.attribute(pos_net, "vertex.names", vertex.attr$vertex.names)
         network::set.vertex.attribute(neg_net, "vertex.names", vertex.attr$vertex.names)
@@ -240,23 +238,25 @@ network.sign <- function(mat = NULL,
         network::set.vertex.attribute(neg_net, nm, vertex.attr[[nm]])
       }
 
-      if(nrow(edges_pos) > 0) {
+      if (nrow(edges_pos) > 0) {
+        tail_ids <- match(edges_pos$from, all_names)
+        head_ids <- match(edges_pos$to,   all_names)
         network::add.edges(pos_net,
-                           tail = edges_pos$from,
-                           head = edges_pos$to)
+                           tail = tail_ids,
+                           head = head_ids,
+                           names.eval = all_names)
       }
 
-      if(nrow(edges_neg) > 0) {
+      if (nrow(edges_neg) > 0) {
+        tail_ids <- match(edges_neg$from, all_names)
+        head_ids <- match(edges_neg$to,   all_names)
         network::add.edges(neg_net,
-                           tail = edges_neg$from,
-                           head = edges_neg$to)
+                           tail = tail_ids,
+                           head = head_ids,
+                           names.eval = all_names)
       }
 
-      MultiNet <- Signed(`+` = pos_net, `-` = neg_net)
-
-      if (!dual.sign)
-        MultiNet %ergmlhs% "constraints" <- update(MultiNet %ergmlhs% "constraints", ~. + ChangeStats(~edges ,~`+` & `-`))
-
+      MultiNet <- Signed(`+` = pos_net, `-` = neg_net, dual.sign = dual.sign)
       MultiNet %v% "sign" <- MultiNet %v% ".LayerName"
       MultiNet%n%"dual.sign" <- dual.sign
       class(MultiNet) <- c("static.sign", "network", class(MultiNet))
