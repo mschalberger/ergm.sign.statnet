@@ -52,7 +52,7 @@ summary.static.sign <- function(object, ...) {
     Density = round(network.density(net_sgl), 2),
     check.names = FALSE
   )
-
+  rownames(a) <- ""
   cat("Network Attributes:\n")
   return(a)
 }
