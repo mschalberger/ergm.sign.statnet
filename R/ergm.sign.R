@@ -26,5 +26,6 @@ ergm.sign <- function(formula, estimate = "MLE", eval_lik = FALSE, ..., control 
   }
   if (estimate == "MPLE" || (!is.null(model) && isTRUE(model[["MPLE_is_MLE"]]))) model <- mple
   if (eval_lik) model$mle.lik <- model$mple.lik <- eval_loglik(model)
+  class(model) <- c("sign", class(model))
   return(model)
 }
