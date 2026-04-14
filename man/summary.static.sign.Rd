@@ -7,7 +7,7 @@
 \usage{
 \method{summary}{static.sign}(object, ...)
 
-\method{summary}{dynamic.sign}(object, time = NULL, names = NULL, ...)
+\method{summary}{dynamic.sign}(object, time = NULL, ...)
 }
 \arguments{
 \item{object}{A signed network object of class \code{dynamic.sign}.}
@@ -15,8 +15,6 @@
 \item{...}{Additional arguments.}
 
 \item{time}{Integer vector of timepoints to summarize. Defaults to all.}
-
-\item{names}{Character vector of names for timepoints.}
 }
 \value{
 A data frame or matrix with network attributes.

@@ -4,14 +4,12 @@
 \alias{summary_formula.dynamic.sign}
 \title{Summary formula method for dynamic signed networks}
 \usage{
-\method{summary_formula}{dynamic.sign}(object, at, names = NULL, ..., basis = NULL)
+\method{summary_formula}{dynamic.sign}(object, at, ..., basis = NULL)
 }
 \arguments{
 \item{object}{A formula with a dynamic.sign network as LHS.}
 
 \item{at}{Numeric vector of timepoints. Defaults to all if missing.}
-
-\item{names}{Character vector of names for timepoints.}
 
 \item{...}{Additional arguments passed to summary_formula for network objects.}
 
