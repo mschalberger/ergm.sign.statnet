@@ -60,9 +60,8 @@ summary.static.sign <- function(object, ...) {
 #' @rdname summary.static.sign
 #' @param object A signed network object of class \code{dynamic.sign}.
 #' @param time Integer vector of timepoints to summarize. Defaults to all.
-#' @param names Character vector of names for timepoints.
 #' @export
-summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
+summary.dynamic.sign <- function(object, time = NULL, ...) {
   net <- object
   nws <- net%n%"NetList"
   if (is.null(time)) time <- seq_along(nws)
@@ -101,8 +100,7 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
       Density = round(network.density(nw_sgl), 2),
       check.names = FALSE
     )
-    newnames <- ifelse(is.null(names), net%n%"names", names)
-    rownames(row) <- newnames[[i]]
+    rownames(row) <- NULL
     row
   }))
 
@@ -115,18 +113,15 @@ summary.dynamic.sign <- function(object, time = NULL, names = NULL, ...) {
 #'
 #' @param object A formula with a dynamic.sign network as LHS.
 #' @param at Numeric vector of timepoints. Defaults to all if missing.
-#' @param names Character vector of names for timepoints.
 #' @param basis Optional dynamic.sign network. If NULL, uses LHS network.
 #' @param ... Additional arguments passed to summary_formula for network objects.
 #' @return Matrix of statistics for each timepoint.
 #' @importFrom ergm summary_formula
 #' @importFrom utils getS3method
 #' @export
-summary_formula.dynamic.sign <- function(object, at, names = NULL,  ..., basis = NULL) {
+summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
   basis <- if (is.null(basis)) ergm.getnetwork(object) else basis
-  if (is.null(names)) names <- basis%n%"names"
   if (missing(at) || !is.numeric(at)) at <- seq_along(basis%n%"NetList")
-  names <- names[at]
 
   res_list <- lapply(at, function(t) {
     nw <- basis%n%"NetList"
@@ -135,7 +130,7 @@ summary_formula.dynamic.sign <- function(object, at, names = NULL,  ..., basis =
   })
 
   res <- do.call(rbind, res_list)
-  rownames(res) <- names
+  rownames(res) <- NULL
   return(res)
 }
 
