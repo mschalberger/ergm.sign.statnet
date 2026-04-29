@@ -8,174 +8,279 @@ gof <- function(model, ...) {
 }
 
 #' @rdname gof
-#' @param nsim Integer; number of simulated networks to generate. Defaults to 200.
-#' @param seed Optional integer seed for reproducibility. Passed to \code{\link{set.seed}}.
-#' @return Produces six diagnostic boxplots comparing observed and simulated
-#'   statistics for the fitted model.
-#' @seealso \code{\link[ergm]{ergm}}, \code{\link{mple_sign}}
-#' @examples
-#' \donttest{
-#' data("tribes")
-#' fit <- mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
-#' gof(fit, nsim = 100)
-#' }
-#' @importFrom dplyr bind_rows
-#' @importFrom stats simulate
-#' @importFrom graphics axis
+#' @param nsim Integer; number of simulated networks. Defaults to 200.
+#' @param seed Optional integer seed.
+#' @return An object of class \code{"gof.sign"}.
+#'   Print shows a summary; \code{plot()} produces diagnostic boxplots.
 #' @export
 gof.sign <- function(model, nsim = 200, seed = NULL, ...) {
 
-  net <- model$network
-  sim <- simulate(model$formula, coef = unname(model$coefficients),
+  net      <- model$network
+  dynamic  <- "dynamic.sign" %in% class(net)
+  multi    <- "multi.sign"   %in% class(net)
+
+  sim <- simulate(model,
                   nsim = nsim, seed = seed, basis = net)
 
-  stats <- .compute_gof_stats(net, sim, nsim)
+  dispatch  <- .get_dispatch(net)
+  #clean     <- dispatch$clean
+  directed  <- .is_directed(net)
 
-  .plot_gof(stats)
+  obs      <- .stats_network(net, dynamic, multi, directed)
+  sim_list <- lapply(seq_len(nsim), function(i)
+    .stats_network(sim[[i]], dynamic, multi, directed)
+  )
+
+  stat_names <- names(obs)
+  sim_df <- setNames(
+    lapply(stat_names, function(nm)
+      dplyr::bind_rows(lapply(sim_list, `[[`, nm))
+    ),
+    stat_names
+  )
+
+  structure(
+    list(
+      obs      = obs,
+      sim      = sim_df,
+      directed = directed,
+      dynamic  = dynamic,
+      multi    = multi,
+      panels   = .build_panels(directed)
+    ),
+    class = "gof.sign"
+  )
 }
 
-# --- Internal helpers ---------------------------------------------------------
+# =============================================================================
+# S3 methods
+# =============================================================================
+
+#' @export
+print.gof.sign <- function(x, ...) {
+  cat("Goodness-of-fit diagnostics for a signed ERGM\n")
+  cat("  Network type :", if (x$directed) "directed" else "undirected",
+      if (x$dynamic) "(dynamic)" else if (x$multi) "(multi)" else "(static)", "\n")
+  cat("  Statistics   :", paste(names(x$obs), collapse = ", "), "\n")
+  cat("  Simulations  :", nrow(x$sim[[1]]), "\n")
+  invisible(x)
+}
+
+#' @export
+plot.gof.sign <- function(x, which = NULL, ...) {
+  panels <- x$panels
+  if (!is.null(which)) panels <- panels[which]
+  for (p in panels)
+    .plot_box(x$sim[[p$stat]], x$obs[[p$stat]], p$xlab, p$ylab)
+  invisible(x)
+}
+
+# =============================================================================
+# Network → stats: entry point handling static / dynamic / multi
+# =============================================================================
+
+#' @keywords internal
+.stats_network <- function(net, dynamic, multi, directed) {
+  if (dynamic || multi) {
+    # UnLayer gives a list of static signed graphs (length = t-1 transitions)
+    sgl    <- UnLayer(net)
+    # remove first element
+    sgl <- sgl[-1]
+    A_list <- lapply(sgl, function(g) as.sociomatrix(g, attrname = "sign"))
+    .stats_dynamic(A_list, directed)
+  } else {
+    A         <- as.sociomatrix(net, attrname = "sign")
+    .stats_from_adj(A, directed)
+  }
+}
+
+# =============================================================================
+# Per-timepoint normalisation for dynamic / multi networks
+# =============================================================================
+
+#' @keywords internal
+.stats_dynamic <- function(A_list, directed) {
+  # Compute stats on each wave's adjacency matrix independently — each wave
+  # uses its own edge count as denominator — then average the proportions.
+  # Waves with few edges contribute equally to a wave with many, so density
+  # differences across time do not distort the aggregate GOF statistic.
+  wave_stats <- lapply(A_list, .stats_from_adj, directed = directed)
+
+  stat_names <- names(wave_stats[[1]])
+  setNames(
+    lapply(stat_names, function(nm) {
+      mat <- do.call(rbind, lapply(wave_stats, `[[`, nm))
+      colSums(mat, na.rm = TRUE)
+    }),
+    stat_names
+  )
+}
+
+# =============================================================================
+# Matrix-based stat computation from a single signed adjacency matrix
+# =============================================================================
+
+#' @keywords internal
+.stats_from_adj <- function(A, directed) {
+  # A : n×n integer matrix with values in {-1, 0, +1}
+  n    <- nrow(A)
+  kmax <- n - 2L
+  Ap   <- (A ==  1L) * 1L
+  An   <- (A == -1L) * 1L
+  esp  <- .compute_esp_stats(Ap, An, directed, kmax)
+
+  if (directed) {
+    list(
+      idegree_pos = .degree_dist(Ap, n, "in"),
+      idegree_neg = .degree_dist(An, n, "in"),
+      odegree_pos = .degree_dist(Ap, n, "out"),
+      odegree_neg = .degree_dist(An, n, "out"),
+      esf_pos     = esp$esf_pos,
+      esf_neg     = esp$esf_neg,
+      ese_pos     = esp$ese_pos,
+      ese_neg     = esp$ese_neg
+    )
+  } else {
+    list(
+      degree_pos  = .degree_dist(Ap, n, "total"),
+      degree_neg  = .degree_dist(An, n, "total"),
+      esf_pos     = esp$esf_pos,
+      esf_neg     = esp$esf_neg,
+      ese_pos     = esp$ese_pos,
+      ese_neg     = esp$ese_neg
+    )
+  }
+}
+
+# =============================================================================
+# Degree distributions
+# =============================================================================
+
+#' @keywords internal
+.degree_dist <- function(Abin, n, type = c("total", "in", "out")) {
+  type <- match.arg(type)
+  deg  <- switch(type,
+                 total = rowSums(Abin) + colSums(Abin),
+                 out   = rowSums(Abin),
+                 `in`  = colSums(Abin)
+  )
+  tab <- tabulate(deg + 1L, nbins = n)
+  setNames(tab / n, 0:(n - 1L))
+}
+
+# =============================================================================
+# ESP distributions
+# =============================================================================
+
+#' @keywords internal
+.all_path_types <- function(Abin) {
+  # Sum OTP + ITP + OSP + ISP, matching espL behaviour for directed networks
+  At  <- t(Abin)
+  OTP <- Abin %*% Abin   # i->k,  k->j
+  ITP <- At   %*% At     # j->k,  k->i
+  OSP <- Abin %*% At     # i->k,  j->k
+  ISP <- At   %*% Abin   # k->i,  k->j
+  OTP + ITP + OSP + ISP
+}
+
+#' @keywords internal
+.esp_dist_mat <- function(closing_layer, path_mat, kmax) {
+  ep <- sum(closing_layer)
+  if (ep == 0L) return(setNames(rep(0, kmax + 1L), 0:kmax))
+  counts <- pmin(path_mat[closing_layer == 1L], kmax)
+  tab    <- tabulate(counts + 1L, nbins = kmax + 1L)
+  setNames(tab / ep, 0:kmax)
+}
+
+#' @keywords internal
+.compute_esp_stats <- function(Ap, An, directed, kmax) {
+  PP <- if (directed) .all_path_types(Ap) else Ap %*% Ap
+  NN <- if (directed) .all_path_types(An) else An %*% An
+  list(
+    esf_pos = .esp_dist_mat(Ap, PP, kmax),   # shared friends of + edge
+    esf_neg = .esp_dist_mat(An, PP, kmax),   # shared friends of - edge
+    ese_pos = .esp_dist_mat(Ap, NN, kmax),   # shared enemies of + edge
+    ese_neg = .esp_dist_mat(An, NN, kmax)    # shared enemies of - edge
+  )
+}
+
+# =============================================================================
+# Dispatch
+# =============================================================================
 
 #' @keywords internal
 .get_dispatch <- function(net) {
   if ("static.sign" %in% class(net)) {
-    list(
-      clean = identity,
-      wrap  = function(term) term
-    )
+    list(clean = identity)
   } else if ("dynamic.sign" %in% class(net)) {
-    list(
-      clean = function(x) { class(x) <- setdiff(class(x), "dynamic.sign"); x },
-      wrap  = function(term) bquote(Cross(~.(term)))
-    )
+    list(clean = function(x) { class(x) <- setdiff(class(x), "dynamic.sign"); x })
   } else if ("multi.sign" %in% class(net)) {
-    list(
-      clean = function(x) { class(x) <- setdiff(class(x), "multi.sign"); x },
-      wrap  = function(term) bquote(N(~.(term)))
-    )
+    list(clean = function(x) { class(x) <- setdiff(class(x), "multi.sign"); x })
   } else {
     stop("Unsupported network class.")
   }
 }
 
 #' @keywords internal
-.sf <- function(net, rhs) {
-  summary_formula(as.formula(bquote(net ~ .(rhs)), env = environment()))
-}
+.is_directed <- function(net) isTRUE(net %n% "directed")
+
+# =============================================================================
+# Panel metadata
+# =============================================================================
 
 #' @keywords internal
-.observed_stats <- function(net, n, wrap) {
-  ep <- .sf(net, wrap(quote(Pos(~edges))))
-  en <- .sf(net, wrap(quote(Neg(~edges))))
-
-  deg_pos <- .sf(net, wrap(quote(Pos(~degree(0:(n - 1))))))
-  deg_neg <- .sf(net, wrap(quote(Neg(~degree(0:(n - 1))))))
-
-  # derive n from the actual output length rather than network.size
-  n_deg <- length(deg_pos)
-  deg_pos <- deg_pos / n
-  deg_neg <- deg_neg / n
-  names(deg_pos) <- names(deg_neg) <- 0:(n_deg - 1)
-
-  ese_pos <- .sf(net, wrap(quote(ese(0:(n - 2), base = "+")))) / ep
-  ese_neg <- .sf(net, wrap(quote(ese(0:(n - 2), base = "-")))) / en
-  esf_pos <- .sf(net, wrap(quote(esf(0:(n - 2), base = "+")))) / ep
-  esf_neg <- .sf(net, wrap(quote(esf(0:(n - 2), base = "-")))) / en
-
-  n_ese <- length(ese_pos)
-  names(ese_pos) <- names(ese_neg) <- names(esf_pos) <- names(esf_neg) <- 0:(n_ese - 1)
-
-  list(degree_pos = deg_pos, degree_neg = deg_neg,
-       ese_pos = ese_pos,    ese_neg = ese_neg,
-       esf_pos = esf_pos,    esf_neg = esf_neg)
-}
-
-#' @keywords internal
-.compute_gof_stats <- function(net, sim, nsim) {
-
-  dispatch  <- .get_dispatch(net)
-  clean     <- dispatch$clean
-  wrap      <- dispatch$wrap
-
-  net_clean <- clean(net)
-  n         <- network.size(net_clean) / 2
-
-  obs       <- .observed_stats(net_clean, n, wrap)
-  sim_lists <- .empty_sim_lists(nsim)
-
-  for (i in seq_len(nsim)) {
-    tmp <- clean(sim[[i]])
-    ep  <- .sf(tmp, wrap(quote(Pos(~edges))))
-    en  <- .sf(tmp, wrap(quote(Neg(~edges))))
-
-    dp <- .sf(tmp, wrap(quote(Pos(~degree(0:(n - 1))))))
-    dn <- .sf(tmp, wrap(quote(Neg(~degree(0:(n - 1))))))
-    sim_lists$degree_pos[[i]] <- setNames(dp / n, 0:(length(dp) - 1))
-    sim_lists$degree_neg[[i]] <- setNames(dn / n, 0:(length(dn) - 1))
-
-    ep_ese <- .sf(tmp, wrap(quote(ese(0:(n - 2), base = "+"))))
-    en_ese <- .sf(tmp, wrap(quote(ese(0:(n - 2), base = "-"))))
-    ep_esf <- .sf(tmp, wrap(quote(esf(0:(n - 2), base = "+"))))
-    en_esf <- .sf(tmp, wrap(quote(esf(0:(n - 2), base = "-"))))
-    sim_lists$ese_pos[[i]] <- setNames(ep_ese / ep, 0:(length(ep_ese) - 1))
-    sim_lists$ese_neg[[i]] <- setNames(en_ese / en, 0:(length(en_ese) - 1))
-    sim_lists$esf_pos[[i]] <- setNames(ep_esf / ep, 0:(length(ep_esf) - 1))
-    sim_lists$esf_neg[[i]] <- setNames(en_esf / en, 0:(length(en_esf) - 1))
+.build_panels <- function(directed) {
+  if (directed) {
+    list(
+      list(stat = "idegree_pos", xlab = "Positive in-degree",        ylab = "Proportion of nodes"),
+      list(stat = "idegree_neg", xlab = "Negative in-degree",        ylab = "Proportion of nodes"),
+      list(stat = "odegree_pos", xlab = "Positive out-degree",       ylab = "Proportion of nodes"),
+      list(stat = "odegree_neg", xlab = "Negative out-degree",       ylab = "Proportion of nodes"),
+      list(stat = "esf_pos",     xlab = "k-ESF: shared friends (+)", ylab = "Proportion of positive edges"),
+      list(stat = "esf_neg",     xlab = "k-ESF: shared friends (-)", ylab = "Proportion of negative edges"),
+      list(stat = "ese_pos",     xlab = "k-ESE: shared enemies (+)", ylab = "Proportion of positive edges"),
+      list(stat = "ese_neg",     xlab = "k-ESE: shared enemies (-)", ylab = "Proportion of negative edges")
+    )
+  } else {
+    list(
+      list(stat = "degree_pos",  xlab = "Positive degree",           ylab = "Proportion of nodes"),
+      list(stat = "degree_neg",  xlab = "Negative degree",           ylab = "Proportion of nodes"),
+      list(stat = "esf_pos",     xlab = "k-ESF: shared friends (+)", ylab = "Proportion of positive edges"),
+      list(stat = "esf_neg",     xlab = "k-ESF: shared friends (-)", ylab = "Proportion of negative edges"),
+      list(stat = "ese_pos",     xlab = "k-ESE: shared enemies (+)", ylab = "Proportion of positive edges"),
+      list(stat = "ese_neg",     xlab = "k-ESE: shared enemies (-)", ylab = "Proportion of negative edges")
+    )
   }
-
-  list(
-    obs = obs,
-    sim = lapply(sim_lists, bind_rows)
-  )
-}
-#' @keywords internal
-.empty_sim_lists <- function(nsim) {
-  nms <- c("degree_pos", "degree_neg", "ese_neg", "ese_pos", "esf_neg", "esf_pos")
-  setNames(replicate(length(nms), vector("list", nsim), simplify = FALSE), nms)
 }
 
-#' @keywords internal
-.plot_gof <- function(stats) {
-  panels <- list(
-    list(sim = stats$sim$degree_pos, obs = stats$obs$degree_pos,
-         xlab = "Positive degrees",              ylab = "Proportion of nodes"),
-    list(sim = stats$sim$degree_neg, obs = stats$obs$degree_neg,
-         xlab = "Negative degrees",              ylab = "Proportion of nodes"),
-    list(sim = stats$sim$ese_neg,    obs = stats$obs$ese_neg,
-         xlab = "k-Edgewise Shared Enemies (-)", ylab = "Proportion of negative edges"),
-    list(sim = stats$sim$ese_pos,    obs = stats$obs$ese_pos,
-         xlab = "k-Edgewise Shared Enemies (+)", ylab = "Proportion of positive edges"),
-    list(sim = stats$sim$esf_neg,    obs = stats$obs$esf_neg,
-         xlab = "k-Edgewise Shared Friends (-)", ylab = "Proportion of negative edges"),
-    list(sim = stats$sim$esf_pos,    obs = stats$obs$esf_pos,
-         xlab = "k-Edgewise Shared Friends (+)", ylab = "Proportion of positive edges")
-  )
-
-  for (p in panels) .plot_box(p$sim, p$obs, p$xlab, p$ylab)
-}
+# =============================================================================
+# Plotting
+# =============================================================================
 
 #' @keywords internal
 .plot_box <- function(sim_data, obs_data, xlab, ylab) {
+
   get_max_nonzero <- function(x) {
-    cols <- which(vapply(x, function(y) sum(abs(y)), numeric(1)) != 0)
-    max(cols)
+    cols <- which(vapply(as.data.frame(x),
+                         function(y) sum(abs(y), na.rm = TRUE),
+                         numeric(1)) != 0)
+    if (length(cols) == 0L) 1L else max(cols)
   }
+
+  ylim_max <- max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)
+  xlim_max <- max(get_max_nonzero(sim_data),
+                  get_max_nonzero(obs_data)) + 0.5
 
   par(bty = "l")
   boxplot(sim_data,
-          names  = names(sim_data),
-          xlab   = xlab,
-          ylab   = ylab,
-          ylim   = c(0, max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)),
-          xlim   = c(0, max(get_max_nonzero(sim_data),
-                            get_max_nonzero(obs_data)) + 0.5),
-          xaxt   = "n",
-          yaxt   = "n")
-  axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1))
-  axis(2, at = pretty(c(0, max(unlist(sim_data), unlist(obs_data), na.rm = TRUE))),
-       las = 1)
+          names = names(sim_data),
+          xlab  = xlab,
+          ylab  = ylab,
+          ylim  = c(0, ylim_max),
+          xlim  = c(0, xlim_max),
+          xaxt  = "n",
+          yaxt  = "n")
+  axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1L))
+  axis(2, at = pretty(c(0, ylim_max)), las = 1)
   lines(obs_data, lwd = 3)
 }
-
-
-

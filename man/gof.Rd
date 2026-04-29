@@ -14,24 +14,14 @@ gof(model, ...)
 
 \item{...}{Additional arguments passed to methods.}
 
-\item{nsim}{Integer; number of simulated networks to generate. Defaults to 200.}
+\item{nsim}{Integer; number of simulated networks. Defaults to 200.}
 
-\item{seed}{Optional integer seed for reproducibility. Passed to \code{\link{set.seed}}.}
+\item{seed}{Optional integer seed.}
 }
 \value{
-Produces six diagnostic boxplots comparing observed and simulated
-  statistics for the fitted model.
+An object of class \code{"gof.sign"}.
+  Print shows a summary; \code{plot()} produces diagnostic boxplots.
 }
 \description{
 Conduct Goodness-of-Fit Diagnostics for a Signed ERGM
-}
-\examples{
-\donttest{
-data("tribes")
-fit <- mple_sign(tribes ~ Pos(~edges) + Neg(~edges))
-gof(fit, nsim = 100)
-}
-}
-\seealso{
-\code{\link[ergm]{ergm}}, \code{\link{mple_sign}}
 }
