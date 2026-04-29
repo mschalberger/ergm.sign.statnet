@@ -170,6 +170,7 @@ mple_sign <- function(formula, control = control.ergm(), seed = NULL, eval_lik =
   res$control <- control
   res$call <- match.call()
   res$constraints <- net%ergmlhs%"constraints"
+  res$reference <- ~Bernoulli
   res$ergm_version <- as.package_version(as.character(packageVersion("ergm")))
   res$formula <- formula
   res$info <- list(

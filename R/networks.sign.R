@@ -63,7 +63,7 @@ networks.sign <- function(..., dynamic = FALSE, dual.sign = FALSE) {
     sapply(pairs, function(p) paste0("(`", p[1], "` & `", p[2], "`)")),
     collapse = " + "
   )
-  cons <- paste0("+ ChangeStats(~edges,~", pair_str, ")  ")
+  cons <- paste0("+ ChangeStats(~L(~edges,~", pair_str, "))  ")
 
   # Define ERGM constraints
   new_constraints <- if (dynamic) {
