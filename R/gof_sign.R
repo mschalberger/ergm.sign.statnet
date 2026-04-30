@@ -89,7 +89,8 @@ plot.gof.sign <- function(x, which = NULL, ...) {
     A_list <- lapply(sgl, function(g) as.sociomatrix(g, attrname = "sign"))
     .stats_dynamic(A_list, directed)
   } else {
-    A         <- as.sociomatrix(net, attrname = "sign")
+    net_sgl <- UnLayer(net)
+    A         <- as.sociomatrix(net_sgl, attrname = "sign")
     .stats_from_adj(A, directed)
   }
 }
@@ -160,7 +161,7 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 .degree_dist <- function(Abin, n, type = c("total", "in", "out")) {
   type <- match.arg(type)
   deg  <- switch(type,
-                 total = rowSums(Abin) + colSums(Abin),
+                 total = rowSums(Abin),
                  out   = rowSums(Abin),
                  `in`  = colSums(Abin)
   )
@@ -260,16 +261,9 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 #' @keywords internal
 .plot_box <- function(sim_data, obs_data, xlab, ylab) {
 
-  get_max_nonzero <- function(x) {
-    cols <- which(vapply(as.data.frame(x),
-                         function(y) sum(abs(y), na.rm = TRUE),
-                         numeric(1)) != 0)
-    if (length(cols) == 0L) 1L else max(cols)
-  }
-
   ylim_max <- max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)
-  xlim_max <- max(get_max_nonzero(sim_data),
-                  get_max_nonzero(obs_data)) + 0.5
+  xlim_max <- max(max(which(colSums(sim_data) >0)),
+                  max(which(obs_data > 0))) + 0.5
 
   par(bty = "l")
   boxplot(sim_data,
@@ -279,8 +273,10 @@ plot.gof.sign <- function(x, which = NULL, ...) {
           ylim  = c(0, ylim_max),
           xlim  = c(0, xlim_max),
           xaxt  = "n",
-          yaxt  = "n")
+          yaxt  = "n",
+          col = NA
+          )
   axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1L))
   axis(2, at = pretty(c(0, ylim_max)), las = 1)
-  lines(obs_data, lwd = 3)
+  lines(obs_data,  type = "b", col = "red")
 }
