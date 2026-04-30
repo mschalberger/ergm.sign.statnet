@@ -18,43 +18,15 @@
 #'
 #' @export
 summary.static.sign <- function(object, ...) {
-  net <- object
-  net_sgl <- UnLayer(net)
-  multi <- net_sgl%n%"mlt"
-  n <- network.size(net_sgl)
+  sgl      <- UnLayer(object)
+  A        <- as.sociomatrix(sgl, attrname = "sign")
+  directed <- isTRUE(sgl %n% "directed")
 
-  a <- data.frame(
-    Directed = net_sgl%n%"directed",
-    Loops = net_sgl%n%"loops",
-    Nodes = n,
-    Edges = summary_formula(multi ~ edges),
-    `Edges+` = summary_formula(multi ~ L(~ edges, ~ `+`)),
-    `Edges-` = summary_formula(multi ~ L(~ edges, ~ `-`)),
-    Triads = summary_formula(multi ~ L(~ triangle, ~ `+` | `-`)),
-    `+++` = summary_formula(multi ~ L(~ triangle, ~ `+`)),
-    `---` = summary_formula(multi ~ L(~ triangle, ~ `-`)),
-    `++-` = if (net_sgl%n%"directed") {
-      sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
-                            espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP") +
-                            espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
-                            espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) * (1:n))
-    } else {
-      sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * (1:n))
-    },
-    `+--` = if (net_sgl%n%"directed") {
-      sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
-                            espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP") +
-                            espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
-                            espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ISP")) * (1:n))
-    } else {
-      sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * (1:n))
-    },
-    Density = round(network.density(net_sgl), 2),
-    check.names = FALSE
-  )
-  rownames(a) <- ""
+  s   <- .summary_from_adj(A, directed)
+  out <- .format_summary_row(s)
+  rownames(out) <- ""
   cat("Network Attributes:\n")
-  return(a)
+  return(out)
 }
 
 #' @rdname summary.static.sign
@@ -62,48 +34,18 @@ summary.static.sign <- function(object, ...) {
 #' @param time Integer vector of timepoints to summarize. Defaults to all.
 #' @export
 summary.dynamic.sign <- function(object, time = NULL, ...) {
-  net <- object
-  nws <- net%n%"NetList"
+  nws <- object %n% "NetList"
   if (is.null(time)) time <- seq_along(nws)
 
   mat <- do.call(rbind, lapply(time, function(i) {
-    nw_sgl <- UnLayer(nws[[i]])
-    multi <- nws[[i]]
-    n <- network.size(nw_sgl)
-
-    row <- data.frame(
-      Directed = nw_sgl%n%"directed",
-      Loops = nw_sgl%n%"loops",
-      Nodes = n,
-      Edges = summary_formula(multi ~ edges),
-      `Edges+` = summary_formula(multi ~ L(~ edges, ~ `+`)),
-      `Edges-` = summary_formula(multi ~ L(~ edges, ~ `-`)),
-      Triads = summary_formula(multi ~ L(~ triangle, ~ `+` | `-`)),
-      `+++` = summary_formula(multi ~ L(~ triangle, ~ `+`)),
-      `---` = summary_formula(multi ~ L(~ triangle, ~ `-`)),
-      `++-` = if (nw_sgl%n%"directed") {
-        sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OTP") +
-                              espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ITP") +
-                              espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "OSP") +
-                              espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`), type = "ISP")) * (1:n))
-      } else {
-        sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `-`, Ls.path = c(~ `+`, ~ `+`))) * (1:n))
-      },
-      `+--` = if (nw_sgl%n%"directed") {
-        sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OTP") +
-                              espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ITP") +
-                              espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "OSP") +
-                              espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`), type = "ISP")) * (1:n))
-      } else {
-        sum(summary_formula(multi ~ espL(d = 1:n, L.base = ~ `+`, Ls.path = c(~ `-`, ~ `-`))) * (1:n))
-      },
-      Density = round(network.density(nw_sgl), 2),
-      check.names = FALSE
-    )
-    rownames(row) <- NULL
-    row
+    sgl      <- UnLayer(nws[[i]])
+    A        <- as.sociomatrix(sgl, attrname = "sign")
+    directed <- isTRUE(sgl %n% "directed")
+    s        <- .summary_from_adj(A, directed)
+    .format_summary_row(s)
   }))
 
+  rownames(mat) <- NULL
   return(mat)
 }
 
@@ -132,5 +74,100 @@ summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
   res <- do.call(rbind, res_list)
   rownames(res) <- NULL
   return(res)
+}
+
+# =============================================================================
+# Matrix-based summary helpers
+# =============================================================================
+
+#' @keywords internal
+.summary_from_adj <- function(A, directed) {
+  n  <- nrow(A)
+
+  # signed layers
+  Ap <- (A ==  1L) * 1L
+  An <- (A == -1L) * 1L
+  Ab <- (abs(A) > 0) * 1L
+
+  # edge counts
+  ep <- sum(Ap)
+  en <- sum(An)
+  e  <- ep + en
+
+  if (directed) {
+
+    # --- all 2-path types (OTP, ITP, OSP, ISP)
+    .all_path_types <- function(M) {
+      Mt  <- t(M)
+      OTP <- M  %*% M
+      ITP <- Mt %*% Mt
+      OSP <- M  %*% Mt
+      ISP <- Mt %*% M
+      OTP + ITP + OSP + ISP
+    }
+
+    paths_all <- .all_path_types(Ab)
+    tri_all   <- sum(paths_all * Ab) / 3
+
+    PP <- .all_path_types(Ap)
+    NN <- .all_path_types(An)
+
+    tri_ppp <- sum(PP * Ap) / 3 # + + +
+    tri_nnn <- sum(NN * An) / 3 # - - -
+
+    tri_ppm <- sum(PP * An)  # + + closed by -
+    tri_pmm <- sum(NN * Ap)  # - - closed by +
+
+  } else {
+    Ap2 <- Ap %*% Ap
+    An2 <- An %*% An
+    Ab2 <- Ab %*% Ab
+
+    tri_ppp <- sum(diag(Ap2 %*% Ap)) / 6
+    tri_nnn <- sum(diag(An2 %*% An)) / 6
+
+    tri_ppm <- sum(Ap2 * An) / 2
+    tri_pmm <- sum(An2 * Ap) / 2
+
+    tri_all <- sum(diag(Ab2 %*% Ab)) / 6
+  }
+
+  # density
+  possible <- if (directed) n * (n - 1L) else n * (n - 1L) / 2
+  density  <- round(e / possible, 3)
+
+  list(
+    directed = directed,
+    loops    = FALSE,
+    n        = n,
+    edges    = e,
+    edges_p  = ep,
+    edges_n  = en,
+    tri_all  = tri_all,
+    tri_ppp  = tri_ppp,
+    tri_nnn  = tri_nnn,
+    tri_ppm  = tri_ppm,
+    tri_pmm  = tri_pmm,
+    density  = density
+  )
+}
+
+#' @keywords internal
+.format_summary_row <- function(s) {
+  data.frame(
+    Directed  = s$directed,
+    Loops     = s$loops,
+    Nodes     = s$n,
+    Edges     = s$edges,
+    `Edges+`  = s$edges_p,
+    `Edges-`  = s$edges_n,
+    Triads    = s$tri_all,
+    `+++`     = s$tri_ppp,
+    `---`     = s$tri_nnn,
+    `++-`     = s$tri_ppm,
+    `+--`     = s$tri_pmm,
+    Density   = s$density,
+    check.names = FALSE
+  )
 }
 
