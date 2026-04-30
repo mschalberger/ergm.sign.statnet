@@ -20,15 +20,15 @@ gof.sign <- function(model, nsim = 200, seed = NULL, ...) {
   multi    <- "multi.sign"   %in% class(net)
 
   sim <- simulate(model,
-                  nsim = nsim, seed = seed, basis = net)
+                  nsim = nsim, seed = seed, basis = net, ...)
 
   dispatch  <- .get_dispatch(net)
   #clean     <- dispatch$clean
   directed  <- .is_directed(net)
 
-  obs      <- .stats_network(net, dynamic, multi, directed)
+  obs      <- .stats_network(net, dynamic, multi, directed, obs = TRUE)
   sim_list <- lapply(seq_len(nsim), function(i)
-    .stats_network(sim[[i]], dynamic, multi, directed)
+    .stats_network(sim[[i]], dynamic, multi, directed, obs = FALSE)
   )
 
   stat_names <- names(obs)
@@ -80,12 +80,10 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 # =============================================================================
 
 #' @keywords internal
-.stats_network <- function(net, dynamic, multi, directed) {
+.stats_network <- function(net, dynamic, multi, directed, obs = FALSE) {
   if (dynamic || multi) {
-    # UnLayer gives a list of static signed graphs (length = t-1 transitions)
     sgl    <- UnLayer(net)
-    # remove first element
-    sgl <- sgl[-1]
+    if (obs) sgl <- sgl[-1]
     A_list <- lapply(sgl, function(g) as.sociomatrix(g, attrname = "sign"))
     .stats_dynamic(A_list, directed)
   } else {
@@ -101,10 +99,7 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 
 #' @keywords internal
 .stats_dynamic <- function(A_list, directed) {
-  # Compute stats on each wave's adjacency matrix independently — each wave
-  # uses its own edge count as denominator — then average the proportions.
-  # Waves with few edges contribute equally to a wave with many, so density
-  # differences across time do not distort the aggregate GOF statistic.
+
   wave_stats <- lapply(A_list, .stats_from_adj, directed = directed)
 
   stat_names <- names(wave_stats[[1]])
@@ -181,7 +176,7 @@ plot.gof.sign <- function(x, which = NULL, ...) {
   ITP <- At   %*% At     # j->k,  k->i
   OSP <- Abin %*% At     # i->k,  j->k
   ISP <- At   %*% Abin   # k->i,  k->j
-  OTP + ITP + OSP + ISP
+  (OTP + ITP + OSP + ISP) / 2
 }
 
 #' @keywords internal
