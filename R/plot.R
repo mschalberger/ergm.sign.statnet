@@ -13,6 +13,7 @@
 #' @param col_pos Color for positive edges. Default is green.
 #' @param col_neg Color for negative edges. Default is red.
 #' @param col_both Color for edges that are both positive and negative. Default is darkgrey.
+#' @param alpha Numeric between 0 and 1 for edge transparency. Default is 1 (fully opaque).
 #' @param neg.lty Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".
 #' @param both.lty Line type for edges that are both positive and negative. Default is "solid". Other options are "dotted" and "dashed".
 #' @param inv_weights Logical. If TRUE, edge weights are inverted (1/weights) so positive edges pull nodes closer together. Default is TRUE.
@@ -31,6 +32,7 @@
 #'
 #' @export
 plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
+                             alpha = 1,
                              neg.lty = 1, both.lty = 1, inv_weights = TRUE, coord = NULL, ...) {
   net <- x
   sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, color_both = col_both, neg.lty = neg.lty, both.lty = both.lty)
@@ -46,7 +48,7 @@ plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_bo
 
   network::plot.network(
     sgl,
-    edge.col = sgl%e%"col",
+    edge.col = adjustcolor(sgl%e%"col", alpha.f = alpha),
     edge.lty = sgl%e%"type",
     coord = coord,
     ...
@@ -70,6 +72,7 @@ plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_bo
 #'
 #' @export
 plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
+                              alpha =1,
                               neg.lty = 1, both.lty = 1, inv_weights = TRUE,
                               time = NULL, titles = x%n%"names", fix.pos = TRUE,
                               coord = NULL, ...) {
@@ -89,7 +92,7 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_b
 
     for (t in time) {
       p[[t]] <- network::plot.network(sgl[[t]],
-                                      edge.col = sgl[[t]]%e%"col",
+                                      edge.col = adjustcolor(sgl[[t]]%e%"col", alpha.f = alpha),
                                       edge.lty = sgl[[t]]%e%"type",
                                       coord = coord[[t]],
                                       main = titles[t],
