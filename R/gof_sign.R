@@ -121,8 +121,8 @@ plot.gof.sign <- function(x, which = NULL, ...) {
   # A : n×n integer matrix with values in {-1, 0, +1}
   n    <- nrow(A)
   kmax <- n - 2L
-  Ap   <- (A ==  1L) * 1L
-  An   <- (A == -1L) * 1L
+  Ap   <- (A ==  1L | A == 2) * 1L
+  An   <- (A ==  -1L | A == 2)* 1L
   esp  <- .compute_esp_stats(Ap, An, directed, kmax)
 
   if (directed) {
@@ -257,7 +257,7 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 .plot_box <- function(sim_data, obs_data, xlab, ylab) {
 
   ylim_max <- max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)
-  xlim_max <- max(max(which(colSums(sim_data) >0)),
+  xlim_max <- max(#max(which(colSums(sim_data) >0)),
                   max(which(obs_data > 0))) + 0.5
 
   par(bty = "l")
@@ -269,8 +269,9 @@ plot.gof.sign <- function(x, which = NULL, ...) {
           xlim  = c(0, xlim_max),
           xaxt  = "n",
           yaxt  = "n",
-          col = NA
-          )
+          col = NA,
+          outpch = 16,       # symbol
+          outcex = 0.5)
   axis(1, at = seq_along(sim_data), labels = 0:(length(sim_data) - 1L))
   axis(2, at = pretty(c(0, ylim_max)), las = 1)
   lines(obs_data,  type = "b", col = "red")

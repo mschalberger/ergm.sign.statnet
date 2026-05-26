@@ -85,8 +85,8 @@ summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
   n  <- nrow(A)
 
   # signed layers
-  Ap <- (A ==  1L) * 1L
-  An <- (A == -1L) * 1L
+  Ap <- (A ==  1L | A == 2) * 1L
+  An <- (A == -1L | A == 2) * 1L
   Ab <- (abs(A) > 0) * 1L
 
   # edge counts
