@@ -7,6 +7,7 @@ inst/doc
 
 # Session Data files
 .RData
+.RDataTmp
 .RSession
 .Ruserdata
 # Example code in package build process
