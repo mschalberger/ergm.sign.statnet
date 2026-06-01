@@ -102,7 +102,8 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_b
   }
 
   if (fix.pos) {
-    ref_sgl <- sgl[[1]]
+    collapse <- pool.sign(net, timepoints = 1, dual.sign = TRUE)
+    ref_sgl <- UnLayer(collapse)
     ref_graph <- intergraph::asIgraph(ref_sgl)
 
     weights_ref <- ref_sgl%e%"weights"
@@ -112,23 +113,13 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_b
     layout_ref <- graphlayouts::layout_with_stress(ref_graph, weights = E(ref_graph)$weights)
 
     for (t in time) {
-      tmp_graph <- intergraph::asIgraph(sgl[[t]])
-      tmp_weights <- sgl[[t]]%e%"weights"
-      if (inv_weights) tmp_weights <- 1 / pmax(tmp_weights, .Machine$double.eps)
-      E(tmp_graph)$weights <- tmp_weights
-
-      layout_t <- graphlayouts::layout_with_stress(tmp_graph, weights = E(tmp_graph)$weights)
-
-      layout_t <- vegan::procrustes(layout_ref, layout_t, scale = FALSE)$Yrot
-
       p[[t]] <- network::plot.network(sgl[[t]],
                                       edge.col = sgl[[t]]%e%"col",
                                       edge.lty = sgl[[t]]%e%"type",
-                                      coord = layout_t,
+                                      coord = layout_ref,
                                       main = titles[t],
                                       ...)
     }
-
   } else {
     for (t in time) {
       tmp_graph <- intergraph::asIgraph(sgl[[t]])
