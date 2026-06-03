@@ -2,11 +2,6 @@
 #'
 #' @param model A fitted signed ERGM (SERGM) object of class \code{"sign"}.
 #' @param ... Additional arguments passed to methods.
-#' @export
-gof <- function(model, ...) {
-  UseMethod("gof")
-}
-
 #' @rdname gof
 #' @param nsim Integer; number of simulated networks. Defaults to 200.
 #' @param seed Optional integer seed.

@@ -23,7 +23,6 @@ Imports:
     Rdpack,
     intergraph,
     graphlayouts,
-    vegan,
     igraph,
     purrr,
     graphics,

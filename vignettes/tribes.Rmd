@@ -87,7 +87,8 @@ Here, the `gwese` (geometrically weighted edgewise shared enemies) term models e
 In order to assess the goodness of fit of the model we can use the `gof_sign` function, which compares the observed network statistics to the statistics of simulated networks. The `nsim` argument specifies the number of simulations to be performed. For example, to perform 20 simulations we can use the following code:
 
 ```{r}
-gof_sign(triad_fit, nsim = 20)
+gof_data <- gof(triad_fit, nsim = 20)
+plot(gof_data)
 ```
 
 # References

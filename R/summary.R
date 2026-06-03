@@ -89,11 +89,6 @@ summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
   An <- (A == -1L | A == 2) * 1L
   Ab <- (abs(A) > 0) * 1L
 
-  # edge counts
-  ep <- sum(Ap)
-  en <- sum(An)
-  e  <- ep + en
-
   if (directed) {
 
     # --- all 2-path types (OTP, ITP, OSP, ISP)
@@ -118,6 +113,10 @@ summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
     tri_ppm <- sum(PP * An)  # + + closed by -
     tri_pmm <- sum(NN * Ap)  # - - closed by +
 
+    ep <- sum(Ap)
+    en <- sum(An)
+    e  <- ep + en
+
   } else {
     Ap2 <- Ap %*% Ap
     An2 <- An %*% An
@@ -130,6 +129,10 @@ summary_formula.dynamic.sign <- function(object, at,  ..., basis = NULL) {
     tri_pmm <- sum(An2 * Ap) / 2
 
     tri_all <- sum(diag(Ab2 %*% Ab)) / 6
+
+    ep <- sum(Ap) / 2
+    en <- sum(An) / 2
+    e  <- ep + en
   }
 
   # density

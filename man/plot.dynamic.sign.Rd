@@ -9,6 +9,7 @@
   col_pos = "#008000",
   col_neg = "#E3000F",
   col_both = "#333333",
+  alpha = 1,
   neg.lty = 1,
   both.lty = 1,
   inv_weights = TRUE,
@@ -27,6 +28,8 @@
 \item{col_neg}{Color for negative edges. Default is red.}
 
 \item{col_both}{Color for edges that are both positive and negative. Default is darkgrey.}
+
+\item{alpha}{Numeric between 0 and 1 for edge transparency. Default is 1 (fully opaque).}
 
 \item{neg.lty}{Line type for negative edges. Default is "solid". Other options are "dotted" and "dashed".}
 
