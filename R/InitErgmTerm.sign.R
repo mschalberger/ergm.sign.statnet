@@ -2,7 +2,7 @@
 # Called at the top of every InitErgmTerm that requires signed layers.
 .check_sign_network <- function(nw, term_name) {
   sign_classes <- c("static.sign", "dynamic.sign", "multi.sign")
-  if (!inherits(nw, sign_classes)) {
+  if (!(inherits(nw, sign_classes) | all(nw%v%".LayerName" %in% c("+","-")))) {
     ergm_Init_stop(
       "Term `", term_name, "` requires a signed network ",
       "(class 'static.sign', 'dynamic.sign', or 'multi.sign'), ",

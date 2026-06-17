@@ -62,11 +62,11 @@ print.gof.sign <- function(x, ...) {
 }
 
 #' @export
-plot.gof.sign <- function(x, which = NULL, ...) {
+plot.gof.sign <- function(x, which = NULL, xlim = NULL, ...) {
   panels <- x$panels
   if (!is.null(which)) panels <- panels[which]
   for (p in panels)
-    .plot_box(x$sim[[p$stat]], x$obs[[p$stat]], p$xlab, p$ylab)
+    .plot_box(x$sim[[p$stat]], x$obs[[p$stat]], p$xlab, p$ylab, xlim = xlim)
   invisible(x)
 }
 
@@ -249,11 +249,13 @@ plot.gof.sign <- function(x, which = NULL, ...) {
 # =============================================================================
 
 #' @keywords internal
-.plot_box <- function(sim_data, obs_data, xlab, ylab) {
+.plot_box <- function(sim_data, obs_data, xlab, ylab, xlim = NULL) {
 
   ylim_max <- max(unlist(sim_data), unlist(obs_data), na.rm = TRUE)
-  xlim_max <- max(#max(which(colSums(sim_data) >0)),
-                  max(which(obs_data > 0))) + 0.5
+  xlim_max <- max(max(which(colSums(sim_data) >0))
+                  #max(which(obs_data > 0))
+                  ) + 1.5
+  if (is.null(xlim)) xlim <- c(0, xlim_max)
 
   par(bty = "l")
   boxplot(sim_data,
@@ -261,7 +263,7 @@ plot.gof.sign <- function(x, which = NULL, ...) {
           xlab  = xlab,
           ylab  = ylab,
           ylim  = c(0, ylim_max),
-          xlim  = c(0, xlim_max),
+          xlim  = xlim,
           xaxt  = "n",
           yaxt  = "n",
           col = NA,

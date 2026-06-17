@@ -18,6 +18,7 @@
 #'
 #' @export
 ergm.sign <- function(formula, estimate = "MLE", eval_lik = FALSE, ..., control = control.ergm()) {
+  net <- ergm.getnetwork(formula)
   mple <- mple_sign(formula, eval_lik = FALSE, ..., control = control)
   model <- NULL
   if (estimate != "MPLE") {
@@ -26,6 +27,7 @@ ergm.sign <- function(formula, estimate = "MLE", eval_lik = FALSE, ..., control 
   }
   if (estimate == "MPLE" || (!is.null(model) && isTRUE(model[["MPLE_is_MLE"]]))) model <- mple
   if (eval_lik) model$mle.lik <- model$mple.lik <- eval_loglik(model)
+  if ("dynamic.sign" %in% class(net)) names(model$coef) <- gsub("\\(1\\)", "", names(model$coef))
   class(model) <- c("sign", class(model))
   return(model)
 }

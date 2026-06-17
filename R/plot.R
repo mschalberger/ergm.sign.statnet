@@ -72,24 +72,20 @@ plot.static.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_bo
 #'
 #' @export
 plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_both = "#333333",
-                              alpha =1,
+                              alpha = 1,
                               neg.lty = 1, both.lty = 1, inv_weights = TRUE,
                               time = NULL, titles = x%n%"names", fix.pos = TRUE,
                               coord = NULL, ...) {
-
   net <- x
   sgl <- UnLayer(net, color_pos = col_pos, color_neg = col_neg, color_both = col_both,
                  neg.lty = neg.lty, both.lty = both.lty)
-
   if (is.null(time)) time <- seq_along(sgl)
   p <- vector("list", length(time))
 
-  # If user provides coord, just use it (must match timepoints)
   if (!is.null(coord)) {
     if (is.matrix(coord)) {
       coord <- replicate(length(sgl), coord, simplify = FALSE)
     }
-
     for (t in time) {
       p[[t]] <- network::plot.network(sgl[[t]],
                                       edge.col = adjustcolor(sgl[[t]]%e%"col", alpha.f = alpha),
@@ -105,16 +101,13 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_b
     collapse <- pool.sign(net, timepoints = 1, dual.sign = TRUE)
     ref_sgl <- UnLayer(collapse)
     ref_graph <- intergraph::asIgraph(ref_sgl)
-
     weights_ref <- ref_sgl%e%"weights"
     if (inv_weights) weights_ref <- 1 / pmax(weights_ref, .Machine$double.eps)
     E(ref_graph)$weights <- weights_ref
-
     layout_ref <- graphlayouts::layout_with_stress(ref_graph, weights = E(ref_graph)$weights)
-
     for (t in time) {
       p[[t]] <- network::plot.network(sgl[[t]],
-                                      edge.col = sgl[[t]]%e%"col",
+                                      edge.col = adjustcolor(sgl[[t]]%e%"col", alpha.f = alpha),
                                       edge.lty = sgl[[t]]%e%"type",
                                       coord = layout_ref,
                                       main = titles[t],
@@ -126,18 +119,15 @@ plot.dynamic.sign <- function(x, col_pos = "#008000", col_neg = "#E3000F", col_b
       tmp_weights <- sgl[[t]]%e%"weights"
       if (inv_weights) tmp_weights <- 1 / pmax(tmp_weights, .Machine$double.eps)
       E(tmp_graph)$weights <- tmp_weights
-
       layout <- graphlayouts::layout_with_stress(tmp_graph, weights = E(tmp_graph)$weights)
-
       p[[t]] <- network::plot.network(sgl[[t]],
-                                      edge.col = sgl[[t]]%e%"col",
+                                      edge.col = adjustcolor(sgl[[t]]%e%"col", alpha.f = alpha),
                                       edge.lty = sgl[[t]]%e%"type",
                                       coord = layout,
                                       main = titles[t],
                                       ...)
     }
   }
-
   p
 }
 
